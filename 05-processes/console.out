@@ -1,0 +1,26 @@
+[root@alexhome lesson_5-finish]# ./run_proc_with_different_nice.sh
+
+Замеряется время выполнения скрипта с разным значением nice:
+
+[root@alexhome lesson_5-finish]# Процесс 1 c nice -20 запущен 19:52:15.738
+Процесс 2 c nice 19 запущен 19:52:15.738
+Процесс 1 c nice -20 завершен 19:52:18.415
+Процесс 2 c nice 19 завершен 19:52:19.239
+
+[root@alexhome lesson_5-finish]# ./run_proc_with_different_nice.sh
+
+Замеряется время выполнения скрипта с разным значением nice:
+
+[root@alexhome lesson_5-finish]# Процесс 1 c nice -20 запущен 19:52:24.544
+Процесс 2 c nice 19 запущен 19:52:24.545
+Процесс 1 c nice -20 завершен 19:52:27.289
+Процесс 2 c nice 19 завершен 19:52:28.128
+
+[root@alexhome lesson_5-finish]# ./run_proc_with_different_nice.sh
+
+Замеряется время выполнения скрипта с разным значением nice:
+
+[root@alexhome lesson_5-finish]# Процесс 1 c nice -20 запущен 19:52:34.530
+Процесс 2 c nice 19 запущен 19:52:34.530
+Процесс 1 c nice -20 завершен 19:52:37.194
+Процесс 2 c nice 19 завершен 19:52:38.063

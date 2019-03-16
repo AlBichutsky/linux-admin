@@ -1,0 +1,139 @@
+# Занятие 2.
+# домашняя работа
+# работа с mdadm.
+# добавить в Vagrantfile еще дисков
+# сломать/починить raid
+# собрать R0/R5/R10 на выбор 
+# прописать собранный рейд в конф, чтобы рейд собирался при загрузке
+# создать GPT раздел и 5 партиций
+#
+# после добавления 2-х новых дисков в Vagrant, проверяем наличие устройств в linux
+sudo lshw -short | grep disk
+# /0/100/1.1/0.0.0    /dev/sda  disk        42GB VBOX HARDDISK
+# /0/100/d/0          /dev/sdb  disk        262MB VBOX HARDDISK
+# /0/100/d/1          /dev/sdc  disk        262MB VBOX HARDDISK
+# /0/100/d/2          /dev/sdd  disk        262MB VBOX HARDDISK
+# /0/100/d/3          /dev/sde  disk        262MB VBOX HARDDISK
+#
+fdisk -l
+#
+# желательно занулить на всякий случай суперблоки, если raid ранее собирался
+# mdadm --zero-superblock --force /dev/sd{b,c,d,e}
+#
+# создаем raid 10
+# опция -l - уровень raid (10)
+# опция -n - количество дисков в raid (4 - sdb,sdc,sdd,sde)
+mdadm --create --verbose /dev/md0 -l 10 -n 4 /dev/sd{b,c,d,e}
+#
+# далее проверяем командами, что raid1 создался
+#
+lsblk
+# на логическом уровне создалось устройство md0 с мажорным номером 8 (устройство raid)
+# NAME   MAJ:MIN RM  SIZE RO TYPE   MOUNTPOINT
+# sda      8:0    0   40G  0 disk   
+# └─sda1   8:1    0   40G  0 part   /
+# sdb      8:16   0  250M  0 disk   
+# └─md0    9:0    0  496M  0 raid10 
+# sdc      8:32   0  250M  0 disk   
+# └─md0    9:0    0  496M  0 raid10 
+# sdd      8:48   0  250M  0 disk   
+# └─md0    9:0    0  496M  0 raid10 
+# sde      8:64   0  250M  0 disk   
+# └─md0    9:0    0  496M  0 raid10
+# 
+cat /proc/mdstat
+# cостояние активно, UUUU - количество юнитов (все исправны), если юнит не исправен, то отображается прочерк
+# Personalities : [raid10] 
+# md0 : active raid10 sde[3] sdd[2] sdc[1] sdb[0]
+#      507904 blocks super 1.2 512K chunks 2 near-copies [4/4] [UUUU]
+#
+# наиболее подробное состояние raid выводится с помощью команды  
+mdadm -D /dev/md0
+#
+# /dev/md0:
+#           Version : 1.2
+#     Creation Time : Sat Feb  2 10:36:50 2019
+#        Raid Level : raid10
+#        Array Size : 507904 (496.00 MiB 520.09 MB)
+#     Used Dev Size : 253952 (248.00 MiB 260.05 MB)
+#      Raid Devices : 4
+#     Total Devices : 4
+#       Persistence : Superblock is persistent
+#
+#       Update Time : Sat Feb  2 10:36:52 2019
+#             State : clean 
+#    Active Devices : 4
+#   Working Devices : 4
+#    Failed Devices : 0
+#     Spare Devices : 0
+#
+#            Layout : near=2
+#        Chunk Size : 512K
+#
+# Consistency Policy : resync
+#
+#              Name : otuslinux:0  (local to host otuslinux)
+#              UUID : 43a83d78:de90fbf7:689b16ea:1580dcf3
+#            Events : 17
+#
+#    Number   Major   Minor   RaidDevice State
+#       0       8       16        0      active sync set-A   /dev/sdb
+#       1       8       32        1      active sync set-B   /dev/sdc
+#       2       8       48        2      active sync set-A   /dev/sdd
+#       3       8       64        3      active sync set-B   /dev/sde
+#
+# cоздание конфигурационного файла mdadm.conf (можно не выполнять, актуально было в старых версиях)
+# cначала убедимся, что информация верна
+mdadm --detail --scan --verbose
+# ARRAY /dev/md0 level=raid10 num-devices=4 metadata=1.2 name=otuslinux:0 UUID=43a83d78:de90fbf7:689b16ea:1580dcf3
+#   devices=/dev/sdb,/dev/sdc,/dev/sdd,/dev/sde
+# затем в 2 команды создадим файл mdadm.conf, в методичке путь указывается /etc/mdadm/mdadm.conf
+echo "DEVICE partitions" > /etc/mdadm.conf
+mdadm --detail --scan > /etc/mdadm.conf
+#
+# cоздаем раздел GPT на raid
+parted -s /dev/md0 mklabel gpt
+#
+# cоздаем партиции на файловой системе
+parted /dev/md0 mkpart primary ext4 0% 20%
+parted /dev/md0 mkpart primary ext4 20% 40%
+parted /dev/md0 mkpart primary ext4 40% 60%
+parted /dev/md0 mkpart primary ext4 60% 80%
+parted /dev/md0 mkpart primary ext4 80% 100%
+#
+# далее создаем на этих партициях файловые системы
+for i in $(seq 1 5); do sudo mkfs.ext4 /dev/md0p$i; done
+#
+# и монтируем их по каталогам
+mkdir -p /raid/part{1,2,3,4,5}
+for i in $(seq 1 5); do mount /dev/md0p$i /raid/part$i; done
+#
+# имитируем отказ диска sdb в raid10
+mdadm /dev/md0 --fail /dev/sdb
+# mdadm: set /dev/sdb faulty in /dev/md0
+#
+# проверяем как это отразилось на raid
+# sdb[0](F) - в фейле, [_UUU] - отображается отказ 1-го диска
+cat /proc/mdstat
+# Personalities : [raid10] 
+# md0 : active raid10 sde[3] sdd[2] sdc[1] sdb[0](F)
+#      507904 blocks super 1.2 512K chunks 2 near-copies [4/3] [_UUU]
+#
+# более подробные сведения о проблеме 
+mdadm -D /dev/md0
+#
+# удалим сломанный диск sdb
+mdadm /dev/md0 --remove /dev/sdb
+# mdadm: hot removed /dev/sdb from /dev/md0
+# 
+# представим, что мы вставили новый диск в сервер и теперь нам нужно добавить его в raid
+mdadm /dev/md0 --add /dev/sdb
+# диск должен пройти стадию rebuilding и raid должен стать целостным
+#
+# для автоматического монтирования созданных разделов при старте
+# добавляем строчки в конец файла /etc/fstab  
+# /dev/md0p1 /raid/part1 ext4 defaults 0 0
+# /dev/md0p2 /raid/part2 ext4 defaults 0 0
+# /dev/md0p3 /raid/part3 ext4 defaults 0 0
+# /dev/md0p4 /raid/part4 ext4 defaults 0 0
+# /dev/md0p5 /raid/part5 ext4 defaults 0 0

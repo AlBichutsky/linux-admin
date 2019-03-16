@@ -1,0 +1,94 @@
+
+# Занятие 2. Домашнее задание **
+# Перенесети работающую систему с одним диском на RAID 1. 
+# Даунтайм на загрузку с нового диска предполагается. 
+# В качестве проверки принимается вывод команды lsblk до и после и описание хода решения 
+# (можно воспользовать утилитой Script).
+
+# Во избежание проблем в процессе желательно отключить SELinux
+
+# 1. Установим пакеты для работы с raid,lvm,фс
+yum install -y mdadm smartmontools hdparm gdisk xfsdump lvm2
+
+# 2. Проверяем данные о дисковой подсистеме и информацию о разделах:
+lsblk -f
+fdisk -l
+
+# 3. Копируем полностью разделы с sda на sdb и проверяем, что получилось:
+sfdisk -d /dev/sda | sfdisk /dev/sdb
+lsblk -f
+
+# 4. Через fdisk меняем id 83 на fd (Linux raid autodetect) на sdb и проверяем, что получилось:
+fdisk /dev/sdb
+# выбираем m, t - change a partition's system id, указываем - fd, затем сохраняем изменения - w 
+fdisk -l
+
+# 5. Создаем raid level 1 с одним диском sdb, т.к. на sda находится активный рутовый раздел и добавить в raid его нельзя 
+mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 missing /dev/sdb1
+# Проверяем состояние после создания:
+lsblk -f
+
+# 6. Форматируем получившийся /dev/md0 с фс xfs:
+mkfs.xfs /dev/md0
+
+# 7. Монтируем наш /dev/md0 к папке /mnt:
+mount /dev/md0 /mnt/
+
+# 8. Копируем текущую весь корневой раздел на /dev/md0:
+xfsdump -J - /dev/sda1 | xfsrestore -J - /mnt
+# либо используем rsync -axu / /mnt/
+ls /mnt/
+
+# 9. Монтируем информацию о текущей системе в наш новый корень и делаем chroot в него:
+mount --bind /proc /mnt/proc && mount --bind /dev /mnt/dev && mount --bind /sys /mnt/sys && mount --bind /run /mnt/run
+chroot /mnt/
+
+# 10. Монтируем /dev/md0 вместо /dev/sda1 в корневой раздел в /etc/fstab -
+#    для этого заменяем UUID sda1 на md0 
+blkid
+ls -l /dev/disk/by-uuid |grep md0 >> /etc/fstab && vi /etc/fstab
+
+# 11. Создаем конфиг для mdadm, чтоб md0 не сменил имя при перезагрузке (необязательно, но желательно):
+mdadm --detail --scan --verbose > /etc/mdadm.conf 
+cat /etc/mdadm.conf
+
+# 12. Делаем новый initramfs, с нужными модулями:
+# необязательно - mv /boot/initramfs-3.10.0-123.el7.x86_64.img /boot/initramfs-3.10.0-123.el7.x86_64.img.bak
+dracut --nolvm --mdadmconf -f /boot/initramfs-`uname -r`.img `uname -r`
+
+# 13. Передаем ядру доп.опции в /etc/default/grub: 
+GRUB_CMDLINE_LINUX="rd.auto=1 ...",
+GRUB_PRELOAD_MODULES="mdraid1x"
+vi /etc/default/grub
+
+# 14. Перепишем конфиг «GRUB» и установим его на наш диск sdb:
+grub2-mkconfig -o /boot/grub2/grub.cfg && grub2-install /dev/sdb
+
+# 15. Проверим, что uuid md0 и опция «rd.auto=1» записались:
+cat /boot/grub2/grub.cfg | grep "rd.auto"
+
+# 16. Производим reboot машины, через bios boot меню выбираем наш диск в raid (sata sdb)
+
+# 17. После удачной загрузки через fdisk меняем id 83 на fd (Linux raid autodetect) на sda и проверяем, что получилось:
+fdisk /dev/sda
+# выбираем m, t - change a partition's system id, указываем fd, затем сохраняем изменения w 
+# проверяем, что id изменился:
+fdisk -l
+
+# 18. Добавляем диск sda в raid1 и смотрим состояние массива:
+mdadm --manage /dev/md0 --add /dev/sda1
+cat /proc/mdstat
+mdadm -D /dev/md0
+lsblk -f
+
+# 19. Перегружаемся для проверки, через bios boot меню выбираем диск sata sdb.
+reboot
+# устанавливаем загрузчик в /dev/sda и перегружаемся для проверки: 
+grub2-install /dev/sda
+reboot
+Далее в загружаемся сначала с sata sdb, а потом c ide sda - проверяем, что загрузка проходит успешно! 
+
+# 20. Проверяем состояние raid1 командами:
+cat /proc/mdstat
+mdadm -D /dev/md0
+lsblk -f

@@ -1,0 +1,194 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+config.vbguest.auto_update = false
+
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  config.vm.box = "centos/7"
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder ".", "/vagrant"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+     vb.gui = true
+  #
+  #   # Customize the amount of memory on the VM:
+  vb.memory = "1024"
+   end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+   config.vm.provision "shell", inline: <<-SHELL
+     
+     # Сборка .rpm пакета Apache 2.4.38 с модулем mpm-event и его установка. Создание локального репозитория.
+
+     mkdir -p ~root/.ssh
+     cp ~vagrant/.ssh/auth* ~root/.ssh
+     
+     # Отключаем временно SELinux
+     echo 0 > /etc/selinux/enforce
+     
+     # Устанавливаем средства для работы с пакетами и создания локального репозитория 
+     yum install -y redhat-lsb-core wget rpmdevtools rpm-build createrepo yum-utils
+
+     # Скачаем тарбол-архивы: Apache 2.4.38, APR 1.6.5, APR-util 1.6.1 в папку /tmp/apache2 
+     # Cоберем их сначала в source-пакеты rpm (SRPMS), а затем в обычные rpm (RPMS) и установим через yum.
+     # Установка новой версии Apache Runtime Portable (ARP) желательна для cборки rpm-файла Apache c нужными опциями (mpm-event), иначе в процессе возникнет ошибка. 
+     # Описание модуля: https://httpd.apache.org/docs/2.4/mod/event.html
+
+     # Скачиваем тарбол-архивы:
+     mkdir /tmp/apache2
+     cd /tmp/apache2
+     wget http://mirror.linux-ia64.org/apache//apr/apr-1.6.5.tar.bz2
+     wget http://mirror.linux-ia64.org/apache//apr/apr-util-1.6.1.tar.bz2
+     wget http://mirror.linux-ia64.org/apache//httpd/httpd-2.4.38.tar.bz2
+
+     # Собираем из архивов source-пакеты rpm, затем установим их (по факту при установке распакуются файлы .spec): 
+     rpmbuild -ts apr-1.6.5.tar.bz2 && rpm -i /root/rpmbuild/SRPMS/apr-1.6.5-1.src.rpm
+     rpmbuild -ts apr-util-1.6.1.tar.bz2 && rpm -i /root/rpmbuild/SRPMS/apr-util-1.6.1-1.src.rpm
+     rpmbuild -ts httpd-2.4.38.tar.bz2 && rpm -i /root/rpmbuild/SRPMS/httpd-2.4.38-1.src.rpm
+     # Можно бы было использовтаь ключ -ba, чтобы попытаться собрать и готовый .rpm (не source), а потом установить его в centOS, но перед этим тогда нужно было установить требуемые пакеты.
+     # Без них сборка rpm будет невозможна.
+     # Требуемые пакеты установим позже. 
+     
+     # В каталоге /root/rpmbuild будет созданы папки:
+     # BUILD - директория в которой происходит сборка (пока пустая)
+     # BUILDROOT - директория-корень в файловой системе, на которую накатывается пакет (пока пустая)
+     # RPMS - директория с собранными пакетами .rpm (пока пустая)
+     # SOURCES - директория с исходными файлами (*.tar.bz2)
+     # SPECS - директория с spec-файлами (*.spec ). В файл httpd.spec будут добавляться нужные нам опции перед сборкой Apache.
+     # SRPMS - директория с source-rpm (.rpm)
+     
+     # Перед сборкой rpm-пакетов из source-пакетов нужно заранее установить требуемые пакеты. 
+     # Список необходимых пакетов указан в .spec-файлах. Это можно сделать автоматически с помощью команды:
+     # yum-builddep /root/rpmbuild/SPECS/*.spec
+     # Перед этим желательно заранее подключить необходимые репозитории для установки, но на практике при запуске команды возникли проблемы с поиском некоторых пакетов (libdb4).
+     
+     # Поэтому сначала установим необходимые пакеты через yum, затем подключим EPEL репозиторий и установим пакет db4-devel отдельно.
+     yum install -y autoconf libtool doxygen apr-devel apr-util-devel expat-devel libuuid-devel postgresql-devel sqlite-devel unixODBC-devel openldap-devel openssl-devel nss-devel mariadb-devel python
+     yum install -y zlib-devel libselinux-devel pcre-devel lua-devel libxml2-devel mysql-devel    
+     # Подключаем epel-репозиторий:
+     wget http://download-ib01.fedoraproject.org/pub/epel/7/x86_64/
+     yum install -y epel-release
+     rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+     # Устанавливаем libdb4-devel
+     yum install -y http://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/l/libdb4-devel-4.8.30-13.el7.x86_64.rpm
+
+     # Попробуем еще раз определить и установить автоматически требуемые пакеты, вывод должен показать, они уже установлены:
+     yum-builddep /root/rpmbuild/SPECS/apr.spec
+     yum-builddep /root/rpmbuild/SPECS/apr-util.spec
+     yum-builddep /root/rpmbuild/SPECS/httpd.spec
+     
+     # Произведем сборку rpm-пакетов Apache Runtime Portable 1.6 из шаблона .spec. Затем установим их в CentOS с помощью yum.
+     rpmbuild -bb /root/rpmbuild/SPECS/apr.spec 
+     rpmbuild -bb /root/rpmbuild/SPECS/apr-util.spec
+     yum localinstall -y /root/rpmbuild/RPMS/x86_64/apr-*
+     
+     # Произведем сборку rpm-файла самого Apache и установим его в CentOS.
+
+     # В шаблоне /root/rpmbuild/SPECS/httpd.spec в разделе %configure \ указываются параметры, с которыми Apache будет собран в rpm-файл.
+     # Мы хотим добавить модуль mpm-event, поэтому добавляем новую строчку (в строку 148): 
+     # --with-mpm=event
+     # Важно: скрипт содержит обратный слэш, чтобы он отработал без ошибок добавляем 4 слэша.
+     sed -i '138i--with-mpm=event \\\\' /root/rpmbuild/SPECS/httpd.spec &&
+     
+     # Собираем rpm-файлы Apache из шаблона .spec и устанавливаем с помощью yum. 
+     # В процессе инсталляции также установится зависимый пакет mailcap из репозитория base.
+     rpmbuild -bb /root/rpmbuild/SPECS/httpd.spec &&
+     yum localinstall -y /root/rpmbuild/RPMS/x86_64/httpd-2.4.38-1.x86_64.rpm
+
+     # Запускаем службу apache: 
+     systemctl start httpd
+     # systemctl status httpd
+
+     # Создаем свой локальный репозиторий и cкопируем туда rpm-пакеты apache и htop
+     
+     # Удалим файл index.html, чтобы apache к нему не обращался:
+     rm /var/www/html/index.html
+
+     # Создадим каталог для репозитория в папке apache:
+     mkdir /var/www/html/local_repo
+     chmod -R 755 /var/www/html/local_repo
+
+     # Скопируем в папку local_repo собранный пакет Apache:
+     cp /root/rpmbuild/RPMS/x86_64/httpd-2.4.38-1.x86_64.rpm /var/www/html/local_repo/
+
+     # Скачем туда же rpm-пакет утилиты htop:
+     cd /var/www/html/local_repo/
+     wget http://springdale.math.ias.edu/data/puias/7/x86_64/os/Addons/Packages/htop-2.2.0-1.sdl7.x86_64.rpm 
+
+     # Инициализируем репозиторий командой:
+     createrepo /var/www/html/local_repo
+
+     # Создадим файл otus.repo с настройками локального репозитория:
+     touch /etc/yum.repos.d/otus.repo
+     echo "[otus]" >> /etc/yum.repos.d/otus.repo
+     echo "name=otus-linux" >> /etc/yum.repos.d/otus.repo
+     echo "baseurl=http://localhost/local_repo" >> /etc/yum.repos.d/otus.repo
+     echo "gpgcheck=0" >> /etc/yum.repos.d/otus.repo
+     echo "enabled=1" >> /etc/yum.repos.d/otus.repo
+    
+     # перезапустим apache:
+     systemctl restart httpd
+     
+     # Можно проверить содержимое каталога командой:
+     # curl -a http://localhost/local_repo/ 
+
+     # Убедимся, что репозиторий подключен:
+     # yum repolist all  # смотрим все репозитории - включены/выключены
+     # yum repolist all | grep enabled  # смотрим только включенные
+     # yum repolist enabled | grep otus 
+     # yum list | grep otus
+     
+     # Далее отключаем все внешние репозитории и оставляем включенным только otus. Пробуем установить htop из локального репо.
+     # yum install -y htop
+
+   SHELL
+end

@@ -1,0 +1,575 @@
+[Alexey@alexhome hw2]$ vagrant ssh
+Last login: Sun Feb 10 15:09:32 2019 from 10.0.2.2
+[vagrant@otuslinux ~]$ sudo su
+[root@otuslinux vagrant]# vi /etc/selinux/config
+[root@otuslinux vagrant]# cat /etc/selinux/config
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=disabled
+# SELINUXTYPE= can take one of three values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected.
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+
+
+[root@otuslinux vagrant]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+[Alexey@alexhome hw2]$ vagrant ssh
+Last login: Mon Feb 11 22:22:01 2019 from 10.0.2.2
+[vagrant@otuslinux ~]$ sudo su
+[root@otuslinux vagrant]# cat /etc/selinux/config
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=disabled
+# SELINUXTYPE= can take one of three values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected.
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+
+
+[root@otuslinux vagrant]# yum install -y mdadm smartmontools hdparm gdisk xfsdump lvm2
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.sale-dedic.com
+ * extras: mirror.sale-dedic.com
+ * updates: mirror.sale-dedic.com
+base                                                                                                                                                                                                         | 3.6 kB  00:00:00
+extras                                                                                                                                                                                                       | 3.4 kB  00:00:00
+updates                                                                                                                                                                                                      | 3.4 kB  00:00:00
+Resolving Dependencies
+--> Running transaction check
+---> Package gdisk.x86_64 0:0.8.10-2.el7 will be installed
+---> Package hdparm.x86_64 0:9.43-5.el7 will be installed
+---> Package lvm2.x86_64 7:2.02.180-10.el7_6.3 will be installed
+--> Processing Dependency: lvm2-libs = 7:2.02.180-10.el7_6.3 for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: device-mapper-persistent-data >= 0.7.0-0.1.rc6 for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: liblvm2app.so.2.2(Base)(64bit) for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: libdevmapper-event.so.1.02(Base)(64bit) for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: libaio.so.1(LIBAIO_0.4)(64bit) for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: libaio.so.1(LIBAIO_0.1)(64bit) for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: liblvm2app.so.2.2()(64bit) for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: libdevmapper-event.so.1.02()(64bit) for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+--> Processing Dependency: libaio.so.1()(64bit) for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+---> Package mdadm.x86_64 0:4.1-rc1_2.el7 will be installed
+--> Processing Dependency: libreport-filesystem for package: mdadm-4.1-rc1_2.el7.x86_64
+---> Package smartmontools.x86_64 1:6.5-1.el7 will be installed
+--> Processing Dependency: mailx for package: 1:smartmontools-6.5-1.el7.x86_64
+---> Package xfsdump.x86_64 0:3.1.7-1.el7 will be installed
+--> Processing Dependency: attr >= 2.0.0 for package: xfsdump-3.1.7-1.el7.x86_64
+--> Running transaction check
+---> Package attr.x86_64 0:2.4.46-13.el7 will be installed
+---> Package device-mapper-event-libs.x86_64 7:1.02.149-10.el7_6.3 will be installed
+---> Package device-mapper-persistent-data.x86_64 0:0.7.3-3.el7 will be installed
+---> Package libaio.x86_64 0:0.3.109-13.el7 will be installed
+---> Package libreport-filesystem.x86_64 0:2.1.11-42.el7.centos will be installed
+---> Package lvm2-libs.x86_64 7:2.02.180-10.el7_6.3 will be installed
+--> Processing Dependency: device-mapper-event = 7:1.02.149-10.el7_6.3 for package: 7:lvm2-libs-2.02.180-10.el7_6.3.x86_64
+---> Package mailx.x86_64 0:12.5-19.el7 will be installed
+--> Running transaction check
+---> Package device-mapper-event.x86_64 7:1.02.149-10.el7_6.3 will be installed
+--> Processing Dependency: device-mapper = 7:1.02.149-10.el7_6.3 for package: 7:device-mapper-event-1.02.149-10.el7_6.3.x86_64
+--> Running transaction check
+---> Package device-mapper.x86_64 7:1.02.149-10.el7_6.2 will be updated
+--> Processing Dependency: device-mapper = 7:1.02.149-10.el7_6.2 for package: 7:device-mapper-libs-1.02.149-10.el7_6.2.x86_64
+---> Package device-mapper.x86_64 7:1.02.149-10.el7_6.3 will be an update
+--> Running transaction check
+---> Package device-mapper-libs.x86_64 7:1.02.149-10.el7_6.2 will be updated
+---> Package device-mapper-libs.x86_64 7:1.02.149-10.el7_6.3 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+====================================================================================================================================================================================================================================
+ Package                                                             Arch                                         Version                                                       Repository                                     Size
+====================================================================================================================================================================================================================================
+Installing:
+ gdisk                                                               x86_64                                       0.8.10-2.el7                                                  base                                          189 k
+ hdparm                                                              x86_64                                       9.43-5.el7                                                    base                                           83 k
+ lvm2                                                                x86_64                                       7:2.02.180-10.el7_6.3                                         updates                                       1.3 M
+ mdadm                                                               x86_64                                       4.1-rc1_2.el7                                                 base                                          433 k
+ smartmontools                                                       x86_64                                       1:6.5-1.el7                                                   base                                          460 k
+ xfsdump                                                             x86_64                                       3.1.7-1.el7                                                   base                                          308 k
+Installing for dependencies:
+ attr                                                                x86_64                                       2.4.46-13.el7                                                 base                                           66 k
+ device-mapper-event                                                 x86_64                                       7:1.02.149-10.el7_6.3                                         updates                                       188 k
+ device-mapper-event-libs                                            x86_64                                       7:1.02.149-10.el7_6.3                                         updates                                       188 k
+ device-mapper-persistent-data                                       x86_64                                       0.7.3-3.el7                                                   base                                          405 k
+ libaio                                                              x86_64                                       0.3.109-13.el7                                                base                                           24 k
+ libreport-filesystem                                                x86_64                                       2.1.11-42.el7.centos                                          base                                           39 k
+ lvm2-libs                                                           x86_64                                       7:2.02.180-10.el7_6.3                                         updates                                       1.1 M
+ mailx                                                               x86_64                                       12.5-19.el7                                                   base                                          245 k
+Updating for dependencies:
+ device-mapper                                                       x86_64                                       7:1.02.149-10.el7_6.3                                         updates                                       292 k
+ device-mapper-libs                                                  x86_64                                       7:1.02.149-10.el7_6.3                                         updates                                       320 k
+
+Transaction Summary
+====================================================================================================================================================================================================================================
+Install  6 Packages (+8 Dependent packages)
+Upgrade             ( 2 Dependent packages)
+
+Total download size: 5.5 M
+Downloading packages:
+Delta RPMs reduced 320 k of updates to 180 k (43% saved)
+(1/16): device-mapper-libs-1.02.149-10.el7_6.2_1.02.149-10.el7_6.3.x86_64.drpm                                                                                                                               | 180 kB  00:00:00
+(2/16): device-mapper-1.02.149-10.el7_6.3.x86_64.rpm                                                                                                                                                         | 292 kB  00:00:00
+(3/16): device-mapper-persistent-data-0.7.3-3.el7.x86_64.rpm                                                                                                                                                 | 405 kB  00:00:00
+(4/16): gdisk-0.8.10-2.el7.x86_64.rpm                                                                                                                                                                        | 189 kB  00:00:00
+(5/16): hdparm-9.43-5.el7.x86_64.rpm                                                                                                                                                                         |  83 kB  00:00:00
+(6/16): libaio-0.3.109-13.el7.x86_64.rpm                                                                                                                                                                     |  24 kB  00:00:00
+(7/16): libreport-filesystem-2.1.11-42.el7.centos.x86_64.rpm                                                                                                                                                 |  39 kB  00:00:00
+(8/16): lvm2-2.02.180-10.el7_6.3.x86_64.rpm                                                                                                                                                                  | 1.3 MB  00:00:00
+(9/16): attr-2.4.46-13.el7.x86_64.rpm                                                                                                                                                                        |  66 kB  00:00:01
+(10/16): mailx-12.5-19.el7.x86_64.rpm                                                                                                                                                                        | 245 kB  00:00:00
+(11/16): lvm2-libs-2.02.180-10.el7_6.3.x86_64.rpm                                                                                                                                                            | 1.1 MB  00:00:00
+(12/16): smartmontools-6.5-1.el7.x86_64.rpm                                                                                                                                                                  | 460 kB  00:00:00
+(13/16): mdadm-4.1-rc1_2.el7.x86_64.rpm                                                                                                                                                                      | 433 kB  00:00:00
+(14/16): xfsdump-3.1.7-1.el7.x86_64.rpm                                                                                                                                                                      | 308 kB  00:00:00
+(15/16): device-mapper-event-libs-1.02.149-10.el7_6.3.x86_64.rpm                                                                                                                                             | 188 kB  00:00:03
+(16/16): device-mapper-event-1.02.149-10.el7_6.3.x86_64.rpm                                                                                                                                                  | 188 kB  00:00:03
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                                                                               1.4 MB/s | 5.4 MB  00:00:03
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : 7:device-mapper-1.02.149-10.el7_6.3.x86_64                                                                                                                                                                      1/18
+  Updating   : 7:device-mapper-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                                                                 2/18
+  Installing : 7:device-mapper-event-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                                                           3/18
+  Installing : libaio-0.3.109-13.el7.x86_64                                                                                                                                                                                    4/18
+  Installing : device-mapper-persistent-data-0.7.3-3.el7.x86_64                                                                                                                                                                5/18
+  Installing : 7:device-mapper-event-1.02.149-10.el7_6.3.x86_64                                                                                                                                                                6/18
+  Installing : 7:lvm2-libs-2.02.180-10.el7_6.3.x86_64                                                                                                                                                                          7/18
+  Installing : attr-2.4.46-13.el7.x86_64                                                                                                                                                                                       8/18
+  Installing : mailx-12.5-19.el7.x86_64                                                                                                                                                                                        9/18
+  Installing : libreport-filesystem-2.1.11-42.el7.centos.x86_64                                                                                                                                                               10/18
+  Installing : mdadm-4.1-rc1_2.el7.x86_64                                                                                                                                                                                     11/18
+  Installing : 1:smartmontools-6.5-1.el7.x86_64                                                                                                                                                                               12/18
+  Installing : xfsdump-3.1.7-1.el7.x86_64                                                                                                                                                                                     13/18
+  Installing : 7:lvm2-2.02.180-10.el7_6.3.x86_64                                                                                                                                                                              14/18
+  Installing : gdisk-0.8.10-2.el7.x86_64                                                                                                                                                                                      15/18
+  Installing : hdparm-9.43-5.el7.x86_64                                                                                                                                                                                       16/18
+  Cleanup    : 7:device-mapper-1.02.149-10.el7_6.2.x86_64                                                                                                                                                                     17/18
+  Cleanup    : 7:device-mapper-libs-1.02.149-10.el7_6.2.x86_64                                                                                                                                                                18/18
+  Verifying  : device-mapper-persistent-data-0.7.3-3.el7.x86_64                                                                                                                                                                1/18
+  Verifying  : hdparm-9.43-5.el7.x86_64                                                                                                                                                                                        2/18
+  Verifying  : 7:device-mapper-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                                                                 3/18
+  Verifying  : libreport-filesystem-2.1.11-42.el7.centos.x86_64                                                                                                                                                                4/18
+  Verifying  : xfsdump-3.1.7-1.el7.x86_64                                                                                                                                                                                      5/18
+  Verifying  : 1:smartmontools-6.5-1.el7.x86_64                                                                                                                                                                                6/18
+  Verifying  : libaio-0.3.109-13.el7.x86_64                                                                                                                                                                                    7/18
+  Verifying  : 7:device-mapper-event-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                                                           8/18
+  Verifying  : 7:device-mapper-event-1.02.149-10.el7_6.3.x86_64                                                                                                                                                                9/18
+  Verifying  : gdisk-0.8.10-2.el7.x86_64                                                                                                                                                                                      10/18
+  Verifying  : mdadm-4.1-rc1_2.el7.x86_64                                                                                                                                                                                     11/18
+  Verifying  : mailx-12.5-19.el7.x86_64                                                                                                                                                                                       12/18
+  Verifying  : attr-2.4.46-13.el7.x86_64                                                                                                                                                                                      13/18
+  Verifying  : 7:lvm2-libs-2.02.180-10.el7_6.3.x86_64                                                                                                                                                                         14/18
+  Verifying  : 7:lvm2-2.02.180-10.el7_6.3.x86_64                                                                                                                                                                              15/18
+  Verifying  : 7:device-mapper-1.02.149-10.el7_6.3.x86_64                                                                                                                                                                     16/18
+  Verifying  : 7:device-mapper-1.02.149-10.el7_6.2.x86_64                                                                                                                                                                     17/18
+  Verifying  : 7:device-mapper-libs-1.02.149-10.el7_6.2.x86_64                                                                                                                                                                18/18
+
+Installed:
+  gdisk.x86_64 0:0.8.10-2.el7        hdparm.x86_64 0:9.43-5.el7        lvm2.x86_64 7:2.02.180-10.el7_6.3        mdadm.x86_64 0:4.1-rc1_2.el7        smartmontools.x86_64 1:6.5-1.el7        xfsdump.x86_64 0:3.1.7-1.el7
+
+Dependency Installed:
+  attr.x86_64 0:2.4.46-13.el7              device-mapper-event.x86_64 7:1.02.149-10.el7_6.3             device-mapper-event-libs.x86_64 7:1.02.149-10.el7_6.3           device-mapper-persistent-data.x86_64 0:0.7.3-3.el7
+  libaio.x86_64 0:0.3.109-13.el7           libreport-filesystem.x86_64 0:2.1.11-42.el7.centos           lvm2-libs.x86_64 7:2.02.180-10.el7_6.3                          mailx.x86_64 0:12.5-19.el7
+
+Dependency Updated:
+  device-mapper.x86_64 7:1.02.149-10.el7_6.3                                                                     device-mapper-libs.x86_64 7:1.02.149-10.el7_6.3
+
+Complete!
+[root@otuslinux vagrant]# lsblk -f
+NAME   FSTYPE LABEL UUID                                 MOUNTPOINT
+sda
+└─sda1 xfs          9165566a-91aa-41d0-89cd-7d51756fbc16 /
+sdb
+[root@otuslinux vagrant]# fdisk -l
+
+Disk /dev/sda: 42.9 GB, 42949672960 bytes, 83886080 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x0009cf06
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048    83886079    41942016   83  Linux
+
+Disk /dev/sdb: 42.9 GB, 42949672960 bytes, 83886080 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+[root@otuslinux vagrant]# sfdisk -d /dev/sda | sfdisk /dev/sdb
+Checking that no-one is using this disk right now ...
+OK
+
+Disk /dev/sdb: 5221 cylinders, 255 heads, 63 sectors/track
+sfdisk:  /dev/sdb: unrecognized partition table type
+
+Old situation:
+sfdisk: No partitions found
+
+New situation:
+Units: sectors of 512 bytes, counting from 0
+
+   Device Boot    Start       End   #sectors  Id  System
+/dev/sdb1   *      2048  83886079   83884032  83  Linux
+/dev/sdb2             0         -          0   0  Empty
+/dev/sdb3             0         -          0   0  Empty
+/dev/sdb4             0         -          0   0  Empty
+Warning: partition 1 does not end at a cylinder boundary
+Successfully wrote the new partition table
+
+Re-reading the partition table ...
+
+If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)
+to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
+(See fdisk(8).)
+[root@otuslinux vagrant]# lsblk -f
+NAME   FSTYPE LABEL UUID                                 MOUNTPOINT
+sda
+└─sda1 xfs          9165566a-91aa-41d0-89cd-7d51756fbc16 /
+sdb
+└─sdb1
+[root@otuslinux vagrant]# fdisk /dev/sdb
+Welcome to fdisk (util-linux 2.23.2).
+
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): m
+Command action
+   a   toggle a bootable flag
+   b   edit bsd disklabel
+   c   toggle the dos compatibility flag
+   d   delete a partition
+   g   create a new empty GPT partition table
+   G   create an IRIX (SGI) partition table
+   l   list known partition types
+   m   print this menu
+   n   add a new partition
+   o   create a new empty DOS partition table
+   p   print the partition table
+   q   quit without saving changes
+   s   create a new empty Sun disklabel
+   t   change a partition's system id
+   u   change display/entry units
+   v   verify the partition table
+   w   write table to disk and exit
+   x   extra functionality (experts only)
+
+Command (m for help): t
+Selected partition 1
+Hex code (type L to list all codes): fd
+Changed type of partition 'Linux' to 'Linux raid autodetect'
+
+Command (m for help): w
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+[root@otuslinux vagrant]# fdisk -l
+
+Disk /dev/sda: 42.9 GB, 42949672960 bytes, 83886080 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x0009cf06
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048    83886079    41942016   83  Linux
+
+Disk /dev/sdb: 42.9 GB, 42949672960 bytes, 83886080 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x00000000
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1   *        2048    83886079    41942016   fd  Linux raid autodetect
+[root@otuslinux vagrant]# mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 missing /dev/sdb1
+mdadm: Note: this array has metadata at the start and
+    may not be suitable as a boot device.  If you plan to
+    store '/boot' on this device please ensure that
+    your boot-loader understands md/v1.x metadata, or use
+    --metadata=0.90
+mdadm: size set to 41908224K
+Continue creating array? y
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md0 started.
+[root@otuslinux vagrant]# lsblk -f
+NAME    FSTYPE            LABEL       UUID                                 MOUNTPOINT
+sda
+└─sda1  xfs                           9165566a-91aa-41d0-89cd-7d51756fbc16 /
+sdb
+└─sdb1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0
+[root@otuslinux vagrant]# mkfs.xfs /dev/md0
+meta-data=/dev/md0               isize=512    agcount=4, agsize=2619264 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=10477056, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=5115, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@otuslinux vagrant]# mount /dev/md0 /mnt/
+[root@otuslinux vagrant]# xfsdump -J - /dev/sda1 | xfsrestore -J - /mnt
+xfsdump: using file dump (drive_simple) strategy
+xfsdump: version 3.1.7 (dump format 3.0)
+xfsdump: level 0 dump of otuslinux:/
+xfsdump: dump date: Mon Feb 11 22:26:41 2019
+xfsdump: session id: 8dbd4c9a-a4e3-4989-97cc-4394a3001358
+xfsdump: session label: ""
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.7 (dump format 3.0)
+xfsrestore: searching media for dump
+xfsdump: ino map phase 1: constructing initial dump list
+xfsdump: ino map phase 2: skipping (no pruning necessary)
+xfsdump: ino map phase 3: skipping (only one dump stream)
+xfsdump: ino map construction complete
+xfsdump: estimated dump size: 3366397568 bytes
+xfsdump: creating dump session media file 0 (media 0, file 0)
+xfsdump: dumping ino map
+xfsdump: dumping directories
+xfsrestore: examining media file 0
+xfsrestore: dump description:
+xfsrestore: hostname: otuslinux
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/sda1
+xfsrestore: session time: Mon Feb 11 22:26:41 2019
+xfsrestore: level: 0
+xfsrestore: session label: ""
+xfsrestore: media label: ""
+xfsrestore: file system id: 9165566a-91aa-41d0-89cd-7d51756fbc16
+xfsrestore: session id: 8dbd4c9a-a4e3-4989-97cc-4394a3001358
+xfsrestore: media id: daaae839-1881-447b-835f-44ff7fdae1c4
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsdump: dumping non-directory files
+xfsrestore: 11388 directories and 68192 entries processed
+xfsrestore: directory post-processing
+xfsrestore: restoring non-directory files
+xfsdump: ending media file
+xfsdump: media file size 3310729824 bytes
+xfsdump: dump size (non-dir files) : 3273844592 bytes
+xfsdump: dump complete: 19 seconds elapsed
+xfsdump: Dump Status: SUCCESS
+xfsrestore: restore complete: 19 seconds elapsed
+xfsrestore: Restore Status: SUCCESS
+[root@otuslinux vagrant]# ls /mnt/
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  swapfile  sys  tmp  usr  vagrant  var
+[root@otuslinux vagrant]# ls /mnt/
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  swapfile  sys  tmp  usr  vagrant  var
+[root@otuslinux vagrant]# mount --bind /proc /mnt/proc && mount --bind /dev /mnt/dev && mount --bind /sys /mnt/sys && mount --bind /run /mnt/run
+[root@otuslinux vagrant]# chroot /mnt/
+[root@otuslinux /]# ls -l /dev/disk/by-uuid |grep md0 >> /etc/fstab && vi /etc/fstab
+[root@otuslinux /]# vi /etc/fstab
+[root@otuslinux /]# cat /etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Thu Jan  3 21:45:48 2019
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+UUID=83ba31e2-9316-4482-ae67-c63fd8237c6b /                       xfs     defaults        0 0
+/swapfile none swap defaults 0 0
+
+[root@otuslinux /]# mdadm --detail --scan --verbose > /etc/mdadm.conf
+[root@otuslinux /]# cat /etc/mdadm.conf
+ARRAY /dev/md0 level=raid1 num-devices=2 metadata=1.2 name=otuslinux:0 UUID=aa629fcd:d0923beb:7612b2b5:d75f53f5
+   devices=/dev/sdb1
+[root@otuslinux /]# dracut --nolvm --mdadmconf -f /boot/initramfs-`uname -r`.img `uname -r`
+[root@otuslinux /]# vi /etc/default/grub
+[root@otuslinux /]# grub2-mkconfig -o /boot/grub2/grub.cfg && grub2-install /dev/sdb
+Generating grub configuration file ...
+/usr/sbin/grub2-probe: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+Found linux image: /boot/vmlinuz-3.10.0-957.1.3.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-957.1.3.el7.x86_64.img
+/usr/sbin/grub2-probe: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+/usr/sbin/grub2-probe: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+/usr/sbin/grub2-probe: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+/usr/sbin/grub2-probe: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+done
+Installing for i386-pc platform.
+grub2-install: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+grub2-install: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+Installation finished. No error reported.
+[root@otuslinux /]# cat /boot/grub2/grub.cfg | grep "rd.auto"
+        linux16 /boot/vmlinuz-3.10.0-957.1.3.el7.x86_64 root=UUID=83ba31e2-9316-4482-ae67-c63fd8237c6b ro rd.auto=1 no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=auto
+[root@otuslinux /]# reboot
+Running in chroot, ignoring request.
+[root@otuslinux /]# exit
+exit
+[root@otuslinux vagrant]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+[Alexey@alexhome hw2]$ vagrant ssh
+Last login: Mon Feb 11 22:23:47 2019 from 10.0.2.2
+[vagrant@otuslinux ~]$ sudo su
+[root@otuslinux vagrant]# fdisk /dev/sda
+Welcome to fdisk (util-linux 2.23.2).
+
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): m
+Command action
+   a   toggle a bootable flag
+   b   edit bsd disklabel
+   c   toggle the dos compatibility flag
+   d   delete a partition
+   g   create a new empty GPT partition table
+   G   create an IRIX (SGI) partition table
+   l   list known partition types
+   m   print this menu
+   n   add a new partition
+   o   create a new empty DOS partition table
+   p   print the partition table
+   q   quit without saving changes
+   s   create a new empty Sun disklabel
+   t   change a partition's system id
+   u   change display/entry units
+   v   verify the partition table
+   w   write table to disk and exit
+   x   extra functionality (experts only)
+
+Command (m for help): t
+Selected partition 1
+Hex code (type L to list all codes): fd
+Changed type of partition 'Linux' to 'Linux raid autodetect'
+
+Command (m for help): w
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+[root@otuslinux vagrant]# fdisk -l
+
+Disk /dev/sda: 42.9 GB, 42949672960 bytes, 83886080 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x0009cf06
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048    83886079    41942016   fd  Linux raid autodetect
+
+Disk /dev/sdb: 42.9 GB, 42949672960 bytes, 83886080 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x00000000
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1   *        2048    83886079    41942016   fd  Linux raid autodetect
+
+Disk /dev/md0: 42.9 GB, 42914021376 bytes, 83816448 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+[root@otuslinux vagrant]# mdadm --manage /dev/md0 --add /dev/sda1
+mdadm: added /dev/sda1
+[root@otuslinux vagrant]# cat /proc/mdstat
+Personalities : [raid1]
+md0 : active raid1 sda1[2] sdb1[1]
+      41908224 blocks super 1.2 [2/1] [_U]
+      [=>...................]  recovery =  9.5% (4008448/41908224) finish=1.2min speed=501056K/sec
+
+unused devices: <none>
+[root@otuslinux vagrant]# cat /proc/mdstat
+Personalities : [raid1]
+md0 : active raid1 sda1[2] sdb1[1]
+      41908224 blocks super 1.2 [2/1] [_U]
+      [===============>.....]  recovery = 78.9% (33101952/41908224) finish=0.2min speed=530023K/sec
+
+unused devices: <none>
+[root@otuslinux vagrant]# cat /proc/mdstat
+Personalities : [raid1]
+md0 : active raid1 sda1[2] sdb1[1]
+      41908224 blocks super 1.2 [2/2] [UU]
+
+unused devices: <none>
+[root@otuslinux vagrant]# cat /proc/mdstat
+Personalities : [raid1]
+md0 : active raid1 sda1[2] sdb1[1]
+      41908224 blocks super 1.2 [2/2] [UU]
+
+unused devices: <none>
+[root@otuslinux vagrant]# lsblk -f
+NAME    FSTYPE            LABEL       UUID                                 MOUNTPOINT
+sda
+└─sda1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /
+sdb
+└─sdb1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /
+[root@otuslinux vagrant]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+[Alexey@alexhome hw2]$ vagrant ssh
+Last login: Mon Feb 11 22:37:00 2019 from 10.0.2.2
+[vagrant@otuslinux ~]$ sudo su
+[root@otuslinux vagrant]# lsblk -f
+NAME    FSTYPE            LABEL       UUID                                 MOUNTPOINT
+sda
+└─sda1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /
+sdb
+└─sdb1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /
+[root@otuslinux vagrant]# grub2-install /dev/sda
+Installing for i386-pc platform.
+Installation finished. No error reported.
+[root@otuslinux vagrant]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+[Alexey@alexhome hw2]$ vagrant ssh
+Last login: Mon Feb 11 22:41:57 2019 from 10.0.2.2
+[vagrant@otuslinux ~]$ sudo su
+[root@otuslinux vagrant]# lsblk -f
+NAME    FSTYPE            LABEL       UUID                                 MOUNTPOINT
+sda
+└─sda1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /
+sdb
+└─sdb1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /
+[root@otuslinux vagrant]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+[Alexey@alexhome hw2]$ vagrant ssh
+Last login: Mon Feb 11 22:43:46 2019 from 10.0.2.2
+[vagrant@otuslinux ~]$ sudo su
+[root@otuslinux vagrant]# lsblk -f
+NAME    FSTYPE            LABEL       UUID                                 MOUNTPOINT
+sda
+└─sda1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /
+sdb
+└─sdb1  linux_raid_member otuslinux:0 aa629fcd-d092-3beb-7612-b2b5d75f53f5
+  └─md0 xfs                           83ba31e2-9316-4482-ae67-c63fd8237c6b /

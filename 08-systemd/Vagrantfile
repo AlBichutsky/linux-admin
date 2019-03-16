@@ -1,0 +1,294 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+config.vbguest.auto_update = false
+
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  config.vm.box = "centos/7"
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8008, host: 8008, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8081, host: 8081, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8005, host: 8005, host_ip: "127.0.0.1"
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder ".", "/vagrant"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+     vb.gui = true
+  #
+  #   # Customize the amount of memory on the VM:
+  vb.memory = "1024"
+   end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+   config.vm.provision "shell", inline: <<-SHELL
+     
+mkdir -p ~root/.ssh
+cp ~vagrant/.ssh/auth* ~root/.ssh
+     
+# Отключаем временно SELinux
+echo 0 > /etc/selinux/enforce
+
+########################################################################################################################################################     
+# 1. Написать сервис, который будет раз в 30 секунд мониторить лог на предмет наличия ключевого слова. Файл и слово должны задаваться в /etc/sysconfig #
+########################################################################################################################################################
+
+# Cоздаём файл с конфигурацией для сервиса в каталоге /etc/sysconfig
+# из неё сервис будет брать необходимые переменные
+
+echo 'WORD="Error"' > /etc/sysconfig/watchlog
+echo 'LOG=/var/log/watchlog.log' >> /etc/sysconfig/watchlog
+
+# Затем создаем файл лога /var/log/watchlog.log и пишем туда строки на своё усмотрение,
+# плюс ключевое слово 'Error'
+
+echo "Error: host is not available" > /var/log/watchlog.log
+
+# Создаем скрипт мониторинга
+
+touch /opt/watchlog.sh
+chmod +x /opt/watchlog.sh
+echo '#!/bin/bash' >> /opt/watchlog.sh
+echo 'WORD=$1' >> /opt/watchlog.sh
+echo 'LOG=$2' >> /opt/watchlog.sh
+echo 'DATE=`date`' >> /opt/watchlog.sh
+echo 'if grep $WORD $LOG &>/dev/null' >> /opt/watchlog.sh
+echo 'then' >> /opt/watchlog.sh
+echo 'logger "$DATE: Error on $HOSTNAME"' >> /opt/watchlog.sh
+echo 'else' >> /opt/watchlog.sh
+echo 'exit 0' >> /opt/watchlog.sh
+echo 'fi' >> /opt/watchlog.sh
+
+# Создадим юнит для сервиса в каталоге /etc/systemd/system/:
+
+touch /etc/systemd/system/watchlog.service
+echo '[Unit]' >> /etc/systemd/system/watchlog.service
+echo 'Description=My watchlog service' >> /etc/systemd/system/watchlog.service
+echo '[Service]' >> /etc/systemd/system/watchlog.service
+echo 'Type=notify' >> /etc/systemd/system/watchlog.service
+echo 'EnvironmentFile=/etc/sysconfig/watchlog' >> /etc/systemd/system/watchlog.service
+echo 'ExecStart=/opt/watchlog.sh $WORD $LOG' >> /etc/systemd/system/watchlog.service
+
+# Создадим юнит для сервиса в каталоге /etc/systemd/system/:
+
+touch /etc/systemd/system/watchlog.timer
+echo '[Unit]' >> /etc/systemd/system/watchlog.timer
+echo 'Description=Run watchlog script every 30 second' >> /etc/systemd/system/watchlog.timer
+echo '[Timer]' >> /etc/systemd/system/watchlog.timer
+echo '# Run every 30 second' >> /etc/systemd/system/watchlog.timer
+echo 'OnUnitActiveSec=30' >> /etc/systemd/system/watchlog.timer
+echo 'Unit=watchlog.service' >> /etc/systemd/system/watchlog.timer
+echo '[Install]' >> /etc/systemd/system/watchlog.timer
+echo 'WantedBy=multi-user.target' >> /etc/systemd/system/watchlog.timer
+
+sleep 4
+
+# Запустим юнит watchlog.timer:
+systemctl enable watchlog.timer
+systemctl start watchlog.timer
+
+# Запустим юнит watchlog.service
+systemctl enable watchlog.service
+systemctl start watchlog.service
+
+# Убедимся, что сервис запущен:
+# tail -f /var/log/messages
+
+###############################################################################################################
+# 2. Из epel установить spawn-fcgi и переписать init-скрипт на unit-файл. Имя сервиса должно также называться #
+###############################################################################################################
+
+# Устанавливаем spawn-fcgi и необходимые для него пакеты:
+yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y wget
+
+# etc/rc.d/init.d/spawn-fcg - cам Init скрипт, который будем переписывать
+# Но перед этим необходимо раскомментировать строки с переменными в /etc/sysconfig/spawn-fcgi
+#SOCKET=/var/run/php-fcgi.sock
+#OPTIONS="-u apache -g apache -s $SOCKET -S -M 0600 -C 32 -F 1 -P /var/run/spawn-fcgi.pid -- /usr/bin/php-cgi"
+
+# Старые строчки с комментариями не трогаем, добавляем новые строчки на позицию 9,10:
+sed -i '9i SOCKET=/var/run/php-fcgi.sock' /etc/sysconfig/spawn-fcgi
+sed -i '10i OPTIONS="-u apache -g apache -s $SOCKET -S -M 0600 -C 32 -F 1 -P /var/run/spawn-fcgi.pid -- /usr/bin/php-cgi"' /etc/sysconfig/spawn-fcgi
+
+# Создадим юнит для сервиса spawn-fcgi в каталоге /etc/systemd/system/:
+touch /etc/systemd/system/spawn-fcgi.service
+echo '[Unit]' >> /etc/systemd/system/spawn-fcgi.service
+echo 'Description=Spawn-fcgi startup service by Otus' >> /etc/systemd/system/spawn-fcgi.service
+echo 'After=network.target' >> /etc/systemd/system/spawn-fcgi.service
+echo '[Service]' >> /etc/systemd/system/spawn-fcgi.service
+echo 'Type=simple' >> /etc/systemd/system/spawn-fcgi.service
+echo 'PIDFile=/var/run/spawn-fcgi.pid' >> /etc/systemd/system/spawn-fcgi.service
+echo 'EnvironmentFile=/etc/sysconfig/spawn-fcgi' >> /etc/systemd/system/spawn-fcgi.service
+echo 'ExecStart=/usr/bin/spawn-fcgi -n $OPTIONS' >> /etc/systemd/system/spawn-fcgi.service
+echo 'KillMode=process' >> /etc/systemd/system/spawn-fcgi.service
+echo '[Install]' >> /etc/systemd/system/spawn-fcgi.service
+echo 'WantedBy=multi-user.target' >> /etc/systemd/system/spawn-fcgi.service
+
+# Убедимся, что все успешно работает. Перезапустим сервис:
+systemctl daemon-reload
+systemctl start spawn-fcgi
+# systemctl status spawn-fcgi
+
+##############################################################################################################
+#3. Дополнить юнит-файл apache httpd с возможностю запустить несколько инстансов сервера с разными конфигами #
+##############################################################################################################
+
+# Остановим работающий сервис httpd
+systemctl stop httpd
+
+# Переименуем юнит httpd.service на httpd@.service для возможности запуска нескольких инстансов:
+cd /usr/lib/systemd/system
+mv httpd.service httpd@.service 
+
+# Закомментируем в юните 9-ю строчку - "EnvironmentFile=/etc/sysconfig/...":
+sed -i '9s/^/#/' /usr/lib/systemd/system/httpd@.service
+
+# Добавим в юнит новую строчку - "EnvironmentFile=/etc/sysconfig/httpd-%I"
+# Таким образом юнит сможет обращаться одновременно к нескольким файлам окружения для запуска нескольких инстансов apache
+sed -i '10i EnvironmentFile=/etc/sysconfig/httpd-%I' /usr/lib/systemd/system/httpd@.service
+
+# В /etc/sysconfig/ cоздаем 2 новых файла окружения для юнита httpd@.service: httpd-first, httpd-second. 
+# В httpd-first задаем опцию для запуска веб-сервера с конфигурационным файлом /etc/httpd/conf/first.conf 
+# В httpd-second задаем опцию для запуска веб-сервера с конфигурационным файлом /etc/httpd/conf/second.conf
+touch /etc/sysconfig/httpd-first
+echo 'OPTIONS=-f /etc/httpd/conf/first.conf' > /etc/sysconfig/httpd-first
+touch /etc/sysconfig/httpd-second
+echo 'OPTIONS=-f /etc/httpd/conf/second.conf' > /etc/sysconfig/httpd-second
+mv /etc/sysconfig/httpd /etc/sysconfig/backup.httpd
+
+# Соответственно в директории с конфигами httpd должны лежать два файла: first.conf и second.conf.
+# Создадим их путем копирования начального конфига.
+cd /etc/httpd/conf
+cp httpd.conf first.conf && cp httpd.conf second.conf
+
+# Для удачного запуска, в конфигурационных файлах должны быть указаны уникальные для каждого экземпляра опции Listen и PidFile. 
+
+# В 1-м конфиге изменим порт apache 80 на 8008 (не обязательно)
+# закоментируем строчку 42 "Listen 80"
+sed -i '42s/^/#/' /etc/httpd/conf/first.conf
+# Добавим строчку 43:
+sed -i '43i Listen 8008' /etc/httpd/conf/first.conf
+
+# Во 2-м конфиге изменим порт apache 80 на 8080 и сделаем pid уникальным (обязательно)
+# закоментируем строчку 42 "Listen 80"
+sed -i '42s/^/#/' /etc/httpd/conf/second.conf
+# Добавим строчки 43,44:
+sed -i '43i Listen 8080' /etc/httpd/conf/second.conf
+sed -i '44i PidFile /var/run/httpd-second.pid' /etc/httpd/conf/second.conf
+
+# Перечитаем параметры изменившихся юнитов м перезапустим каждый инстанс apache:
+systemctl daemon-reload
+systemctl restart httpd@first
+systemctl restart httpd@second
+
+# Можно проверить какие порты слушает apache и состояние каждого инстанса:
+# ss -tnulp | grep httpd
+# systemctl status httpd@first
+# systemctl status httpd@second
+
+############################################################################################
+# 4.Установить демо-версию Atlassian Jira и переписать основной скрипт запуска на unit-файл #
+#############################################################################################
+
+# Создаем каталог и скачиваем туда бинарник демо-версии Jira
+mkdir /tmp/jira_installer
+cd /tmp/jira_installer
+wget https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.0.0-x64.bin
+chmod +wx /tmp/jira_installer/atlassian-jira-software-8.0.0-x64.bin
+
+# Создадим в этом же каталоге файл автоответов, чтобы Jira установилась автоматически с необходимыми параметрами. Работать Jira будет на порту 8081
+touch /tmp/jira_installer/response.varfile
+echo '#install4j response file for JIRA Software 8.0.0' >> /tmp/jira_installer/response.varfile
+echo 'launch.application$Boolean=true' >> /tmp/jira_installer/response.varfile
+echo 'rmiPort$Long=8005' >> /tmp/jira_installer/response.varfile
+echo 'app.jiraHome=/var/atlassian/application-data/jira' >> /tmp/jira_installer/response.varfile
+echo 'app.install.service$Boolean=true' >> /tmp/jira_installer/response.varfile
+echo 'existingInstallationDir=/opt/JIRA Software' >> /tmp/jira_installer/response.varfile
+echo 'sys.confirmedUpdateInstallationString=false' >> /tmp/jira_installer/response.varfile
+echo 'sys.languageId=en' >> /tmp/jira_installer/response.varfile
+echo 'sys.installationDir=/opt/atlassian/jira' >> /tmp/jira_installer/response.varfile
+echo 'executeLauncherAction$Boolean=true' >> /tmp/jira_installer/response.varfile
+echo 'httpPort$Long=8081' >> /tmp/jira_installer/response.varfile
+echo 'portChoice=default' >> /tmp/jira_installer/response.varfile
+
+# Устанавливаем Jira, указав файла автоответа:
+./atlassian-jira-software-8.0.0-x64.bin -q -varfile response.varfile
+
+# Создаем юнит службы Jira:
+touch /usr/lib/systemd/system/jira.service
+echo '[Unit]' >> /usr/lib/systemd/system/jira.service
+echo 'Description=JIRA Service' >> /usr/lib/systemd/system/jira.service
+echo 'After=network.target iptables.service firewalld.service firewalld.service httpd.service' >> /usr/lib/systemd/system/jira.service
+echo '[Service]' >> /usr/lib/systemd/system/jira.service
+echo 'Type=forking' >> /usr/lib/systemd/system/jira.service
+echo 'User=jira' >> /usr/lib/systemd/system/jira.service
+echo 'ExecStart=/opt/atlassian/jira/bin/start-jira.sh' >> /usr/lib/systemd/system/jira.service
+echo 'ExecStop=/opt/atlassian/jira/bin/stop-jira.sh' >> /usr/lib/systemd/system/jira.service
+echo '[Install]' >> /usr/lib/systemd/system/jira.service
+echo 'WantedBy=multi-user.target' >> /usr/lib/systemd/system/jira.service
+
+# Поскольку Jira запустится автоматически после установки, остановим ее через kill перед запуском нашего юнита:
+kill -15 $(pidof java) 
+sleep 5  
+# Затем запустим сервис уже в systemd:
+systemctl daemon-reload
+sleep 5
+systemctl start jira
+systemctl enable jira
+# Можно проверить, что jira слушает порт 8081: 
+# ss -tnulp | grep java
+# И также проверить состояние службы в systemd:
+systemctl status jira
+   SHELL
+end
+

@@ -1,0 +1,667 @@
+[root@lvm log]# yum install -y mdadm smartmontools hdparm gdisk
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.reconn.ru
+ * extras: mirror.sale-dedic.com
+ * updates: mirror.sale-dedic.com
+Resolving Dependencies
+--> Running transaction check
+---> Package gdisk.x86_64 0:0.8.10-2.el7 will be installed
+---> Package hdparm.x86_64 0:9.43-5.el7 will be installed
+---> Package mdadm.x86_64 0:4.1-rc1_2.el7 will be installed
+--> Processing Dependency: libreport-filesystem for package: mdadm-4.1-rc1_2.el7.x86_64
+---> Package smartmontools.x86_64 1:6.5-1.el7 will be installed
+--> Processing Dependency: mailx for package: 1:smartmontools-6.5-1.el7.x86_64
+--> Running transaction check
+---> Package libreport-filesystem.x86_64 0:2.1.11-42.el7.centos will be installed
+---> Package mailx.x86_64 0:12.5-19.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=====================================================================================================================================================================================================
+ Package                                                Arch                                     Version                                                Repository                              Size
+=====================================================================================================================================================================================================
+Installing:
+ gdisk                                                  x86_64                                   0.8.10-2.el7                                           base                                   189 k
+ hdparm                                                 x86_64                                   9.43-5.el7                                             base                                    83 k
+ mdadm                                                  x86_64                                   4.1-rc1_2.el7                                          base                                   433 k
+ smartmontools                                          x86_64                                   1:6.5-1.el7                                            base                                   460 k
+Installing for dependencies:
+ libreport-filesystem                                   x86_64                                   2.1.11-42.el7.centos                                   base                                    39 k
+ mailx                                                  x86_64                                   12.5-19.el7                                            base                                   245 k
+
+Transaction Summary
+=====================================================================================================================================================================================================
+Install  4 Packages (+2 Dependent packages)
+
+Total download size: 1.4 M
+Installed size: 4.0 M
+Downloading packages:
+warning: /var/cache/yum/x86_64/7/base/packages/libreport-filesystem-2.1.11-42.el7.centos.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
+Public key for libreport-filesystem-2.1.11-42.el7.centos.x86_64.rpm is not installed
+(1/6): libreport-filesystem-2.1.11-42.el7.centos.x86_64.rpm                                                                                                                   |  39 kB  00:00:00
+(2/6): gdisk-0.8.10-2.el7.x86_64.rpm                                                                                                                                          | 189 kB  00:00:00
+(3/6): hdparm-9.43-5.el7.x86_64.rpm                                                                                                                                           |  83 kB  00:00:00
+(4/6): mdadm-4.1-rc1_2.el7.x86_64.rpm                                                                                                                                         | 433 kB  00:00:00
+(5/6): mailx-12.5-19.el7.x86_64.rpm                                                                                                                                           | 245 kB  00:00:00
+(6/6): smartmontools-6.5-1.el7.x86_64.rpm                                                                                                                                     | 460 kB  00:00:00
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                                                1.3 MB/s | 1.4 MB  00:00:01
+Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Importing GPG key 0xF4A80EB5:
+ Userid     : "CentOS-7 Key (CentOS 7 Official Signing Key) <security@centos.org>"
+ Fingerprint: 6341 ab27 53d7 8a78 a7c2 7bb1 24c6 a8a7 f4a8 0eb5
+ Package    : centos-release-7-5.1804.el7.centos.x86_64 (@anaconda)
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : mailx-12.5-19.el7.x86_64                                                                                                                                                          1/6
+  Installing : libreport-filesystem-2.1.11-42.el7.centos.x86_64                                                                                                                                  2/6
+  Installing : mdadm-4.1-rc1_2.el7.x86_64                                                                                                                                                        3/6
+  Installing : 1:smartmontools-6.5-1.el7.x86_64                                                                                                                                                  4/6
+  Installing : hdparm-9.43-5.el7.x86_64                                                                                                                                                          5/6
+  Installing : gdisk-0.8.10-2.el7.x86_64                                                                                                                                                         6/6
+  Verifying  : libreport-filesystem-2.1.11-42.el7.centos.x86_64                                                                                                                                  1/6
+  Verifying  : 1:smartmontools-6.5-1.el7.x86_64                                                                                                                                                  2/6
+  Verifying  : gdisk-0.8.10-2.el7.x86_64                                                                                                                                                         3/6
+  Verifying  : mdadm-4.1-rc1_2.el7.x86_64                                                                                                                                                        4/6
+  Verifying  : mailx-12.5-19.el7.x86_64                                                                                                                                                          5/6
+  Verifying  : hdparm-9.43-5.el7.x86_64                                                                                                                                                          6/6
+
+Installed:
+  gdisk.x86_64 0:0.8.10-2.el7                    hdparm.x86_64 0:9.43-5.el7                    mdadm.x86_64 0:4.1-rc1_2.el7                    smartmontools.x86_64 1:6.5-1.el7
+
+Dependency Installed:
+  libreport-filesystem.x86_64 0:2.1.11-42.el7.centos                                                            mailx.x86_64 0:12.5-19.el7
+
+Complete!
+[root@lvm log]# yum install -y lvm2 xfsdump
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.reconn.ru
+ * extras: mirror.sale-dedic.com
+ * updates: mirror.sale-dedic.com
+Resolving Dependencies
+--> Running transaction check
+---> Package lvm2.x86_64 7:2.02.177-4.el7 will be updated
+---> Package lvm2.x86_64 7:2.02.180-10.el7_6.3 will be an update
+--> Processing Dependency: lvm2-libs = 7:2.02.180-10.el7_6.3 for package: 7:lvm2-2.02.180-10.el7_6.3.x86_64
+---> Package xfsdump.x86_64 0:3.1.7-1.el7 will be installed
+--> Processing Dependency: attr >= 2.0.0 for package: xfsdump-3.1.7-1.el7.x86_64
+--> Running transaction check
+---> Package attr.x86_64 0:2.4.46-13.el7 will be installed
+---> Package lvm2-libs.x86_64 7:2.02.177-4.el7 will be updated
+---> Package lvm2-libs.x86_64 7:2.02.180-10.el7_6.3 will be an update
+--> Processing Dependency: device-mapper-event = 7:1.02.149-10.el7_6.3 for package: 7:lvm2-libs-2.02.180-10.el7_6.3.x86_64
+--> Running transaction check
+---> Package device-mapper-event.x86_64 7:1.02.146-4.el7 will be updated
+---> Package device-mapper-event.x86_64 7:1.02.149-10.el7_6.3 will be an update
+--> Processing Dependency: device-mapper-event-libs = 7:1.02.149-10.el7_6.3 for package: 7:device-mapper-event-1.02.149-10.el7_6.3.x86_64
+--> Processing Dependency: device-mapper = 7:1.02.149-10.el7_6.3 for package: 7:device-mapper-event-1.02.149-10.el7_6.3.x86_64
+--> Running transaction check
+---> Package device-mapper.x86_64 7:1.02.146-4.el7 will be updated
+--> Processing Dependency: device-mapper = 7:1.02.146-4.el7 for package: 7:device-mapper-libs-1.02.146-4.el7.x86_64
+---> Package device-mapper.x86_64 7:1.02.149-10.el7_6.3 will be an update
+---> Package device-mapper-event-libs.x86_64 7:1.02.146-4.el7 will be updated
+---> Package device-mapper-event-libs.x86_64 7:1.02.149-10.el7_6.3 will be an update
+--> Running transaction check
+---> Package device-mapper-libs.x86_64 7:1.02.146-4.el7 will be updated
+---> Package device-mapper-libs.x86_64 7:1.02.149-10.el7_6.3 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=====================================================================================================================================================================================================
+ Package                                                  Arch                                   Version                                               Repository                               Size
+=====================================================================================================================================================================================================
+Installing:
+ xfsdump                                                  x86_64                                 3.1.7-1.el7                                           base                                    308 k
+Updating:
+ lvm2                                                     x86_64                                 7:2.02.180-10.el7_6.3                                 updates                                 1.3 M
+Installing for dependencies:
+ attr                                                     x86_64                                 2.4.46-13.el7                                         base                                     66 k
+Updating for dependencies:
+ device-mapper                                            x86_64                                 7:1.02.149-10.el7_6.3                                 updates                                 292 k
+ device-mapper-event                                      x86_64                                 7:1.02.149-10.el7_6.3                                 updates                                 188 k
+ device-mapper-event-libs                                 x86_64                                 7:1.02.149-10.el7_6.3                                 updates                                 188 k
+ device-mapper-libs                                       x86_64                                 7:1.02.149-10.el7_6.3                                 updates                                 320 k
+ lvm2-libs                                                x86_64                                 7:2.02.180-10.el7_6.3                                 updates                                 1.1 M
+
+Transaction Summary
+=====================================================================================================================================================================================================
+Install  1 Package (+1 Dependent package)
+Upgrade  1 Package (+5 Dependent packages)
+
+Total download size: 3.7 M
+Downloading packages:
+updates/7/x86_64/prestodelta                                                                                                                                                  | 329 kB  00:00:00
+Delta RPMs reduced 1.4 M of updates to 923 k (35% saved)
+(1/8): attr-2.4.46-13.el7.x86_64.rpm                                                                                                                                          |  66 kB  00:00:00
+(2/8): device-mapper-libs-1.02.146-4.el7_1.02.149-10.el7_6.3.x86_64.drpm                                                                                                      | 208 kB  00:00:00
+(3/8): lvm2-libs-2.02.177-4.el7_2.02.180-10.el7_6.3.x86_64.drpm                                                                                                               | 715 kB  00:00:00
+(4/8): device-mapper-event-libs-1.02.149-10.el7_6.3.x86_64.rpm                                                                                                                | 188 kB  00:00:00
+(5/8): lvm2-2.02.180-10.el7_6.3.x86_64.rpm                                                                                                                                    | 1.3 MB  00:00:00
+(6/8): xfsdump-3.1.7-1.el7.x86_64.rpm                                                                                                                                         | 308 kB  00:00:00
+(7/8): device-mapper-event-1.02.149-10.el7_6.3.x86_64.rpm                                                                                                                     | 188 kB  00:00:03
+(8/8): device-mapper-1.02.149-10.el7_6.3.x86_64.rpm                                                                                                                           | 292 kB  00:00:03
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                                                823 kB/s | 3.2 MB  00:00:04
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : 7:device-mapper-1.02.149-10.el7_6.3.x86_64                                                                                                                                       1/14
+  Updating   : 7:device-mapper-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                                  2/14
+  Updating   : 7:device-mapper-event-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                            3/14
+  Updating   : 7:device-mapper-event-1.02.149-10.el7_6.3.x86_64                                                                                                                                 4/14
+  Updating   : 7:lvm2-libs-2.02.180-10.el7_6.3.x86_64                                                                                                                                           5/14
+  Installing : attr-2.4.46-13.el7.x86_64                                                                                                                                                        6/14
+  Installing : xfsdump-3.1.7-1.el7.x86_64                                                                                                                                                       7/14
+  Updating   : 7:lvm2-2.02.180-10.el7_6.3.x86_64                                                                                                                                                8/14
+  Cleanup    : 7:lvm2-2.02.177-4.el7.x86_64                                                                                                                                                     9/14
+  Cleanup    : 7:lvm2-libs-2.02.177-4.el7.x86_64                                                                                                                                               10/14
+  Cleanup    : 7:device-mapper-event-1.02.146-4.el7.x86_64                                                                                                                                     11/14
+  Cleanup    : 7:device-mapper-event-libs-1.02.146-4.el7.x86_64                                                                                                                                12/14
+  Cleanup    : 7:device-mapper-1.02.146-4.el7.x86_64                                                                                                                                           13/14
+  Cleanup    : 7:device-mapper-libs-1.02.146-4.el7.x86_64                                                                                                                                      14/14
+  Verifying  : xfsdump-3.1.7-1.el7.x86_64                                                                                                                                                       1/14
+  Verifying  : 7:device-mapper-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                                  2/14
+  Verifying  : 7:device-mapper-event-libs-1.02.149-10.el7_6.3.x86_64                                                                                                                            3/14
+  Verifying  : 7:device-mapper-event-1.02.149-10.el7_6.3.x86_64                                                                                                                                 4/14
+  Verifying  : attr-2.4.46-13.el7.x86_64                                                                                                                                                        5/14
+  Verifying  : 7:lvm2-libs-2.02.180-10.el7_6.3.x86_64                                                                                                                                           6/14
+  Verifying  : 7:lvm2-2.02.180-10.el7_6.3.x86_64                                                                                                                                                7/14
+  Verifying  : 7:device-mapper-1.02.149-10.el7_6.3.x86_64                                                                                                                                       8/14
+  Verifying  : 7:device-mapper-event-1.02.146-4.el7.x86_64                                                                                                                                      9/14
+  Verifying  : 7:lvm2-2.02.177-4.el7.x86_64                                                                                                                                                    10/14
+  Verifying  : 7:device-mapper-event-libs-1.02.146-4.el7.x86_64                                                                                                                                11/14
+  Verifying  : 7:device-mapper-1.02.146-4.el7.x86_64                                                                                                                                           12/14
+  Verifying  : 7:lvm2-libs-2.02.177-4.el7.x86_64                                                                                                                                               13/14
+  Verifying  : 7:device-mapper-libs-1.02.146-4.el7.x86_64                                                                                                                                      14/14
+
+Installed:
+  xfsdump.x86_64 0:3.1.7-1.el7
+
+Dependency Installed:
+  attr.x86_64 0:2.4.46-13.el7
+
+Updated:
+  lvm2.x86_64 7:2.02.180-10.el7_6.3
+
+Dependency Updated:
+  device-mapper.x86_64 7:1.02.149-10.el7_6.3 device-mapper-event.x86_64 7:1.02.149-10.el7_6.3 device-mapper-event-libs.x86_64 7:1.02.149-10.el7_6.3 device-mapper-libs.x86_64 7:1.02.149-10.el7_6.3
+  lvm2-libs.x86_64 7:2.02.180-10.el7_6.3
+
+Complete!
+[root@lvm log]# lsblk
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0   40G  0 disk
+├─sda1                    8:1    0    1M  0 part
+├─sda2                    8:2    0    1G  0 part /boot
+└─sda3                    8:3    0   39G  0 part
+  ├─VolGroup00-LogVol00 253:0    0 37.5G  0 lvm  /
+  └─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]
+sdb                       8:16   0   10G  0 disk
+sdc                       8:32   0    2G  0 disk
+sdd                       8:48   0    1G  0 disk
+sde                       8:64   0    1G  0 disk
+[root@lvm log]# pvcreate /dev/sdb
+  Physical volume "/dev/sdb" successfully created.
+[root@lvm log]# vgcreate vg_root /dev/sdb
+  Volume group "vg_root" successfully created
+[root@lvm log]# lvcreate -n lv_root -l +100%FREE /dev/vg_root
+  Logical volume "lv_root" created.
+[root@lvm log]# mkfs.xfs /dev/vg_root/lv_root
+meta-data=/dev/vg_root/lv_root   isize=512    agcount=4, agsize=655104 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=2620416, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@lvm log]# mount /dev/vg_root/lv_root /mnt
+[root@lvm log]# xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.7 (dump format 3.0)
+xfsdump: using file dump (drive_simple) strategy
+xfsdump: version 3.1.7 (dump format 3.0)
+xfsdump: level 0 dump of lvm:/
+xfsdump: dump date: Wed Feb  6 21:42:44 2019
+xfsdump: session id: a08f64eb-21a5-4f04-b4e5-0d687ddb3c2d
+xfsdump: session label: ""
+xfsrestore: searching media for dump
+xfsdump: ino map phase 1: constructing initial dump list
+xfsdump: ino map phase 2: skipping (no pruning necessary)
+xfsdump: ino map phase 3: skipping (only one dump stream)
+xfsdump: ino map construction complete
+xfsdump: estimated dump size: 734115136 bytes
+xfsdump: creating dump session media file 0 (media 0, file 0)
+xfsdump: dumping ino map
+xfsdump: dumping directories
+xfsrestore: examining media file 0
+xfsrestore: dump description:
+xfsrestore: hostname: lvm
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/mapper/VolGroup00-LogVol00
+xfsrestore: session time: Wed Feb  6 21:42:44 2019
+xfsrestore: level: 0
+xfsrestore: session label: ""
+xfsrestore: media label: ""
+xfsrestore: file system id: b60e9498-0baa-4d9f-90aa-069048217fee
+xfsrestore: session id: a08f64eb-21a5-4f04-b4e5-0d687ddb3c2d
+xfsrestore: media id: 37ef40d9-05b7-44a9-80d2-e397359e9667
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsdump: dumping non-directory files
+xfsrestore: 2701 directories and 23715 entries processed
+xfsrestore: directory post-processing
+xfsrestore: restoring non-directory files
+xfsdump: ending media file
+xfsdump: media file size 711033296 bytes
+xfsdump: dump size (non-dir files) : 697812720 bytes
+xfsdump: dump complete: 7 seconds elapsed
+xfsdump: Dump Status: SUCCESS
+xfsrestore: restore complete: 7 seconds elapsed
+xfsrestore: Restore Status: SUCCESS
+[root@lvm log]# ls /mnt
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  vagrant  var
+[root@lvm log]# cat /home/
+log/     vagrant/
+[root@lvm log]# cat /home/log/script.out | tail -n 2
+[root@lvm log]# ls /mnt
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root [root@lvm log]#
+[root@lvm log]# for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+[root@lvm log]# chroot /mnt/
+[root@lvm /]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img
+done
+[root@lvm /]# cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force; done
+Executing: /sbin/dracut -v initramfs-3.10.0-862.2.3.el7.x86_64.img 3.10.0-862.2.3.el7.x86_64 --force
+dracut module 'busybox' will not be installed, because command 'busybox' could not be found!
+dracut module 'crypt' will not be installed, because command 'cryptsetup' could not be found!
+dracut module 'dmraid' will not be installed, because command 'dmraid' could not be found!
+dracut module 'dmsquash-live-ntfs' will not be installed, because command 'ntfs-3g' could not be found!
+dracut module 'multipath' will not be installed, because command 'multipath' could not be found!
+dracut module 'busybox' will not be installed, because command 'busybox' could not be found!
+dracut module 'crypt' will not be installed, because command 'cryptsetup' could not be found!
+dracut module 'dmraid' will not be installed, because command 'dmraid' could not be found!
+dracut module 'dmsquash-live-ntfs' will not be installed, because command 'ntfs-3g' could not be found!
+dracut module 'multipath' will not be installed, because command 'multipath' could not be found!
+*** Including module: bash ***
+*** Including module: nss-softokn ***
+*** Including module: i18n ***
+*** Including module: drm ***
+*** Including module: plymouth ***
+*** Including module: dm ***
+Skipping udev rule: 64-device-mapper.rules
+Skipping udev rule: 60-persistent-storage-dm.rules
+Skipping udev rule: 55-dm.rules
+*** Including module: kernel-modules ***
+Omitting driver floppy
+*** Including module: lvm ***
+Skipping udev rule: 64-device-mapper.rules
+Skipping udev rule: 56-lvm.rules
+Skipping udev rule: 60-persistent-storage-lvm.rules
+*** Including module: qemu ***
+*** Including module: resume ***
+*** Including module: rootfs-block ***
+*** Including module: terminfo ***
+*** Including module: udev-rules ***
+Skipping udev rule: 40-redhat-cpu-hotplug.rules
+Skipping udev rule: 91-permissions.rules
+*** Including module: biosdevname ***
+*** Including module: systemd ***
+*** Including module: usrmount ***
+*** Including module: base ***
+*** Including module: fs-lib ***
+*** Including module: shutdown ***
+*** Including modules done ***
+*** Installing kernel module dependencies and firmware ***
+*** Installing kernel module dependencies and firmware done ***
+*** Resolving executable dependencies ***
+*** Resolving executable dependencies done***
+*** Hardlinking files ***
+*** Hardlinking files done ***
+*** Stripping files ***
+*** Stripping files done ***
+*** Generating early-microcode cpio image contents ***
+*** No early-microcode cpio image needed ***
+*** Store current command line parameters ***
+*** Creating image file ***
+*** Creating image file done ***
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
+[root@lvm boot]# sudo vi /boot/grub2/grub.cfg
+[root@lvm boot]# cat /boot/grub2/grub.cfg | grep "vg_root/lv_root"
+        linux16 /vmlinuz-3.10.0-862.2.3.el7.x86_64 root=/dev/mapper/vg_root-lv_root ro no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=autord.lvm.lv=vg_root/lv_root rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet
+[root@lvm boot]# exit
+[root@lvm log]# exit
+Script done, file is script.out
+[root@lvm log]# cat /home/log/script.out
+Script started on Wed 06 Feb 2019 09:39:35 PM UTC
+
+[root@lvm log]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+[vagrant@lvm ~]$ sudo su
+[root@lvm log]# lsblk
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0   40G  0 disk
+├─sda1                    8:1    0    1M  0 part
+├─sda2                    8:2    0    1G  0 part /boot
+└─sda3                    8:3    0   39G  0 part
+  ├─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]
+  └─VolGroup00-LogVol00 253:2    0 37.5G  0 lvm
+sdb                       8:16   0   10G  0 disk
+└─vg_root-lv_root       253:0    0   10G  0 lvm  /
+sdc                       8:32   0    2G  0 disk
+sdd                       8:48   0    1G  0 disk
+sde                       8:64   0    1G  0 disk
+[root@lvm log]# lvremove /dev/VolGroup00/LogVol00
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: y
+  Logical volume "LogVol00" successfully removed
+[root@lvm log]# lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+WARNING: xfs signature detected on /dev/VolGroup00/LogVol00 at offset 0. Wipe it? [y/n]: y
+  Wiping xfs signature on /dev/VolGroup00/LogVol00.
+  Logical volume "LogVol00" created.
+[root@lvm log]# mkfs.xfs /dev/VolGroup00/LogVol00
+meta-data=/dev/VolGroup00/LogVol00 isize=512    agcount=4, agsize=524288 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=2097152, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@lvm log]# mount /dev/VolGroup00/LogVol00 /mnt
+[root@lvm log]# xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.7 (dump format 3.0)
+xfsdump: using file dump (drive_simple) strategy
+xfsdump: version 3.1.7 (dump format 3.0)
+xfsdump: level 0 dump of lvm:/
+xfsdump: dump date: Wed Feb  6 21:53:11 2019
+xfsdump: session id: b912c875-dbea-4557-be2e-21581cf2ac26
+xfsdump: session label: ""
+xfsrestore: searching media for dump
+xfsdump: ino map phase 1: constructing initial dump list
+xfsdump: ino map phase 2: skipping (no pruning necessary)
+xfsdump: ino map phase 3: skipping (only one dump stream)
+xfsdump: ino map construction complete
+xfsdump: estimated dump size: 733256896 bytes
+xfsdump: creating dump session media file 0 (media 0, file 0)
+xfsdump: dumping ino map
+xfsdump: dumping directories
+xfsrestore: examining media file 0
+xfsrestore: dump description:
+xfsrestore: hostname: lvm
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/mapper/vg_root-lv_root
+xfsrestore: session time: Wed Feb  6 21:53:11 2019
+xfsrestore: level: 0
+xfsrestore: session label: ""
+xfsrestore: media label: ""
+xfsrestore: file system id: c931bff8-85c7-4113-84cd-bec52855152f
+xfsrestore: session id: b912c875-dbea-4557-be2e-21581cf2ac26
+xfsrestore: media id: 920b63a3-9d42-465e-b309-97a2523b95f7
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsdump: dumping non-directory files
+xfsrestore: 2705 directories and 23721 entries processed
+xfsrestore: directory post-processing
+xfsrestore: restoring non-directory files
+xfsdump: ending media file
+xfsdump: media file size 709711464 bytes
+xfsdump: dump size (non-dir files) : 696486536 bytes
+xfsdump: dump complete: 8 seconds elapsed
+xfsdump: Dump Status: SUCCESS
+xfsrestore: restore complete: 9 seconds elapsed
+xfsrestore: Restore Status: SUCCESS
+xfsdump: dump size (non-dir files) : 696486536 bytes
+xfsdump: dump compl[root@lvm log]# ls /mnt
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  vagrant  var
+[root@lvm log]# for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+[root@lvm log]# chroot /mnt/
+[root@lvm /]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img
+done
+[root@lvm /]# cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force; done
+Executing: /sbin/dracut -v initramfs-3.10.0-862.2.3.el7.x86_64.img 3.10.0-862.2.3.el7.x86_64 --force
+dracut module 'busybox' will not be installed, because command 'busybox' could not be found!
+dracut module 'crypt' will not be installed, because command 'cryptsetup' could not be found!
+dracut module 'dmraid' will not be installed, because command 'dmraid' could not be found!
+dracut module 'dmsquash-live-ntfs' will not be installed, because command 'ntfs-3g' could not be found!
+dracut module 'multipath' will not be installed, because command 'multipath' could not be found!
+dracut module 'busybox' will not be installed, because command 'busybox' could not be found!
+dracut module 'crypt' will not be installed, because command 'cryptsetup' could not be found!
+dracut module 'dmraid' will not be installed, because command 'dmraid' could not be found!
+dracut module 'dmsquash-live-ntfs' will not be installed, because command 'ntfs-3g' could not be found!
+dracut module 'multipath' will not be installed, because command 'multipath' could not be found!
+*** Including module: bash ***
+*** Including module: nss-softokn ***
+*** Including module: i18n ***
+*** Including module: drm ***
+*** Including module: plymouth ***
+*** Including module: dm ***
+Skipping udev rule: 64-device-mapper.rules
+Skipping udev rule: 60-persistent-storage-dm.rules
+Skipping udev rule: 55-dm.rules
+*** Including module: kernel-modules ***
+Omitting driver floppy
+*** Including module: lvm ***
+Skipping udev rule: 64-device-mapper.rules
+Skipping udev rule: 56-lvm.rules
+Skipping udev rule: 60-persistent-storage-lvm.rules
+*** Including module: qemu ***
+*** Including module: resume ***
+*** Including module: rootfs-block ***
+*** Including module: terminfo ***
+*** Including module: udev-rules ***
+Skipping udev rule: 40-redhat-cpu-hotplug.rules
+Skipping udev rule: 91-permissions.rules
+*** Including module: biosdevname ***
+*** Including module: systemd ***
+*** Including module: usrmount ***
+*** Including module: base ***
+*** Including module: fs-lib ***
+*** Including module: shutdown ***
+*** Including modules done ***
+*** Installing kernel module dependencies and firmware ***
+*** Installing kernel module dependencies and firmware done ***
+*** Resolving executable dependencies ***
+*** Resolving executable dependencies done***
+*** Hardlinking files ***
+*** Hardlinking files done ***
+*** Stripping files ***
+*** Stripping files done ***
+*** Generating early-microcode cpio image contents ***
+*** No early-microcode cpio image needed ***
+*** Store current command line parameters ***
+*** Creating image file ***
+*** Creating image file done ***
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
+[root@lvm boot]# pvcreate /dev/sdc /dev/sdd
+  Physical volume "/dev/sdc" successfully created.
+  Physical volume "/dev/sdd" successfully created.
+[root@lvm boot]# vgcreate vg_var /dev/sdc /dev/sdd
+  Volume group "vg_var" successfully created
+[root@lvm boot]# lvcreate -L 950M -m1 -n lv_var vg_var
+  Rounding up size to full physical extent 952.00 MiB
+  Logical volume "lv_var" created.
+[root@lvm boot]# mkfs.ext4 /dev/vg_var/lv_var
+mke2fs 1.42.9 (28-Dec-2013)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+60928 inodes, 243712 blocks
+12185 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=249561088
+8 block groups
+32768 blocks per group, 32768 fragments per group
+7616 inodes per group
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+[root@lvm boot]# mount /dev/vg_var/lv_var /mnt
+[root@lvm boot]# cp -aR /var/* /mnt/
+[root@lvm boot]# mkdir /tmp/oldvar && mv /var/* /tmp/oldvar
+[root@lvm boot]# umount /mnt
+[root@lvm boot]# mount /dev/vg_var/lv_var /var
+[root@lvm boot]# ls /var
+adm  cache  db  empty  games  gopher  kerberos  lib  local  lock  log  lost+found  mail  nis  opt  preserve  run  spool  tmp  yp
+[root@lvm boot]# echo "`blkid | grep var: | awk '{print $2}'` /var ext4 defaults 0 0" >> /etc/fstab
+[root@lvm boot]# cat /etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Sat May 12 18:50:26 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0
+UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+UUID="41f212bf-b07f-47be-859c-e8ef1a03479e" /var ext4 defaults 0 0
+
+[root@lvm boot]# reboot
+[root@lvm log]# lvremove /dev/vg_root/lv_root
+Do you really want to remove active logical volume vg_root/lv_root? [y/n]: y
+  Logical volume "lv_root" successfully removed
+[root@lvm log]# vgremove /dev/vg_root
+  Volume group "vg_root" successfully removed
+[root@lvm log]# pvremove /dev/sdb
+  Labels on physical volume "/dev/sdb" successfully wiped.
+[root@lvm log]# lvcreate -n LogVol_Home -L 2G /dev/VolGroup00
+  Logical volume "LogVol_Home" created.
+[root@lvm log]# mkfs.xfs /dev/VolGroup00/LogVol_Home
+meta-data=/dev/VolGroup00/LogVol_Home isize=512    agcount=4, agsize=131072 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=524288, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@lvm log]# mount /dev/VolGroup00/LogVol_Home /mnt/
+[root@lvm log]# cp -aR /home/* /mnt/
+[root@lvm log]# rm -rf /home/*
+[root@lvm log]# umount /mnt
+[root@lvm log]# mount /dev/VolGroup00/LogVol_Home /home/
+[root@lvm log]# ls /home
+log  vagrant
+[root@lvm log]# echo "`blkid | grep Home | awk '{print $2}'` /home xfs defaults 0 0" >> /etc/fstab
+[root@lvm log]# touch /home/file{1..20}
+[root@lvm log]# ls /home
+file1  file10  file11  file12  file13  file14  file15  file16  file17  file18  file19  file2  file20  file3  file4  file5  file6  file7  file8  file9  log  vagrant
+[root@lvm log]# lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
+  Rounding up size to full physical extent 128.00 MiB
+  Logical volume "home_snap" created.
+[root@lvm log]# rm -f /home/file{11..20}
+[root@lvm log]# umount /home
+[root@lvm log]# lvconvert --merge /dev/VolGroup00/home_snap
+  Merging of volume VolGroup00/home_snap started.
+  VolGroup00/LogVol_Home: Merged: 100.00%
+[root@lvm log]# mount /home
+[root@lvm log]# ls /home
+file1  file10  file11  file12  file13  file14  file15  file16  file17  file18  file19  file2  file20  file3  file4  file5  file6  file7  file8  file9  log  vagrant
+[root@lvm log]# rm -f /home/file{11..20}
+[root@lvm log]# ls /home
+file1  file10  file2  file3  file4  file5  file6  file7  file8  file9  log  vagrant
+[root@lvm log]# umount /home
+[root@lvm log]# lvconvert --merge /dev/VolGroup00/home_snap
+  Failed to find logical volume "VolGroup00/home_snap"
+[root@lvm log]# lvconvert --merge /dev/VolGroup00/home_snap
+  Failed to find logical volume "VolGroup00/home_snap"
+[root@lvm log]# ls /home
+[root@lvm log]# ls
+[root@lvm log]# mount /home/
+[root@lvm log]# ls
+[root@lvm log]# ls /home/
+file1  file10  file2  file3  file4  file5  file6  file7  file8  file9  log  vagrant
+[root@lvm log]# ^C
+[root@lvm log]# rm -f /home/file{11..20}
+[root@lvm log]# ls /home
+file1  file10  file2  file3  file4  file5  file6  file7  file8  file9  log  vagrant
+[root@lvm log]# rm -f /home/file{1..20}
+[root@lvm log]# ls /home
+log  vagrantcd
+[root@lvm log]# pwd
+/home/log
+[root@lvm log]# cd /home/
+[root@lvm home]# ls
+log  vagrant
+[root@lvm home]# mkdir test_folder
+[root@lvm home]# ls
+log  test_folder  vagrant
+[root@lvm home]# cd test_folder/
+[root@lvm test_folder]# touch 1.txt 2.txt
+[root@lvm test_folder]# cd ..
+[root@lvm home]# ls
+log  test_folder  vagrant
+[root@lvm home]# lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
+  Rounding up size to full physical extent 128.00 MiB
+  Logical volume "home_snap" created.
+[root@lvm home]# rm -rf test_folder
+[root@lvm home]# ls -l
+total 0
+drwxrwxrwx. 2 root    root    62 Feb  6 22:24 log
+drwx------. 3 vagrant vagrant 74 May 12  2018 vagrant
+[root@lvm home]# ls
+log  vagrant
+[root@lvm home]# umount /home
+umount: /home: target is busy.
+        (In some cases useful info about processes that use
+         the device is found by lsof(8) or fuser(1))
+[root@lvm home]# cd /
+[root@lvm /]# umount /home
+[root@lvm /]# lvconvert --merge /dev/VolGroup00/home_snap
+  Merging of volume VolGroup00/home_snap started.
+  VolGroup00/LogVol_Home: Merged: 100.00%
+[root@lvm /]# mount /home
+[root@lvm /]# cd /home/
+[root@lvm home]# ls
+log  test_folder  vagrant
+[root@lvm home]# ls /test_fol
+ls: cannot access /test_fol: No such file or directory
+[root@lvm home]# ls test_folder/
+1.txt  2.txt
+[root@lvm log]# lsblk
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                          8:0    0   40G  0 disk
+├─sda1                       8:1    0    1M  0 part
+├─sda2                       8:2    0    1G  0 part /boot
+└─sda3                       8:3    0   39G  0 part
+  ├─VolGroup00-LogVol00    253:0    0    8G  0 lvm  /
+  ├─VolGroup00-LogVol01    253:1    0  1.5G  0 lvm  [SWAP]
+  └─VolGroup00-LogVol_Home 253:7    0    2G  0 lvm  /home
+sdb                          8:16   0   10G  0 disk
+sdc                          8:32   0    2G  0 disk
+├─vg_var-lv_var_rmeta_0    253:2    0    4M  0 lvm
+│ └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_0   253:3    0  952M  0 lvm
+  └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+sdd                          8:48   0    1G  0 disk
+├─vg_var-lv_var_rmeta_1    253:4    0    4M  0 lvm
+│ └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_1   253:5    0  952M  0 lvm
+  └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+sde                          8:64   0    1G  0 disk
