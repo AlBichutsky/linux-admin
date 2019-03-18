@@ -20,4 +20,4 @@
 
 ## Решение 
 
-Подготовлен Vagrantfile и playbook.
+Vagrantfile и playbook находятся в каталоге [/Ansible](Ansible/).
