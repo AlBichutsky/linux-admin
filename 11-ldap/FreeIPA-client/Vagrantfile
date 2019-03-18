@@ -1,0 +1,41 @@
+
+Vagrant.configure("2") do |config|
+config.vbguest.auto_update = false
+
+ config.vm.box = "centos/7"
+ config.vm.network "private_network", ip: "192.168.33.14"
+ config.vm.synced_folder ".", "/vagrant"
+    
+
+ config.vm.provider "virtualbox" do |vb|
+      vb.name = "host1.test.lab"  
+      vb.gui = true
+      vb.memory = "2024"
+   end
+ 
+   config.vm.provision "shell", inline: <<-SHELL
+     
+mkdir -p ~root/.ssh
+cp ~vagrant/.ssh/auth* ~root/.ssh
+     
+# Отключим SELinux
+sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+
+# Отключим временно файервол, после установки его включим
+# systemctl stop firewalld
+
+# Синхронизируем время и установим часовой пояс Москвы
+# ntpdate 1.ru.pool.ntp.org
+mv /etc/localtime /etc/localtime.bak
+ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+
+# Назначаем полное доменное имя (FQDN) клиентскому хосту "host1.test.lab"
+hostnamectl set-hostname host1.test.lab
+
+# Поскольку DNS-сервера нет, в /etc/hosts укажем ip и имя сервера freeipa и клиентского хоста.
+echo -e "192.168.33.10 ipaserver.test.lab ipaserver" >> /etc/hosts
+echo -e "192.168.33.14 host1.test.lab host1" >> /etc/hosts
+
+   SHELL
+end
+

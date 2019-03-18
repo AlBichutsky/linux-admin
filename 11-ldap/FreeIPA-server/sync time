@@ -1,0 +1,7 @@
+mv /etc/localtime /etc/localtime.bak
+
+В директории /usr/share/zoneinfo/ находятся файлы доступных к использованию временных зон. В нашем случае это /usr/share/zoneinfo/Europe/Moscow. В вашем случае может быть /usr/share/zoneinfo/Europe/Paris, да что угодно.
+
+Создадим символьную ссылку /etc/localtime на нужную нам зону:
+
+ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime

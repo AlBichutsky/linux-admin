@@ -1,0 +1,54 @@
+
+Vagrant.configure("2") do |config|
+config.vbguest.auto_update = false
+
+ config.vm.box = "centos/7"
+ config.vm.network "private_network", ip: "192.168.33.10"
+ config.vm.synced_folder ".", "/vagrant"
+
+ config.vm.provider "virtualbox" do |vb|
+      vb.name = "ipaserver.test.lab"  
+      vb.gui = true
+      vb.memory = "3024"
+
+   end
+ 
+   config.vm.provision "shell", inline: <<-SHELL
+     
+mkdir -p ~root/.ssh
+cp ~vagrant/.ssh/auth* ~root/.ssh
+
+# Отключим SELinux
+sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+
+# Отключим временно файервол, после установки его включим:
+systemctl stop firewalld
+
+# Синхронизируем время и установим часовой пояс Москвы:
+# ntpdate 1.ru.pool.ntp.org
+mv /etc/localtime /etc/localtime.bak
+ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+
+# Назначаем полное доменное имя (FQDN) серверу "ipaserver.test.lab":
+hostnamectl set-hostname ipaserver.test.lab
+
+# Поскольку DNS-сервера нет, в /etc/hosts укажем ip и имя сервера freeipa и клиентского хоста:
+echo -e "192.168.33.14 host1.test.lab host1" >> /etc/hosts
+echo -e "192.168.33.10 ipaserver.test.lab ipaserver" >> /etc/hosts
+
+# Устанавливаем epel-репозиторий и FreeIPA-server:
+yum -y install epel-release
+# yum -y update
+yum -y install ipa-server
+
+# Устанавливаем FreeIPA-server в режиме автоответа:
+ipa-server-install -a password --hostname=ipaserver.test.lab -r TEST.LAB -p password -n test.lab -U
+
+# Пропишем правила на файерволе (dns-опционально):
+systemctl start firewalld
+firewall-cmd --permanent --add-service={ntp,http,https,ldap,ldaps,kerberos,kpasswd,dns}
+firewall-cmd --reload
+
+   SHELL
+end
+
