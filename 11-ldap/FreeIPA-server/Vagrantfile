@@ -18,10 +18,10 @@ config.vbguest.auto_update = false
 mkdir -p ~root/.ssh
 cp ~vagrant/.ssh/auth* ~root/.ssh
 
-# Отключим SELinux
+# Отключим SELinux:
 sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
 
-# Отключим временно файервол, после установки его включим:
+# Отключим временно файервол, после установки включим обратно:
 systemctl stop firewalld
 
 # Синхронизируем время и установим часовой пояс Москвы:
@@ -29,22 +29,28 @@ systemctl stop firewalld
 mv /etc/localtime /etc/localtime.bak
 ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 
-# Назначаем полное доменное имя (FQDN) серверу "ipaserver.test.lab":
+# Назначаем полное имя (FQDN) серверу "ipaserver.test.lab" (требование FreeIPA):
 hostnamectl set-hostname ipaserver.test.lab
 
-# Поскольку DNS-сервера нет, в /etc/hosts укажем ip и имя сервера freeipa и клиентского хоста:
+# Поскольку DNS-сервера нет, в /etc/hosts укажем ip и имя сервера FreeIPA и клиентского хоста:
 echo -e "192.168.33.14 host1.test.lab host1" >> /etc/hosts
 echo -e "192.168.33.10 ipaserver.test.lab ipaserver" >> /etc/hosts
 
-# Устанавливаем epel-репозиторий и FreeIPA-server:
+# Устанавливаем epel-репозиторий и пакеты FreeIPA Server:
 yum -y install epel-release
 # yum -y update
 yum -y install ipa-server
 
-# Устанавливаем FreeIPA-server в режиме автоответа:
+# Запускаем установку FreeIPA Server в режиме автоответа, передав необходимые параметры:
+# -a password    #пароль учетной записи admin
+# --hostname=ipaserver.test.lab   #FQDN имя сервера
+# -r TEST.LAB  #Kerberos realm name (доменное имя большими буквами)
+# -p password  #The kerberos master password 
+# -n test.lab  #доменное имя
+# -U  #установка в режиме автоответа 
 ipa-server-install -a password --hostname=ipaserver.test.lab -r TEST.LAB -p password -n test.lab -U
 
-# Пропишем правила на файерволе (dns-опционально):
+# Настроим правила на файерволе (dns-опционально,т.к. не установлен):
 systemctl start firewalld
 firewall-cmd --permanent --add-service={ntp,http,https,ldap,ldaps,kerberos,kpasswd,dns}
 firewall-cmd --reload
