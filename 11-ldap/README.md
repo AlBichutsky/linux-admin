@@ -56,6 +56,6 @@ ansible-playbook -v -i inventory/hosts install-client.yml
 
 После установки можно перейти в консоль адинистрироования https://192.168.33.10 и убедиться, что новый хост host1.test.lab был автоматически добавлен на сервере каталогов. 
 
-Затем для проверки с host1.test.lab и подключиться по ssh к ipaserver.test.lab от имени admin:
+Затем для проверки с host1.test.lab подключиться по ssh к ipaserver.test.lab от имени admin:
 
     ssh admin@192.168.33.10
