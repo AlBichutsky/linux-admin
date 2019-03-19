@@ -1,4 +1,4 @@
-## Инструкция по установке FreeIPA Server
+## Инструкция по установке FreeIPA Server с DNS-сервером
 
 **Ссылки:**
 
@@ -18,7 +18,7 @@
     systemctl stop firewalld
     systemctl disable firewalld
 
-Либо разрешает необходимые порты:
+Либо разрешаем необходимые порты:
 
     firewall-cmd --permanent --add-service={ntp,http,https,ldap,ldaps,kerberos,kpasswd,dns}
     firewall-cmd --reload
@@ -41,13 +41,13 @@
 
     192.168.33.10 ipaserver.test.lab ipaserver    
 
-Устанавливаем epel-репозиторий, затем обновляем систему и перегружаемся:    
+Устанавливаем epel-репозиторий, затем обновляем систему (при необходимости) и перегружаемся:    
 
     yum install -y epel-release
     yum update -y
     reboot
 
-Устаналиваем freeipa server с dns
+Устаналиваем сервер freeipa с dns-сервером
     yum -y install ipa-server ipa-server-dns bind bind-dyndb-ldap
 
 Запускаем настройку сервера ipa:
