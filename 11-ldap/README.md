@@ -10,13 +10,13 @@
 
 ### 1. Установить FreeIPA
 
-VM сервера с FreeIPA Server разворачивается с помощью [Vagrantfile](FreeIPA-server/Vagrantfile):
+Хост с FreeIPA Server разворачивается с помощью [Vagrantfile](FreeIPA-server/Vagrantfile):
 * имя: ipaserver.test.lab (домен test.lab);
 * ip-адрес: 192.168.33.10
 * DNS-сервер не установлен (хосты резолвятся через /etc/hosts);
 * после установки консоль администрирования FreeIPA доступна с хостовой машины по адресу: https://192.168.33.10 или https://ipaserver.test.lab (если настроен резолвинг). Логин: admin, пароль: password.
 
-VM клиента разорачивается с помощью [Vagrantfile](FreeIPA-client/Vagrantfile):
+Клиентский хост разорачивается с помощью [Vagrantfile](FreeIPA-client/Vagrantfile):
 * имя: host1.test.lab;
 * ip-адрес: 192.168.33.14
 * хосты резолвятся через /etc/hosts.
