@@ -14,7 +14,7 @@
 * имя: ipaserver.test.lab (домен test.lab);
 * ip-адрес: 192.168.33.10
 * DNS-сервер не установлен (хосты резолвятся через /etc/hosts);
-* после установки консоль администрирования FreeIPA доступна с хостовой машины по адресу: https://192.168.33.10 или https://ipaserver.test.lab (если настроен резолвинг). Логин: admin, пароль: password.
+* после установки консоль администрирования FreeIPA доступна по адресу: https://192.168.33.10 или https://ipaserver.test.lab (если настроен резолвинг). Логин: admin, пароль: password.
 
 Клиентский хост разорачивается с помощью [Vagrantfile](FreeIPA-client/Vagrantfile):
 * имя: host1.test.lab;
