@@ -28,7 +28,7 @@ VM клиента разорачивается с помощью [Vagrantfile](F
 Файлы взяты из официального репо проекта [https://github.com/freeipa/ansible-freeipa](https://github.com/freeipa/ansible-freeipa)
 и лежат в [FreeIPA-client/](FreeIPA-client/).
 
-Файл инвентори [hosts](FreeIPA-client/inventory/hosts), в котором указаны параметры конфигурации:
+Файл инвентори [hosts](FreeIPA-client/inventory/hosts), в котором перечислены хосты и параметры конфигурации:
 ````
 [ipaclients]
 host1.test.lab ansible_host=192.168.33.14 ansible_ssh_user=vagrant ansible_port=22 ansible_private_key_file=.vagrant/machines/default/virtualbox/private_key
