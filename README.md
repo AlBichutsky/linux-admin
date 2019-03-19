@@ -9,5 +9,5 @@
 * [8.systemd](08-systemd/)
 * [9.ansible](09-ansible/)
 * [10.pam](10-pam/)
-* [11.pam](11-ldap/)
+* [11.ldap](11-ldap/)
 
