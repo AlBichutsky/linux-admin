@@ -27,6 +27,6 @@
 
 **Задание 2:**
 
-* инструкция: [02-manual-make_raid1_on_running_centos7](02-manual-make_raid1_on_running_centos7)
-* Лог консоли: [02-log-make_raid1_on_running_centos7](02-log-make_raid1_on_running_centos7)
+* инструкция: [02-manual-make_raid1_on_running_centos7](hw2/02-manual-make_raid1_on_running_centos7)
+* Лог консоли: [02-log-make_raid1_on_running_centos7](hw2/02-log-make_raid1_on_running_centos7)
 
