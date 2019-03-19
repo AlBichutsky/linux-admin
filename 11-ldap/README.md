@@ -26,7 +26,7 @@ VM клиента разорачивается с помощью [Vagrantfile](F
 Для установки клиента FreeIPA используется playbook [install-client.yml](FreeIPA-client/install-client.yml). 
 
 Файлы взяты из официального репо проекта [https://github.com/freeipa/ansible-freeipa](https://github.com/freeipa/ansible-freeipa)
-и лежат в [FreeIPA-client/](FreeIPA-client/).
+и лежат во [FreeIPA-client/](FreeIPA-client/).
 
 Файл инвентори [hosts](FreeIPA-client/inventory/hosts), в котором перечислены хосты и параметры конфигурации:
 ````
