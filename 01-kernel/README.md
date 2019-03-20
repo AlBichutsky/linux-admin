@@ -23,3 +23,5 @@
 
 Инструкция: [manual-install_new_kernel](manual-install_new_kernel)
 
+Список доустановленных пакетов: [yum.log](yum.log)
+
