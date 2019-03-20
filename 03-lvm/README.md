@@ -24,7 +24,7 @@
 
 ## Решение:
 
-Подготовлены по заданию 1:
+### Задание 1
 
 * Инструкция: [03-manual-work_with_lvm](hw1/03-manual-work_with_lvm)
 * Лог консоли: [03-log-work_with_lvm](hw1/03-log-work_with_lvm)
