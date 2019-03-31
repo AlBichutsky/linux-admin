@@ -59,4 +59,4 @@ $ bconsole
 ```
 $ psql -h 127.0.0.1 -U bacula
 ```
-Selinux и firewalld отключен для тестирования.
+Selinux и firewalld отключены для тестирования.
