@@ -1,0 +1,1351 @@
+[root@bacula-server vagrant]# bconsole
+Connecting to Director localhost:9101
+1000 OK: bacula-dir Version: 5.2.13 (19 February 2013)
+Enter a period to cancel a command.
+*list jobs
+Automatically selected Catalog: MyCatalog
+Using Catalog "MyCatalog"
++-------+-------------------------------------+---------------------+------+-------+----------+------------+-----------+
+| jobid | name                                | starttime           | type | level | jobfiles | jobbytes   | jobstatus |
++-------+-------------------------------------+---------------------+------+-------+----------+------------+-----------+
+|     1 | bacula-client1: Full backup         | 2019-03-31 21:30:00 | B    | F     |    2,414 | 31,060,143 | T         |
+|     2 | bacula-client1: Differential backup | 2019-03-31 21:30:02 | B    | F     |    2,414 | 31,060,143 | T         |
+|     3 | bacula-client1: Incremental backup  | 2019-03-31 21:30:03 | B    | F     |    2,414 | 31,060,143 | T         |
+|     4 | bacula-client1: Incremental backup  | 2019-03-31 21:40:02 | B    | I     |        4 |        559 | T         |
+|     5 | bacula-client1: Incremental backup  | 2019-03-31 21:50:02 | B    | I     |        0 |          0 | T         |
+|     6 | bacula-client1: Differential backup | 2019-03-31 22:00:00 | B    | D     |        4 |        559 | T         |
+|     7 | bacula-client1: Incremental backup  | 2019-03-31 22:00:02 | B    | I     |        0 |          0 | T         |
+|     8 | bacula-client1: Incremental backup  | 2019-03-31 22:10:02 | B    | I     |        0 |          0 | T         |
+|     9 | bacula-client1: Incremental backup  | 2019-03-31 22:20:02 | B    | I     |        0 |          0 | T         |
+|    10 | bacula-client1: Differential backup | 2019-03-31 22:30:00 | B    | D     |        4 |        560 | T         |
+|    11 | bacula-client1: Incremental backup  | 2019-03-31 22:30:02 | B    | I     |        2 |          6 | T         |
+|    12 | bacula-client1: Incremental backup  | 2019-03-31 22:40:02 | B    | I     |        0 |          0 | T         |
+|    13 | bacula-client1: Incremental backup  | 2019-03-31 22:50:02 | B    | I     |        0 |          0 | T         |
+|    14 | bacula-client1: Differential backup | 2019-03-31 23:00:00 | B    | D     |        4 |        560 | T         |
+|    15 | bacula-client1: Incremental backup  | 2019-03-31 23:00:02 | B    | I     |        0 |          0 | T         |
+|    16 | bacula-client1: Incremental backup  | 2019-03-31 23:10:00 | B    | I     |        2 |          5 | T         |
+|    17 | BackupCatalog                       | 2019-03-31 23:10:02 | B    | F     |        1 |    833,143 | T         |
+|    18 | bacula-client1: Incremental backup  | 2019-03-31 23:20:02 | B    | I     |        0 |          0 | T         |
+|    19 | bacula-client1: Differential backup | 2019-03-31 23:30:00 | B    | D     |        5 |        565 | T         |
+|    20 | bacula-client1: Incremental backup  | 2019-03-31 23:30:02 | B    | I     |        0 |          0 | T         |
+|    21 | bacula-client1: Incremental backup  | 2019-03-31 23:40:02 | B    | I     |        0 |          0 | T         |
+|    22 | bacula-client1: Incremental backup  | 2019-03-31 23:50:02 | B    | I     |        0 |          0 | T         |
+|    23 | bacula-client1: Differential backup | 2019-04-01 00:00:00 | B    | D     |        5 |        565 | T         |
+|    24 | bacula-client1: Incremental backup  | 2019-04-01 00:00:02 | B    | I     |        0 |          0 | T         |
++-------+-------------------------------------+---------------------+------+-------+----------+------------+-----------+
+You have messages.
+*list files jobid=1
+| /etc/openldap/certs/key3.db                                        |
+| /etc/openldap/certs/cert8.db                                       |
+| /etc/openldap/certs/secmod.db                                      |
+| /etc/openldap/certs/password                                       |
+| /etc/rwtab.d/                                                      |
+| /etc/rwtab.d/logrotate                                             |
+| /etc/cron.daily/                                                   |
+| /etc/cron.daily/man-db.cron                                        |
+| /etc/cron.daily/logrotate                                          |
+| /etc/fuse.conf                                                     |
+| /etc/cron.d/                                                       |
+| /etc/cron.d/0hourly                                                |
+| /etc/iproute2/                                                     |
+| /etc/iproute2/rt_tables                                            |
+| /etc/iproute2/rt_scopes                                            |
+| /etc/iproute2/rt_realms                                            |
+| /etc/iproute2/rt_protos                                            |
+| /etc/iproute2/rt_dsfield                                           |
+| /etc/iproute2/nl_protos                                            |
+| /etc/iproute2/group                                                |
+| /etc/iproute2/ematch_map                                           |
+| /etc/iproute2/bpf_pinning                                          |
+| /etc/python/                                                       |
+| /etc/python/cert-verification.cfg                                  |
+| /etc/request-key.d/                                                |
+| /etc/request-key.d/cifs.spnego.conf                                |
+| /etc/request-key.d/cifs.idmap.conf                                 |
+| /etc/request-key.d/id_resolver.conf                                |
+| /etc/request-key.conf                                              |
+| /etc/my.cnf.d/                                                     |
+| /etc/my.cnf.d/mysql-clients.cnf                                    |
+| /etc/groff/                                                        |
+| /etc/groff/site-tmac/                                              |
+| /etc/groff/site-tmac/mdoc.local                                    |
+| /etc/groff/site-tmac/man.local                                     |
+| /etc/groff/site-font/                                              |
+| /etc/netconfig                                                     |
+| /etc/anacrontab                                                    |
+| /etc/sasl2/                                                        |
+| /etc/sasl2/smtpd.conf                                              |
+| /etc/security/                                                     |
+| /etc/security/pwquality.conf                                       |
+| /etc/security/time.conf                                            |
+| /etc/security/sepermit.conf                                        |
+| /etc/security/pam_env.conf                                         |
+| /etc/security/opasswd                                              |
+| /etc/security/namespace.init                                       |
+| /etc/security/namespace.d/                                         |
+| /etc/security/namespace.conf                                       |
+| /etc/security/limits.d/                                            |
+| /etc/security/limits.d/20-nproc.conf                               |
+| /etc/security/limits.conf                                          |
+| /etc/security/group.conf                                           |
+| /etc/security/console.perms.d/                                     |
+| /etc/security/console.perms                                        |
+| /etc/security/console.handlers                                     |
+| /etc/security/console.apps/                                        |
+| /etc/security/chroot.conf                                          |
+| /etc/security/access.conf                                          |
+| /etc/pam.d/                                                        |
+| /etc/pam.d/smartcard-auth                                          |
+| /etc/pam.d/smartcard-auth-ac                                       |
+| /etc/pam.d/fingerprint-auth                                        |
+| /etc/pam.d/fingerprint-auth-ac                                     |
+| /etc/pam.d/password-auth                                           |
+| /etc/pam.d/password-auth-ac                                        |
+| /etc/pam.d/postlogin                                               |
+| /etc/pam.d/postlogin-ac                                            |
+| /etc/pam.d/system-auth                                             |
+| /etc/pam.d/system-auth-ac                                          |
+| /etc/pam.d/passwd                                                  |
+| /etc/pam.d/sudo-i                                                  |
+| /etc/pam.d/sudo                                                    |
+| /etc/pam.d/smtp                                                    |
+| /etc/pam.d/smtp.postfix                                            |
+| /etc/pam.d/sshd                                                    |
+| /etc/pam.d/vmtoolsd                                                |
+| /etc/pam.d/vlock                                                   |
+| /etc/pam.d/crond                                                   |
+| /etc/pam.d/polkit-1                                                |
+| /etc/pam.d/systemd-user                                            |
+| /etc/pam.d/su-l                                                    |
+| /etc/pam.d/su                                                      |
+| /etc/pam.d/runuser-l                                               |
+| /etc/pam.d/runuser                                                 |
+| /etc/pam.d/remote                                                  |
+| /etc/pam.d/login                                                   |
+| /etc/pam.d/chsh                                                    |
+| /etc/pam.d/chfn                                                    |
+| /etc/pam.d/other                                                   |
+| /etc/pam.d/config-util                                             |
+| /etc/magic                                                         |
+| /etc/cron.hourly/                                                  |
+| /etc/cron.hourly/0anacron                                          |
+| /etc/libnl/                                                        |
+| /etc/libnl/pktloc                                                  |
+| /etc/libnl/classid                                                 |
+| /etc/os-release                                                    |
+| /etc/cron.monthly/                                                 |
+| /etc/issue.net                                                     |
+| /etc/sysctl.conf                                                   |
+| /etc/selinux/targeted/active/modules/100/linuxptp/hll              |
+| /etc/selinux/targeted/active/modules/100/linuxptp/cil              |
+| /etc/selinux/targeted/active/modules/100/likewise/                 |
+| /etc/selinux/targeted/active/modules/100/likewise/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/likewise/hll              |
+| /etc/selinux/targeted/active/modules/100/likewise/cil              |
+| /etc/selinux/targeted/active/modules/100/libraries/                |
+| /etc/selinux/targeted/active/modules/100/libraries/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/libraries/hll             |
+| /etc/selinux/targeted/active/modules/100/libraries/cil             |
+| /etc/selinux/targeted/active/modules/100/ldap/                     |
+| /etc/selinux/targeted/active/modules/100/ldap/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/ldap/hll                  |
+| /etc/selinux/targeted/active/modules/100/ldap/cil                  |
+| /etc/selinux/targeted/active/modules/100/l2tp/                     |
+| /etc/selinux/targeted/active/modules/100/l2tp/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/l2tp/hll                  |
+| /etc/selinux/targeted/active/modules/100/l2tp/cil                  |
+| /etc/selinux/targeted/active/modules/100/ktalk/                    |
+| /etc/selinux/targeted/active/modules/100/ktalk/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/ktalk/hll                 |
+| /etc/selinux/targeted/active/modules/100/ktalk/cil                 |
+| /etc/selinux/targeted/active/modules/100/ksmtuned/                 |
+| /etc/selinux/targeted/active/modules/100/ksmtuned/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/ksmtuned/hll              |
+| /etc/selinux/targeted/active/modules/100/ksmtuned/cil              |
+| /etc/selinux/targeted/active/modules/100/kmscon/                   |
+| /etc/selinux/targeted/active/modules/100/kmscon/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/kmscon/hll                |
+| /etc/selinux/targeted/active/modules/100/kmscon/cil                |
+| /etc/selinux/targeted/active/modules/100/kismet/                   |
+| /etc/selinux/targeted/active/modules/100/kismet/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/kismet/hll                |
+| /etc/selinux/targeted/active/modules/100/kismet/cil                |
+| /etc/selinux/targeted/active/modules/100/keystone/                 |
+| /etc/selinux/targeted/active/modules/100/keystone/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/kdump/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/kdump/hll                 |
+| /etc/selinux/targeted/active/modules/100/kdump/cil                 |
+| /etc/selinux/targeted/active/modules/100/journalctl/               |
+| /etc/selinux/targeted/active/modules/100/journalctl/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/journalctl/hll            |
+| /etc/selinux/targeted/active/modules/100/journalctl/cil            |
+| /etc/selinux/targeted/active/modules/100/jockey/                   |
+| /etc/selinux/targeted/active/modules/100/jockey/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/jockey/hll                |
+| /etc/selinux/targeted/active/modules/100/jockey/cil                |
+| /etc/selinux/targeted/active/modules/100/jetty/                    |
+| /etc/selinux/targeted/active/modules/100/jetty/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/jetty/hll                 |
+| /etc/selinux/targeted/active/modules/100/jetty/cil                 |
+| /etc/selinux/targeted/active/modules/100/jabber/                   |
+| /etc/selinux/targeted/active/modules/100/jabber/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/jabber/hll                |
+| /etc/selinux/targeted/active/modules/100/jabber/cil                |
+| /etc/selinux/targeted/active/modules/100/isns/                     |
+| /etc/selinux/targeted/active/modules/100/isns/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/isns/hll                  |
+| /etc/selinux/targeted/active/modules/100/isns/cil                  |
+| /etc/selinux/targeted/active/modules/100/iscsi/                    |
+| /etc/selinux/targeted/active/modules/100/iscsi/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/iscsi/hll                 |
+| /etc/selinux/targeted/active/modules/100/iscsi/cil                 |
+| /etc/selinux/targeted/active/modules/100/irqbalance/               |
+| /etc/selinux/targeted/active/modules/100/irqbalance/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/irqbalance/hll            |
+| /etc/selinux/targeted/active/modules/100/irqbalance/cil            |
+| /etc/selinux/targeted/active/modules/100/irc/                      |
+| /etc/selinux/targeted/active/modules/100/irc/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/irc/hll                   |
+| /etc/selinux/targeted/active/modules/100/irc/cil                   |
+| /etc/selinux/targeted/active/modules/100/iptables/                 |
+| /etc/selinux/targeted/active/modules/100/iptables/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/iptables/hll              |
+| /etc/selinux/targeted/active/modules/100/iptables/cil              |
+| /etc/selinux/targeted/active/modules/100/ipsec/                    |
+| /etc/selinux/targeted/active/modules/100/ipsec/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/ipsec/hll                 |
+| /etc/selinux/targeted/active/modules/100/ipsec/cil                 |
+| /etc/selinux/targeted/active/modules/100/ipmievd/                  |
+| /etc/selinux/targeted/active/modules/100/ipmievd/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/ipmievd/hll               |
+| /etc/selinux/targeted/active/modules/100/ipmievd/cil               |
+| /etc/selinux/targeted/active/modules/100/ipa/                      |
+| /etc/selinux/targeted/active/modules/100/ipa/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/ipa/hll                   |
+| /etc/selinux/targeted/active/modules/100/ipa/cil                   |
+| /etc/selinux/targeted/active/modules/100/iotop/                    |
+| /etc/selinux/targeted/active/modules/100/iotop/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/iotop/hll                 |
+| /etc/selinux/targeted/active/modules/100/iotop/cil                 |
+| /etc/selinux/targeted/active/modules/100/iodine/                   |
+| /etc/selinux/targeted/active/modules/100/iodine/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/iodine/hll                |
+| /etc/selinux/targeted/active/modules/100/iodine/cil                |
+| /etc/selinux/targeted/active/modules/100/inn/                      |
+| /etc/selinux/targeted/active/modules/100/inn/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/inn/hll                   |
+| /etc/selinux/targeted/active/modules/100/inn/cil                   |
+| /etc/selinux/targeted/active/modules/100/init/                     |
+| /etc/selinux/targeted/active/modules/100/init/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/init/hll                  |
+| /etc/selinux/targeted/active/modules/100/init/cil                  |
+| /etc/selinux/targeted/active/modules/100/inetd/                    |
+| /etc/selinux/targeted/active/modules/100/inetd/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/inetd/hll                 |
+| /etc/selinux/targeted/active/modules/100/inetd/cil                 |
+| /etc/selinux/targeted/active/modules/100/icecast/                  |
+| /etc/selinux/targeted/active/modules/100/icecast/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/icecast/hll               |
+| /etc/selinux/targeted/active/modules/100/icecast/cil               |
+| /etc/selinux/targeted/active/modules/100/hypervkvp/                |
+| /etc/selinux/targeted/active/modules/100/hypervkvp/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/hypervkvp/hll             |
+| /etc/selinux/targeted/active/modules/100/hypervkvp/cil             |
+| /etc/selinux/targeted/active/modules/100/hwloc/                    |
+| /etc/selinux/targeted/active/modules/100/hwloc/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/hwloc/hll                 |
+| /etc/selinux/targeted/active/modules/100/hwloc/cil                 |
+| /etc/selinux/targeted/active/modules/100/hsqldb/                   |
+| /etc/selinux/targeted/active/modules/100/hsqldb/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/hsqldb/hll                |
+| /etc/selinux/targeted/active/modules/100/hsqldb/cil                |
+| /etc/selinux/targeted/active/modules/100/hostname/                 |
+| /etc/selinux/targeted/active/modules/100/hostname/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/hostname/hll              |
+| /etc/selinux/targeted/active/modules/100/hostname/cil              |
+| /etc/selinux/targeted/active/modules/100/hddtemp/                  |
+| /etc/selinux/targeted/active/modules/100/hddtemp/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/hddtemp/hll               |
+| /etc/selinux/targeted/active/modules/100/hddtemp/cil               |
+| /etc/selinux/targeted/active/modules/100/guest/                    |
+| /etc/selinux/targeted/active/modules/100/guest/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/guest/hll                 |
+| /etc/selinux/targeted/active/modules/100/guest/cil                 |
+| /etc/selinux/targeted/active/modules/100/gssproxy/                 |
+| /etc/selinux/targeted/active/modules/100/gssproxy/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/gssproxy/hll              |
+| /etc/selinux/targeted/active/modules/100/gssproxy/cil              |
+| /etc/selinux/targeted/active/modules/100/gpsd/                     |
+| /etc/selinux/targeted/active/modules/100/gpsd/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/gpsd/hll                  |
+| /etc/selinux/targeted/active/modules/100/gpsd/cil                  |
+| /etc/selinux/targeted/active/modules/100/gpm/                      |
+| /etc/selinux/targeted/active/modules/100/gpm/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/gpm/hll                   |
+| /etc/selinux/targeted/active/modules/100/gpm/cil                   |
+| /etc/selinux/targeted/active/modules/100/gpg/                      |
+| /etc/selinux/targeted/active/modules/100/gpg/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/gpg/hll                   |
+| /etc/selinux/targeted/active/modules/100/gpg/cil                   |
+| /etc/selinux/targeted/active/modules/100/gnome/                    |
+| /etc/selinux/targeted/active/modules/100/gnome/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/gnome/hll                 |
+| /etc/selinux/targeted/active/modules/100/gnome/cil                 |
+| /etc/selinux/targeted/active/modules/100/glusterd/                 |
+| /etc/selinux/targeted/active/modules/100/glusterd/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/glusterd/hll              |
+| /etc/selinux/targeted/active/modules/100/glusterd/cil              |
+| /etc/selinux/targeted/active/modules/100/glance/                   |
+| /etc/selinux/targeted/active/modules/100/glance/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/glance/hll                |
+| /etc/selinux/targeted/active/modules/100/glance/cil                |
+| /etc/selinux/targeted/active/modules/100/gitosis/                  |
+| /etc/selinux/targeted/active/modules/100/gitosis/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/gitosis/hll               |
+| /etc/selinux/targeted/active/modules/100/gitosis/cil               |
+| /etc/selinux/targeted/active/modules/100/git/                      |
+| /etc/selinux/targeted/active/modules/100/git/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/git/hll                   |
+| /etc/selinux/targeted/active/modules/100/git/cil                   |
+| /etc/selinux/targeted/active/modules/100/getty/                    |
+| /etc/selinux/targeted/active/modules/100/getty/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/getty/hll                 |
+| /etc/selinux/targeted/active/modules/100/getty/cil                 |
+| /etc/selinux/targeted/active/modules/100/geoclue/                  |
+| /etc/selinux/targeted/active/modules/100/geoclue/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/geoclue/hll               |
+| /etc/selinux/targeted/active/modules/100/geoclue/cil               |
+| /etc/selinux/targeted/active/modules/100/gdomap/                   |
+| /etc/selinux/targeted/active/modules/100/gdomap/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/gdomap/hll                |
+| /etc/selinux/targeted/active/modules/100/gdomap/cil                |
+| /etc/selinux/targeted/active/modules/100/ganesha/                  |
+| /etc/selinux/targeted/active/modules/100/ganesha/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/ganesha/hll               |
+| /etc/selinux/targeted/active/modules/100/ganesha/cil               |
+| /etc/selinux/targeted/active/modules/100/games/                    |
+| /etc/selinux/targeted/active/modules/100/games/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/games/hll                 |
+| /etc/selinux/targeted/active/modules/100/games/cil                 |
+| /etc/selinux/targeted/active/modules/100/ftp/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/ftp/hll                   |
+| /etc/selinux/targeted/active/modules/100/ftp/cil                   |
+| /etc/selinux/targeted/active/modules/100/fstools/                  |
+| /etc/selinux/targeted/active/modules/100/fstools/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/fstools/hll               |
+| /etc/selinux/targeted/active/modules/100/fstools/cil               |
+| /etc/selinux/targeted/active/modules/100/freqset/                  |
+| /etc/selinux/targeted/active/modules/100/freqset/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/freqset/hll               |
+| /etc/selinux/targeted/active/modules/100/freqset/cil               |
+| /etc/selinux/targeted/active/modules/100/freeipmi/                 |
+| /etc/selinux/targeted/active/modules/100/freeipmi/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/freeipmi/hll              |
+| /etc/selinux/targeted/active/modules/100/freeipmi/cil              |
+| /etc/selinux/targeted/active/modules/100/fprintd/                  |
+| /etc/selinux/targeted/active/modules/100/fprintd/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/fprintd/hll               |
+| /etc/selinux/targeted/active/modules/100/fprintd/cil               |
+| /etc/selinux/targeted/active/modules/100/firstboot/                |
+| /etc/selinux/targeted/active/modules/100/firstboot/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/firstboot/hll             |
+| /etc/selinux/targeted/active/modules/100/firstboot/cil             |
+| /etc/selinux/targeted/active/modules/100/firewallgui/              |
+| /etc/selinux/targeted/active/modules/100/firewallgui/lang_ext      |
+| /etc/selinux/targeted/active/modules/100/firewallgui/hll           |
+| /etc/selinux/targeted/active/modules/100/firewallgui/cil           |
+| /etc/selinux/targeted/active/modules/100/firewalld/                |
+| /etc/selinux/targeted/active/modules/100/firewalld/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/firewalld/hll             |
+| /etc/selinux/targeted/active/modules/100/firewalld/cil             |
+| /etc/selinux/targeted/active/modules/100/finger/                   |
+| /etc/selinux/targeted/active/modules/100/finger/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/finger/hll                |
+| /etc/selinux/targeted/active/modules/100/finger/cil                |
+| /etc/issue                                                         |
+| /etc/statetab.d/                                                   |
+| /etc/centos-release-upstream                                       |
+| /etc/redhat-release                                                |
+| /etc/centos-release                                                |
+| /etc/libaudit.conf                                                 |
+| /etc/yum/                                                          |
+| /etc/yum/version-groups.conf                                       |
+| /etc/yum/fssnap.d/                                                 |
+| /etc/yum/pluginconf.d/                                             |
+| /etc/yum/pluginconf.d/langpacks.conf                               |
+| /etc/yum/pluginconf.d/fastestmirror.conf                           |
+| /etc/yum/protected.d/                                              |
+| /etc/yum/protected.d/systemd.conf                                  |
+| /etc/yum/vars/                                                     |
+| /etc/yum/vars/contentdir                                           |
+| /etc/yum/vars/infra                                                |
+| /etc/yum.repos.d/                                                  |
+| /etc/yum.repos.d/CentOS-fasttrack.repo                             |
+| /etc/yum.repos.d/CentOS-Vault.repo                                 |
+| /etc/yum.repos.d/CentOS-Sources.repo                               |
+| /etc/yum.repos.d/CentOS-Media.repo                                 |
+| /etc/yum.repos.d/CentOS-Debuginfo.repo                             |
+| /etc/yum.repos.d/CentOS-CR.repo                                    |
+| /etc/yum.repos.d/CentOS-Base.repo                                  |
+| /etc/rpm/                                                          |
+| /etc/NetworkManager/dispatcher.d/20-chrony                         |
+| /etc/NetworkManager/dispatcher.d/11-dhclient                       |
+| /etc/NetworkManager/dispatcher.d/pre-up.d/                         |
+| /etc/NetworkManager/dispatcher.d/pre-down.d/                       |
+| /etc/NetworkManager/dispatcher.d/no-wait.d/                        |
+| /etc/NetworkManager/dispatcher.d/00-netreport                      |
+| /etc/popt.d/                                                       |
+| /etc/ld.so.cache                                                   |
+| /etc/cron.weekly/                                                  |
+| /etc/rpc                                                           |
+| /etc/ppp/                                                          |
+| /etc/ppp/peers/                                                    |
+| /etc/ppp/ipv6-up                                                   |
+| /etc/ppp/ipv6-down                                                 |
+| /etc/ppp/ip-up.ipv6to4                                             |
+| /etc/ppp/ip-up                                                     |
+| /etc/ppp/ip-down.ipv6to4                                           |
+| /etc/ppp/ip-down                                                   |
+| /etc/nsswitch.conf                                                 |
+| /etc/system-release                                                |
+| /etc/ld.so.conf.d/                                                 |
+| /etc/ld.so.conf.d/kernel-3.10.0-957.10.1.el7.x86_64.conf           |
+| /etc/ld.so.conf.d/kernel-3.10.0-957.1.3.el7.x86_64.conf            |
+| /etc/ld.so.conf.d/mariadb-x86_64.conf                              |
+| /etc/ld.so.conf                                                    |
+| /etc/polkit-1/                                                     |
+| /etc/polkit-1/localauthority.conf.d/                               |
+| /etc/polkit-1/localauthority/                                      |
+| /etc/polkit-1/localauthority/90-mandatory.d/                       |
+| /etc/polkit-1/localauthority/50-local.d/                           |
+| /etc/polkit-1/localauthority/30-site.d/                            |
+| /etc/polkit-1/localauthority/20-org.d/                             |
+| /etc/polkit-1/localauthority/10-vendor.d/                          |
+| /etc/polkit-1/rules.d/                                             |
+| /etc/polkit-1/rules.d/49-polkit-pkla-compat.rules                  |
+| /etc/polkit-1/rules.d/50-default.rules                             |
+| /etc/xinetd.d/                                                     |
+| /etc/xdg/                                                          |
+| /etc/xdg/systemd/                                                  |
+| /etc/xdg/systemd/user                                              |
+| /etc/xdg/autostart/                                                |
+| /etc/sysconfig/                                                    |
+| /etc/sysconfig/bacula-fd                                           |
+| /etc/sysconfig/cloud-info                                          |
+| /etc/sysconfig/anaconda                                            |
+| /etc/sysconfig/network                                             |
+| /etc/sysconfig/kernel                                              |
+| /etc/sysconfig/cpupower                                            |
+| /etc/sysconfig/chronyd                                             |
+| /etc/sysconfig/qemu-ga                                             |
+| /etc/sysconfig/rsyncd                                              |
+| /etc/sysconfig/authconfig                                          |
+| /etc/sysconfig/sshd                                                |
+| /etc/sysconfig/nfs                                                 |
+| /etc/sysconfig/irqbalance                                          |
+| /etc/sysconfig/man-db                                              |
+| /etc/sysconfig/rsyslog                                             |
+| /etc/sysconfig/firewalld                                           |
+| /etc/sysconfig/ebtables-config                                     |
+| /etc/sysconfig/wpa_supplicant                                      |
+| /etc/sysconfig/selinux                                             |
+| /etc/sysconfig/rpc-rquotad                                         |
+| /etc/sysconfig/grub                                                |
+| /etc/sysconfig/run-parts                                           |
+| /etc/sysconfig/crond                                               |
+| /etc/sysconfig/samba                                               |
+| /etc/sysconfig/readonly-root                                       |
+| /etc/sysconfig/network-scripts/                                    |
+| /etc/sysconfig/network-scripts/ifcfg-eth1                          |
+| /etc/sysconfig/network-scripts/ifcfg-eth0                          |
+| /etc/sysconfig/network-scripts/ifup-TeamPort                       |
+| /etc/sysconfig/network-scripts/ifup-Team                           |
+| /etc/sysconfig/network-scripts/ifdown-TeamPort                     |
+| /etc/sysconfig/network-scripts/ifdown-Team                         |
+| /etc/sysconfig/network-scripts/network-functions-ipv6              |
+| /etc/sysconfig/network-scripts/network-functions                   |
+| /etc/sysconfig/network-scripts/init.ipv6-global                    |
+| /etc/sysconfig/network-scripts/ifup-wireless                       |
+| /etc/sysconfig/network-scripts/ifup-tunnel                         |
+| /etc/sysconfig/network-scripts/ifup-sit                            |
+| /etc/sysconfig/network-scripts/ifup-routes                         |
+| /etc/sysconfig/network-scripts/ifup-ppp                            |
+| /etc/sysconfig/network-scripts/ifup-post                           |
+| /etc/sysconfig/network-scripts/ifup-plusb                          |
+| /etc/sysconfig/network-scripts/ifup-plip                           |
+| /etc/sysconfig/network-scripts/ifup-isdn                           |
+| /etc/sysconfig/network-scripts/ifup-ipv6                           |
+| /etc/sysconfig/network-scripts/ifup-ippp                           |
+| /etc/sysconfig/network-scripts/ifup-eth                            |
+| /etc/sysconfig/network-scripts/ifup-bnep                           |
+| /etc/sysconfig/network-scripts/ifup-aliases                        |
+| /etc/sysconfig/network-scripts/ifup                                |
+| /etc/sysconfig/network-scripts/ifdown-tunnel                       |
+| /etc/sysconfig/network-scripts/ifdown-sit                          |
+| /etc/sysconfig/network-scripts/ifdown-routes                       |
+| /etc/sysconfig/network-scripts/ifdown-ppp                          |
+| /etc/sysconfig/network-scripts/ifdown-post                         |
+| /etc/sysconfig/network-scripts/ifdown-isdn                         |
+| /etc/sysconfig/network-scripts/ifdown-ipv6                         |
+| /etc/sysconfig/network-scripts/ifdown-ippp                         |
+| /etc/sysconfig/network-scripts/ifdown-eth                          |
+| /etc/ssl/certs                                                     |
+| /etc/sysconfig/network-scripts/ifdown-bnep                         |
+| /etc/sysconfig/network-scripts/ifdown                              |
+| /etc/sysconfig/network-scripts/ifcfg-lo                            |
+| /etc/sysconfig/netconsole                                          |
+| /etc/sysconfig/modules/                                            |
+| /etc/sysconfig/init                                                |
+| /etc/sysconfig/console/                                            |
+| /etc/sysconfig/rdisc                                               |
+| /etc/sysconfig/rpcbind                                             |
+| /etc/sysconfig/cbq/                                                |
+| /etc/sysconfig/cbq/cbq-0000.example                                |
+| /etc/sysconfig/cbq/avpkt                                           |
+| /etc/sysconfig/iptables-config                                     |
+| /etc/sysconfig/ip6tables-config                                    |
+| /etc/pm/                                                           |
+| /etc/pm/sleep.d/                                                   |
+| /etc/pm/power.d/                                                   |
+| /etc/pm/config.d/                                                  |
+| /etc/pki/                                                          |
+| /etc/pki/rsyslog/                                                  |
+| /etc/pki/CA/                                                       |
+| /etc/pki/CA/private/                                               |
+| /etc/pki/CA/newcerts/                                              |
+| /etc/pki/CA/crl/                                                   |
+| /etc/pki/CA/certs/                                                 |
+| /etc/pki/nssdb/                                                    |
+| /etc/pki/nssdb/secmod.db                                           |
+| /etc/pki/nssdb/pkcs11.txt                                          |
+| /etc/pki/nssdb/key4.db                                             |
+| /etc/pki/nssdb/key3.db                                             |
+| /etc/pki/nssdb/cert9.db                                            |
+| /etc/pki/nssdb/cert8.db                                            |
+| /etc/pki/nss-legacy/                                               |
+| /etc/pki/nss-legacy/nss-rhel7.config                               |
+| /etc/pki/rpm-gpg/                                                  |
+| /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-Testing-7                      |
+| /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-Debug-7                        |
+| /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7                              |
+| /etc/pki/tls/                                                      |
+| /etc/pki/tls/private/                                              |
+| /etc/pki/tls/openssl.cnf                                           |
+| /etc/pki/tls/misc/                                                 |
+| /etc/pki/tls/misc/c_name                                           |
+| /etc/pki/tls/misc/c_issuer                                         |
+| /etc/pki/tls/misc/c_info                                           |
+| /etc/pki/tls/misc/c_hash                                           |
+| /etc/pki/tls/misc/CA                                               |
+| /etc/pki/tls/certs/                                                |
+| /etc/pki/tls/certs/renew-dummy-cert                                |
+| /etc/pki/tls/certs/make-dummy-cert                                 |
+| /etc/pki/tls/certs/Makefile                                        |
+| /etc/pki/tls/certs/ca-bundle.trust.crt                             |
+| /etc/pki/tls/certs/ca-bundle.crt                                   |
+| /etc/pki/tls/cert.pem                                              |
+| /etc/pki/java/                                                     |
+| /etc/pki/java/cacerts                                              |
+| /etc/pki/ca-trust/                                                 |
+| /etc/pki/ca-trust/source/                                          |
+| /etc/pki/ca-trust/source/ca-bundle.legacy.crt                      |
+| /etc/pki/ca-trust/source/blacklist/                                |
+| /etc/pki/ca-trust/source/anchors/                                  |
+| /etc/pki/ca-trust/source/README                                    |
+| /etc/pki/ca-trust/extracted/                                       |
+| /etc/pki/ca-trust/extracted/pem/                                   |
+| /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem              |
+| /etc/pki/ca-trust/extracted/pem/email-ca-bundle.pem                |
+| /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem                  |
+| /etc/pki/ca-trust/extracted/pem/README                             |
+| /etc/pki/ca-trust/extracted/openssl/                               |
+| /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt            |
+| /etc/pki/ca-trust/extracted/openssl/README                         |
+| /etc/pki/ca-trust/extracted/java/                                  |
+| /etc/pki/ca-trust/extracted/java/cacerts                           |
+| /etc/pki/ca-trust/extracted/java/README                            |
+| /etc/pki/ca-trust/extracted/README                                 |
+| /etc/pki/ca-trust/ca-legacy.conf                                   |
+| /etc/pki/ca-trust/README                                           |
+| /etc/opt/                                                          |
+| /etc/bash_completion.d/                                            |
+| /etc/bash_completion.d/redefine_filedir                            |
+| /etc/bash_completion.d/iprutils                                    |
+| /etc/bash_completion.d/yum-utils.bash                              |
+| /etc/X11/                                                          |
+| /etc/X11/xorg.conf.d/                                              |
+| /etc/X11/fontpath.d/                                               |
+| /etc/X11/applnk/                                                   |
+| /etc/subuid                                                        |
+| /etc/statetab                                                      |
+| /etc/selinux/targeted/active/modules/100/keystone/hll              |
+| /etc/selinux/targeted/active/modules/100/keystone/cil              |
+| /etc/selinux/targeted/active/modules/100/keyboardd/                |
+| /etc/selinux/targeted/active/modules/100/keyboardd/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/keyboardd/hll             |
+| /etc/selinux/targeted/active/modules/100/keyboardd/cil             |
+| /etc/selinux/targeted/active/modules/100/kerberos/                 |
+| /etc/selinux/targeted/active/modules/100/kerberos/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/kerberos/hll              |
+| /etc/selinux/targeted/active/modules/100/kerberos/cil              |
+| /etc/selinux/targeted/active/modules/100/keepalived/               |
+| /etc/selinux/targeted/active/modules/100/keepalived/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/keepalived/hll            |
+| /etc/selinux/targeted/active/modules/100/keepalived/cil            |
+| /etc/selinux/targeted/active/modules/100/kdumpgui/                 |
+| /etc/selinux/targeted/active/modules/100/kdumpgui/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/kdumpgui/hll              |
+| /etc/selinux/targeted/active/modules/100/kdumpgui/cil              |
+| /etc/selinux/targeted/active/modules/100/kdump/                    |
+| /etc/selinux/targeted/active/modules/100/cgdcbxd/cil               |
+| /etc/selinux/targeted/active/modules/100/cfengine/                 |
+| /etc/selinux/targeted/active/modules/100/cfengine/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/cfengine/hll              |
+| /etc/selinux/targeted/active/modules/100/cfengine/cil              |
+| /etc/selinux/targeted/active/modules/100/certwatch/                |
+| /etc/selinux/targeted/active/modules/100/certwatch/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/certwatch/hll             |
+| /etc/selinux/targeted/active/modules/100/certwatch/cil             |
+| /etc/selinux/targeted/active/modules/100/certmonger/               |
+| /etc/selinux/targeted/active/modules/100/certmonger/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/certmonger/hll            |
+| /etc/selinux/targeted/active/modules/100/certmonger/cil            |
+| /etc/selinux/targeted/active/modules/100/certmaster/               |
+| /etc/selinux/targeted/active/modules/100/certmaster/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/certmaster/hll            |
+| /etc/selinux/targeted/active/modules/100/certmaster/cil            |
+| /etc/selinux/targeted/active/modules/100/cdrecord/                 |
+| /etc/selinux/targeted/active/modules/100/cdrecord/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/cdrecord/hll              |
+| /etc/selinux/targeted/active/modules/100/cdrecord/cil              |
+| /etc/selinux/targeted/active/modules/100/ccs/                      |
+| /etc/selinux/targeted/active/modules/100/ccs/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/ccs/hll                   |
+| /etc/selinux/targeted/active/modules/100/ccs/cil                   |
+| /etc/selinux/targeted/active/modules/100/canna/                    |
+| /etc/selinux/targeted/active/modules/100/canna/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/canna/hll                 |
+| /etc/selinux/targeted/active/modules/100/canna/cil                 |
+| /etc/selinux/targeted/active/modules/100/callweaver/               |
+| /etc/selinux/targeted/active/modules/100/callweaver/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/callweaver/hll            |
+| /etc/selinux/targeted/active/modules/100/callweaver/cil            |
+| /etc/selinux/targeted/active/modules/100/calamaris/                |
+| /etc/selinux/targeted/active/modules/100/calamaris/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/calamaris/hll             |
+| /etc/selinux/targeted/active/modules/100/calamaris/cil             |
+| /etc/selinux/targeted/active/modules/100/cachefilesd/              |
+| /etc/selinux/targeted/active/modules/100/cachefilesd/lang_ext      |
+| /etc/selinux/targeted/active/modules/100/cachefilesd/hll           |
+| /etc/selinux/targeted/active/modules/100/cachefilesd/cil           |
+| /etc/selinux/targeted/active/modules/100/bumblebee/                |
+| /etc/selinux/targeted/active/modules/100/bumblebee/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/bumblebee/hll             |
+| /etc/selinux/targeted/active/modules/100/bumblebee/cil             |
+| /etc/selinux/targeted/active/modules/100/bugzilla/                 |
+| /etc/selinux/targeted/active/modules/100/bugzilla/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/bugzilla/hll              |
+| /etc/selinux/targeted/active/modules/100/bugzilla/cil              |
+| /etc/selinux/targeted/active/modules/100/brltty/                   |
+| /etc/selinux/targeted/active/modules/100/brltty/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/brltty/hll                |
+| /etc/selinux/targeted/active/modules/100/brltty/cil                |
+| /etc/selinux/targeted/active/modules/100/brctl/                    |
+| /etc/selinux/targeted/active/modules/100/brctl/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/brctl/hll                 |
+| /etc/selinux/targeted/active/modules/100/brctl/cil                 |
+| /etc/selinux/targeted/active/modules/100/bootloader/               |
+| /etc/selinux/targeted/active/modules/100/bootloader/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/bootloader/hll            |
+| /etc/selinux/targeted/active/modules/100/bootloader/cil            |
+| /etc/selinux/targeted/active/modules/100/boinc/                    |
+| /etc/selinux/targeted/active/modules/100/boinc/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/boinc/hll                 |
+| /etc/selinux/targeted/active/modules/100/boinc/cil                 |
+| /etc/selinux/targeted/active/modules/100/bluetooth/                |
+| /etc/selinux/targeted/active/modules/100/bluetooth/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/bluetooth/hll             |
+| /etc/selinux/targeted/active/modules/100/bluetooth/cil             |
+| /etc/selinux/targeted/active/modules/100/blueman/                  |
+| /etc/selinux/targeted/active/modules/100/blueman/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/blueman/hll               |
+| /etc/selinux/targeted/active/modules/100/blueman/cil               |
+| /etc/selinux/targeted/active/modules/100/blkmapd/                  |
+| /etc/selinux/targeted/active/modules/100/blkmapd/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/blkmapd/hll               |
+| /etc/selinux/targeted/active/modules/100/blkmapd/cil               |
+| /etc/selinux/targeted/active/modules/100/bitlbee/                  |
+| /etc/selinux/targeted/active/modules/100/bitlbee/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/bitlbee/hll               |
+| /etc/selinux/targeted/active/modules/100/bitlbee/cil               |
+| /etc/selinux/targeted/active/modules/100/bind/                     |
+| /etc/selinux/targeted/active/modules/100/bind/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/bind/hll                  |
+| /etc/selinux/targeted/active/modules/100/bind/cil                  |
+| /etc/selinux/targeted/active/modules/100/bcfg2/                    |
+| /etc/selinux/targeted/active/modules/100/bcfg2/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/bcfg2/hll                 |
+| /etc/selinux/targeted/active/modules/100/bcfg2/cil                 |
+| /etc/selinux/targeted/active/modules/100/base/                     |
+| /etc/selinux/targeted/active/modules/100/base/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/base/hll                  |
+| /etc/selinux/targeted/active/modules/100/base/cil                  |
+| /etc/selinux/targeted/active/modules/100/bacula/                   |
+| /etc/selinux/targeted/active/modules/100/bacula/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/bacula/hll                |
+| /etc/selinux/targeted/active/modules/100/bacula/cil                |
+| /etc/selinux/targeted/active/modules/100/awstats/                  |
+| /etc/selinux/targeted/active/modules/100/awstats/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/awstats/hll               |
+| /etc/selinux/targeted/active/modules/100/awstats/cil               |
+| /etc/selinux/targeted/active/modules/100/avahi/                    |
+| /etc/selinux/targeted/active/modules/100/avahi/lang_ext            |
+| /etc/selinux/targeted/active/modules/100/avahi/hll                 |
+| /etc/selinux/targeted/active/modules/100/avahi/cil                 |
+| /etc/selinux/targeted/active/modules/100/automount/                |
+| /etc/selinux/targeted/active/modules/100/automount/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/automount/hll             |
+| /etc/selinux/targeted/active/modules/100/automount/cil             |
+| /etc/selinux/targeted/active/modules/100/authlogin/                |
+| /etc/selinux/targeted/active/modules/100/authlogin/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/authlogin/hll             |
+| /etc/selinux/targeted/active/modules/100/authlogin/cil             |
+| /etc/selinux/targeted/active/modules/100/authconfig/               |
+| /etc/selinux/targeted/active/modules/100/authconfig/lang_ext       |
+| /etc/selinux/targeted/active/modules/100/authconfig/hll            |
+| /etc/selinux/targeted/active/modules/100/authconfig/cil            |
+| /etc/selinux/targeted/active/modules/100/auditadm/                 |
+| /etc/selinux/targeted/active/modules/100/auditadm/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/auditadm/hll              |
+| /etc/selinux/targeted/active/modules/100/auditadm/cil              |
+| /etc/selinux/targeted/active/modules/100/asterisk/                 |
+| /etc/selinux/targeted/active/modules/100/asterisk/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/asterisk/hll              |
+| /etc/selinux/targeted/active/modules/100/asterisk/cil              |
+| /etc/selinux/targeted/active/modules/100/arpwatch/                 |
+| /etc/selinux/targeted/active/modules/100/arpwatch/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/arpwatch/hll              |
+| /etc/selinux/targeted/active/modules/100/arpwatch/cil              |
+| /etc/selinux/targeted/active/modules/100/application/              |
+| /etc/selinux/targeted/active/modules/100/application/lang_ext      |
+| /etc/selinux/targeted/active/modules/100/application/hll           |
+| /etc/selinux/targeted/active/modules/100/application/cil           |
+| /etc/selinux/targeted/active/modules/100/apm/                      |
+| /etc/selinux/targeted/active/modules/100/apm/lang_ext              |
+| /etc/selinux/targeted/active/modules/100/apm/hll                   |
+| /etc/selinux/targeted/active/modules/100/apm/cil                   |
+| /etc/selinux/targeted/active/modules/100/apcupsd/                  |
+| /etc/selinux/targeted/active/modules/100/apcupsd/lang_ext          |
+| /etc/selinux/targeted/active/modules/100/apcupsd/hll               |
+| /etc/selinux/targeted/active/modules/100/apcupsd/cil               |
+| /etc/selinux/targeted/active/modules/100/apache/                   |
+| /etc/selinux/targeted/active/modules/100/apache/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/apache/hll                |
+| /etc/selinux/targeted/active/modules/100/apache/cil                |
+| /etc/selinux/targeted/active/modules/100/antivirus/                |
+| /etc/selinux/targeted/active/modules/100/antivirus/lang_ext        |
+| /etc/selinux/targeted/active/modules/100/antivirus/hll             |
+| /etc/selinux/targeted/active/modules/100/antivirus/cil             |
+| /etc/selinux/targeted/active/modules/100/anaconda/                 |
+| /etc/selinux/targeted/active/modules/100/anaconda/lang_ext         |
+| /etc/selinux/targeted/active/modules/100/anaconda/hll              |
+| /etc/selinux/targeted/active/modules/100/anaconda/cil              |
+| /etc/selinux/targeted/active/modules/100/amtu/                     |
+| /etc/selinux/targeted/active/modules/100/amtu/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/amtu/hll                  |
+| /etc/selinux/targeted/active/modules/100/amtu/cil                  |
+| /etc/selinux/targeted/active/modules/100/amanda/                   |
+| /etc/selinux/targeted/active/modules/100/amanda/lang_ext           |
+| /etc/selinux/targeted/active/modules/100/amanda/hll                |
+| /etc/selinux/targeted/active/modules/100/amanda/cil                |
+| /etc/selinux/targeted/active/modules/100/alsa/                     |
+| /etc/selinux/targeted/active/modules/100/alsa/lang_ext             |
+| /etc/selinux/targeted/active/modules/100/alsa/hll                  |
+| /etc/selinux/targeted/active/modules/100/alsa/cil                  |
+| /etc/subgid                                                        |
+| /etc/networks                                                      |
+| /etc/shadow                                                        |
+| /etc/adjtime                                                       |
+| /etc/services                                                      |
+| /etc/sestatus.conf                                                 |
+| /etc/securetty                                                     |
+| /etc/nsswitch.conf.bak                                             |
+| /etc/protocols                                                     |
+| /etc/inittab                                                       |
+| /etc/profile.d/                                                    |
+| /etc/profile.d/vim.sh                                              |
+| /etc/profile.d/vim.csh                                             |
+| /etc/profile.d/bash_completion.sh                                  |
+| /etc/profile.d/lang.sh                                             |
+| /etc/profile.d/lang.csh                                            |
+| /etc/profile.d/256term.sh                                          |
+| /etc/profile.d/256term.csh                                         |
+| /etc/profile.d/less.sh                                             |
+| /etc/profile.d/less.csh                                            |
+| /etc/profile.d/which2.sh                                           |
+| /etc/profile.d/which2.csh                                          |
+| /etc/profile.d/colorls.sh                                          |
+| /etc/profile.d/colorls.csh                                         |
+| /etc/profile.d/colorgrep.sh                                        |
+| /etc/profile.d/colorgrep.csh                                       |
+| /etc/profile.d/sh.local                                            |
+| /etc/profile.d/csh.local                                           |
+| /etc/profile                                                       |
+| /etc/localtime                                                     |
+| /etc/printcap                                                      |
+| /etc/machine-id                                                    |
+| /etc/passwd                                                        |
+| /etc/dhcp/                                                         |
+| /etc/dhcp/dhclient.d/                                              |
+| /etc/dhcp/dhclient.d/chrony.sh                                     |
+| /etc/dhcp/dhclient-exit-hooks.d/                                   |
+| /etc/dhcp/dhclient-exit-hooks.d/azure-cloud.sh                     |
+| /etc/udev/                                                         |
+| /etc/udev/hwdb.bin                                                 |
+| /etc/udev/udev.conf                                                |
+| /etc/udev/rules.d/                                                 |
+| /etc/udev/rules.d/60-vboxadd.rules                                 |
+| /etc/motd                                                          |
+| /etc/tmpfiles.d/                                                   |
+| /etc/inputrc                                                       |
+| /etc/sysctl.d/                                                     |
+| /etc/sysctl.d/99-sysctl.conf                                       |
+| /etc/hosts.deny                                                    |
+| /etc/dbus-1/                                                       |
+| /etc/dbus-1/system.conf                                            |
+| /etc/dbus-1/session.d/                                             |
+| /etc/dbus-1/session.conf                                           |
+| /etc/dbus-1/system.d/                                              |
+| /etc/dbus-1/system.d/com.redhat.tuned.conf                         |
+| /etc/dbus-1/system.d/FirewallD.conf                                |
+| /etc/dbus-1/system.d/org.freedesktop.NetworkManager.conf           |
+| /etc/dbus-1/system.d/nm-ifcfg-rh.conf                              |
+| /etc/dbus-1/system.d/nm-dispatcher.conf                            |
+| /etc/dbus-1/system.d/teamd.conf                                    |
+| /etc/dbus-1/system.d/wpa_supplicant.conf                           |
+| /etc/dbus-1/system.d/org.freedesktop.PolicyKit1.conf               |
+| /etc/dbus-1/system.d/org.freedesktop.timedate1.conf                |
+| /etc/dbus-1/system.d/org.freedesktop.systemd1.conf                 |
+| /etc/dbus-1/system.d/org.freedesktop.machine1.conf                 |
+| /etc/dbus-1/system.d/org.freedesktop.login1.conf                   |
+| /etc/dbus-1/system.d/org.freedesktop.locale1.conf                  |
+| /etc/dbus-1/system.d/org.freedesktop.import1.conf                  |
+| /etc/dbus-1/system.d/org.freedesktop.hostname1.conf                |
+| /etc/hosts.allow                                                   |
+| /etc/shadow-                                                       |
+| /etc/hosts                                                         |
+| /etc/passwd-                                                       |
+| /etc/host.conf                                                     |
+| /etc/rc.local                                                      |
+| /etc/gshadow                                                       |
+| /etc/systemd/                                                      |
+| /etc/systemd/user.conf                                             |
+| /etc/systemd/user/                                                 |
+| /etc/systemd/system.conf                                           |
+| /etc/systemd/system/                                               |
+| /etc/systemd/system/default.target                                 |
+| /etc/systemd/system/dev-virtio\x2dports-org.qemu.guest_agent.0.device.wants/ |
+| /etc/systemd/system/dev-virtio\x2dports-org.qemu.guest_agent.0.device.wants/qemu-guest-agent.service |
+| /etc/systemd/system/remote-fs.target.wants/                        |
+| /etc/systemd/system/remote-fs.target.wants/nfs-client.target       |
+| /etc/systemd/system/vmtoolsd.service.requires/                     |
+| /etc/systemd/system/vmtoolsd.service.requires/vgauthd.service      |
+| /etc/systemd/system/network-online.target.wants/                   |
+| /etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service |
+| /etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service     |
+| /etc/systemd/system/dbus-org.freedesktop.NetworkManager.service    |
+| /etc/systemd/system/local-fs.target.wants/                         |
+| /etc/systemd/system/local-fs.target.wants/rhel-readonly.service    |
+| /etc/systemd/system/basic.target.wants/                            |
+| /etc/systemd/system/basic.target.wants/rhel-dmesg.service          |
+| /etc/systemd/system/sysinit.target.wants/                          |
+| /etc/systemd/system/sysinit.target.wants/rhel-loadmodules.service  |
+| /etc/systemd/system/sysinit.target.wants/rhel-import-state.service |
+| /etc/systemd/system/sysinit.target.wants/rhel-domainname.service   |
+| /etc/systemd/system/sysinit.target.wants/rhel-autorelabel.service  |
+| /etc/systemd/system/sockets.target.wants/                          |
+| /etc/systemd/system/sockets.target.wants/rpcbind.socket            |
+| /etc/systemd/system/system-update.target.wants/                    |
+| /etc/systemd/system/system-update.target.wants/systemd-readahead-drop.service |
+| /etc/systemd/system/default.target.wants/                          |
+| /etc/systemd/system/default.target.wants/systemd-readahead-collect.service |
+| /etc/systemd/system/default.target.wants/systemd-readahead-replay.service |
+| /etc/systemd/system/getty.target.wants/                            |
+| /etc/systemd/system/getty.target.wants/getty@tty1.service          |
+| /etc/systemd/system/multi-user.target.wants/                       |
+| /etc/systemd/system/multi-user.target.wants/bacula-fd.service      |
+| /etc/systemd/system/multi-user.target.wants/vboxadd-service.service |
+| /etc/systemd/system/multi-user.target.wants/vboxadd.service        |
+| /etc/systemd/system/multi-user.target.wants/chronyd.service        |
+| /etc/systemd/system/multi-user.target.wants/auditd.service         |
+| /etc/systemd/system/multi-user.target.wants/postfix.service        |
+| /etc/systemd/system/multi-user.target.wants/sshd.service           |
+| /etc/systemd/system/multi-user.target.wants/nfs-client.target      |
+| /etc/systemd/system/multi-user.target.wants/irqbalance.service     |
+| /etc/systemd/system/multi-user.target.wants/rsyslog.service        |
+| /etc/systemd/system/multi-user.target.wants/tuned.service          |
+| /etc/systemd/system/multi-user.target.wants/vmtoolsd.service       |
+| /etc/systemd/system/multi-user.target.wants/NetworkManager.service |
+| /etc/systemd/system/multi-user.target.wants/crond.service          |
+| /etc/systemd/system/multi-user.target.wants/rhel-configure.service |
+| /etc/systemd/system/multi-user.target.wants/rpcbind.service        |
+| /etc/systemd/system/multi-user.target.wants/remote-fs.target       |
+| /etc/systemd/logind.conf                                           |
+| /etc/systemd/journald.conf                                         |
+| /etc/systemd/coredump.conf                                         |
+| /etc/systemd/bootchart.conf                                        |
+| /etc/group                                                         |
+| /etc/modules-load.d/                                               |
+| /etc/filesystems                                                   |
+| /etc/binfmt.d/                                                     |
+| /etc/exports                                                       |
+| /etc/rsyslog.d/                                                    |
+| /etc/rsyslog.d/listen.conf                                         |
+| /etc/environment                                                   |
+| /etc/modprobe.d/                                                   |
+| /etc/modprobe.d/nofloppy.conf                                      |
+| /etc/modprobe.d/lockd.conf                                         |
+| /etc/modprobe.d/tuned.conf                                         |
+| /etc/modprobe.d/firewalld-sysctls.conf                             |
+| /etc/modprobe.d/dccp-blacklist.conf                                |
+| /etc/csh.login                                                     |
+| /etc/gshadow-                                                      |
+| /etc/csh.cshrc                                                     |
+| /etc/group-                                                        |
+| /etc/bashrc                                                        |
+| /etc/dracut.conf.d/                                                |
+| /etc/dracut.conf.d/nofloppy.conf                                   |
+| /etc/dracut.conf.d/hyperv-drivers.conf                             |
+| /etc/dracut.conf.d/vmware-fusion-drivers.conf                      |
+| /etc/aliases                                                       |
+| /etc/depmod.d/                                                     |
+| /etc/depmod.d/vboxvideo-upstream.conf                              |
+| /etc/depmod.d/dist.conf                                            |
+| /etc/prelink.conf.d/                                               |
+| /etc/prelink.conf.d/grub2.conf                                     |
+| /etc/prelink.conf.d/fipscheck.conf                                 |
+| /etc/prelink.conf.d/nss-softokn-prelink.conf                       |
+| /etc/default/                                                      |
+| /etc/default/grub                                                  |
+| /etc/default/useradd                                               |
+| /etc/default/nss                                                   |
+| /etc/rc6.d                                                         |
+| /etc/.pwd.lock                                                     |
+| /etc/rc5.d                                                         |
+| /etc/dracut.conf                                                   |
+| /etc/rc4.d                                                         |
+| /etc/login.defs                                                    |
+| /etc/rc3.d                                                         |
+| /etc/GeoIP.conf.default                                            |
+| /etc/rc2.d                                                         |
+| /etc/GeoIP.conf                                                    |
+| /etc/rc1.d                                                         |
+| /etc/ssh/                                                          |
+| /etc/ssh/ssh_host_ed25519_key.pub                                  |
+| /etc/ssh/ssh_host_ed25519_key                                      |
+| /etc/ssh/ssh_host_ecdsa_key.pub                                    |
+| /etc/ssh/ssh_host_ecdsa_key                                        |
+| /etc/ssh/ssh_host_rsa_key.pub                                      |
+| /etc/ssh/ssh_host_rsa_key                                          |
+| /etc/ssh/ssh_config                                                |
+| /etc/ssh/sshd_config                                               |
+| /etc/ssh/moduli                                                    |
+| /etc/virc                                                          |
+| /etc/rc0.d                                                         |
+| /etc/idmapd.conf                                                   |
+| /etc/rc.d/                                                         |
+| /etc/rc.d/rc.local                                                 |
+| /etc/rc.d/rc6.d/                                                   |
+| /etc/rc.d/rc6.d/K50netconsole                                      |
+| /etc/rc.d/rc6.d/K90network                                         |
+| /etc/rc.d/rc5.d/                                                   |
+| /etc/rc.d/rc5.d/K50netconsole                                      |
+| /etc/rc.d/rc5.d/S10network                                         |
+| /etc/rc.d/rc4.d/                                                   |
+| /etc/rc.d/rc4.d/K50netconsole                                      |
+| /etc/rc.d/rc4.d/S10network                                         |
+| /etc/rc.d/rc3.d/                                                   |
+| /etc/rc.d/rc3.d/K50netconsole                                      |
+| /etc/rc.d/rc3.d/S10network                                         |
+| /etc/rc.d/rc2.d/                                                   |
+| /etc/rc.d/rc2.d/K50netconsole                                      |
+| /etc/rc.d/rc2.d/S10network                                         |
+| /etc/rc.d/rc1.d/                                                   |
+| /etc/rc.d/rc1.d/K50netconsole                                      |
+| /etc/rc.d/rc1.d/K90network                                         |
+| /etc/rc.d/rc0.d/                                                   |
+| /etc/rc.d/rc0.d/K50netconsole                                      |
+| /etc/rc.d/rc0.d/K90network                                         |
+| /etc/rc.d/init.d/                                                  |
+| /etc/rc.d/init.d/network                                           |
+| /etc/rpm/macros.perl                                               |
+| /etc/rpm/macros.dist                                               |
+| /etc/DIR_COLORS.lightbgcolor                                       |
+| /etc/crontab                                                       |
+| /etc/gcrypt/                                                       |
+| /etc/DIR_COLORS.256color                                           |
+| /etc/system-release-cpe                                            |
+| /etc/DIR_COLORS                                                    |
+| /etc/samba/                                                        |
+| /etc/samba/smb.conf.example                                        |
+| /etc/samba/smb.conf                                                |
+| /etc/samba/lmhosts                                                 |
+| /etc/krb5.conf.d/                                                  |
+| /etc/krb5.conf                                                     |
+| /etc/rwtab                                                         |
+| /etc/gss/                                                          |
+| /etc/gss/mech.d/                                                   |
+| /etc/gss/mech.d/gssproxy.conf                                      |
+| /etc/ssl/                                                          |
+| /etc/pkcs11/                                                       |
+| /etc/pkcs11/modules/                                               |
+| /etc/GREP_COLORS                                                   |
+| /etc/NetworkManager/                                               |
+| /etc/NetworkManager/system-connections/                            |
+| /etc/NetworkManager/dnsmasq.d/                                     |
+| /etc/NetworkManager/dnsmasq-shared.d/                              |
+| /etc/NetworkManager/conf.d/                                        |
+| /etc/NetworkManager/NetworkManager.conf                            |
+| /etc/NetworkManager/dispatcher.d/                                  |
+| /etc/rc.d/init.d/netconsole                                        |
+| /etc/rc.d/init.d/functions                                         |
+| /etc/rc.d/init.d/README                                            |
+| /etc/init.d                                                        |
+| /etc/libuser.conf                                                  |
+| /etc/chkconfig.d/                                                  |
+| /etc/alternatives/                                                 |
+| /etc/alternatives/libnssckbi.so.x86_64                             |
+| /etc/alternatives/libwbclient.so.0.14-64                           |
+| /etc/alternatives/mta-aliasesman                                   |
+| /etc/alternatives/mta-sendmailman                                  |
+| /etc/alternatives/mta-newaliasesman                                |
+| /etc/alternatives/mta-mailqman                                     |
+| /etc/alternatives/mta-sendmail                                     |
+| /etc/alternatives/mta-rmail                                        |
+| /etc/alternatives/mta-pam                                          |
+| /etc/alternatives/mta-newaliases                                   |
+| /etc/alternatives/mta-mailq                                        |
+| /etc/alternatives/mta                                              |
+| /etc/alternatives/cifs-idmap-plugin                                |
+| /etc/alternatives/ld                                               |
+| /etc/shells                                                        |
+| /etc/skel/                                                         |
+| /etc/skel/.bashrc                                                  |
+| /etc/skel/.bash_profile                                            |
+| /etc/skel/.bash_logout                                             |
+| /etc/terminfo/                                                     |
+| /etc/grub.d/                                                       |
+| /etc/grub.d/00_tuned                                               |
+| /etc/grub.d/README                                                 |
+| /etc/grub.d/41_custom                                              |
+| /etc/grub.d/40_custom                                              |
+| /etc/grub.d/30_os-prober                                           |
+| /etc/grub.d/20_ppc_terminfo                                        |
+| /etc/grub.d/20_linux_xen                                           |
+| /etc/grub.d/10_linux                                               |
+| /etc/grub.d/01_users                                               |
+| /etc/grub.d/00_header                                              |
+| /etc/resolv.conf                                                   |
+| /etc/mtab                                                          |
+| /etc/crypttab                                                      |
+| /etc/fstab                                                         |
++--------------------------------------------------------------------+
++-------+-----------------------------+---------------------+------+-------+----------+------------+-----------+
+| jobid | name                        | starttime           | type | level | jobfiles | jobbytes   | jobstatus |
++-------+-----------------------------+---------------------+------+-------+----------+------------+-----------+
+|     1 | bacula-client1: Full backup | 2019-03-31 21:30:00 | B    | F     |    2,414 | 31,060,143 | T         |
++-------+-----------------------------+---------------------+------+-------+----------+------------+-----------+
+*list files jobid=10
++---------------------+
+| filename            |
++---------------------+
+| /etc/selinux/       |
+| /etc/selinux/config |
+| /etc/test.config    |
+| /etc/               |
++---------------------+
++-------+-------------------------------------+---------------------+------+-------+----------+----------+-----------+
+| jobid | name                                | starttime           | type | level | jobfiles | jobbytes | jobstatus |
++-------+-------------------------------------+---------------------+------+-------+----------+----------+-----------+
+|    10 | bacula-client1: Differential backup | 2019-03-31 22:30:00 | B    | D     |        4 |      560 | T         |
++-------+-------------------------------------+---------------------+------+-------+----------+----------+-----------+
+*list files jobid=16
++-----------+
+| filename  |
++-----------+
+| /etc/motd |
+| /etc/     |
++-----------+
++-------+------------------------------------+---------------------+------+-------+----------+----------+-----------+
+| jobid | name                               | starttime           | type | level | jobfiles | jobbytes | jobstatus |
++-------+------------------------------------+---------------------+------+-------+----------+----------+-----------+
+|    16 | bacula-client1: Incremental backup | 2019-03-31 23:10:00 | B    | I     |        2 |        5 | T         |
++-------+------------------------------------+---------------------+------+-------+----------+----------+-----------+
+*restore
+
+First you select one or more JobIds that contain files
+to be restored. You will be presented several methods
+of specifying the JobIds. Then you will be allowed to
+select which files from those JobIds are to be restored.
+
+To select the JobIds, you have the following choices:
+     1: List last 20 Jobs run
+     2: List Jobs where a given File is saved
+     3: Enter list of comma separated JobIds to select
+     4: Enter SQL list command
+     5: Select the most recent backup for a client
+     6: Select backup for a client before a specified time
+     7: Enter a list of files to restore
+     8: Enter a list of files to restore before a specified time
+     9: Find the JobIds of the most recent backup for a client
+    10: Find the JobIds for a backup for a client before a specified time
+    11: Enter a list of directories to restore for found JobIds
+    12: Select full restore to a specified Job date
+    13: Cancel
+Select item:  (1-13): 5
+Defined Clients:
+     1: client1-fd
+     2: client2-fd
+     3: server-fd
+Select the Client (1-3): 1
+Automatically selected FileSet: etc
++-------+-------+----------+------------+---------------------+---------------+
+| jobid | level | jobfiles | jobbytes   | starttime           | volumename    |
++-------+-------+----------+------------+---------------------+---------------+
+|     3 | F     |    2,414 | 31,060,143 | 2019-03-31 21:30:03 | BackupVol0001 |
+|    23 | D     |        5 |        565 | 2019-04-01 00:00:00 | BackupVol0001 |
++-------+-------+----------+------------+---------------------+---------------+
+You have selected the following JobIds: 3,23
+
+Building directory tree for JobId(s) 3,23 ...  ++++++++++++++++++++++++++++++++++++++
+1,872 files inserted into the tree.
+
+You are now entering file selection mode where you add (mark) and
+remove (unmark) files to be restored. No files are initially added, unless
+you used the "all" keyword on the command line.
+Enter "done" to leave this mode.
+
+cwd is: /
+$ cd /etc
+cwd is: /etc/
+$ ls
+.pwd.lock
+.updated
+DIR_COLORS
+DIR_COLORS.256color
+DIR_COLORS.lightbgcolor
+GREP_COLORS
+GeoIP.conf
+GeoIP.conf.default
+NetworkManager/
+X11/
+adjtime
+aliases
+aliases.db
+alternatives/
+anacrontab
+audisp/
+audit/
+bacula/
+bash_completion.d/
+bashrc
+binfmt.d
+centos-release
+centos-release-upstream
+chkconfig.d
+chrony.conf
+chrony.keys
+cifs-utils/
+client-inited
+cron.d/
+cron.daily/
+cron.deny
+cron.hourly/
+cron.monthly
+cron.weekly
+crontab
+crypttab
+csh.cshrc
+csh.login
+dbus-1/
+default/
+depmod.d/
+dhcp/
+dracut.conf
+dracut.conf.d/
+e2fsck.conf
+environment
+ethertypes
+exports
+exports.d
+filesystems
+firewalld/
+fstab
+fuse.conf
+gcrypt
+gnupg
+groff/
+group
+group-
+grub.d/
+grub2.cfg
+gshadow
+gshadow-
+gss/
+gssproxy/
+host.conf
+hostname
+hosts
+hosts.allow
+hosts.deny
+idmapd.conf
+init.d
+inittab
+inputrc
+iproute2/
+issue
+issue.net
+kernel/
+krb5.conf
+krb5.conf.d
+ld.so.cache
+ld.so.conf
+ld.so.conf.d/
+libaudit.conf
+libnl/
+libuser.conf
+locale.conf
+localtime
+localtime.bak
+login.defs
+logrotate.conf
+logrotate.d/
+machine-id
+magic
+man_db.conf
+mke2fs.conf
+modprobe.d/
+modules-load.d
+motd
+mtab
+my.cnf
+my.cnf.d/
+netconfig
+networks
+nfs.conf
+nfsmount.conf
+nsswitch.conf
+nsswitch.conf.bak
+openldap/
+opt
+os-release
+pam.d/
+passwd
+passwd-
+pkcs11/
+pki/
+pm/
+polkit-1/
+popt.d
+postfix/
+ppp/
+prelink.conf.d/
+printcap
+profile
+profile.d/
+protocols
+python/
+qemu-ga/
+rc.d/
+rc.local
+rc0.d
+rc1.d
+rc2.d
+rc3.d
+rc4.d
+rc5.d
+rc6.d
+redhat-release
+request-key.conf
+request-key.d/
+resolv.conf
+rpc
+rpm/
+rsyncd.conf
+rsyslog.conf
+rsyslog.d/
+rwtab
+rwtab.d/
+samba/
+sasl2/
+securetty
+security/
+selinux/
+services
+sestatus.conf
+shadow
+shadow-
+shells
+skel/
+ssh/
+ssl/
+statetab
+statetab.d
+subgid
+subuid
+sudo-ldap.conf
+sudo.conf
+sudoers
+sudoers.d/
+sysconfig/
+sysctl.conf
+sysctl.d/
+system-release
+system-release-cpe
+systemd/
+terminfo
+test.config
+tmpfiles.d
+tuned/
+udev/
+vconsole.conf
+vimrc
+virc
+vmware-tools/
+wpa_supplicant/
+xdg/
+xinetd.d
+yum/
+yum.conf
+yum.repos.d/
+$ add *
+2,414 files marked.
+$ done
+Bootstrap records written to /var/spool/bacula/bacula-dir.restore.1.bsr
+
+The job will require the following
+   Volume(s)                 Storage(s)                SD Device(s)
+===========================================================================
+
+    BackupVol0001             File                      FileStorage
+
+Volumes marked with "*" are online.
+
+
+2,415 files selected to be restored.
+
+Run Restore job
+JobName:         bacula-client1: RestoreJob
+Bootstrap:       /var/spool/bacula/bacula-dir.restore.1.bsr
+Where:           /bacula/restore
+Replace:         always
+FileSet:         etc
+Backup Client:   client1-fd
+Restore Client:  client1-fd
+Storage:         File
+When:            2019-04-01 00:16:54
+Catalog:         MyCatalog
+Priority:        10
+Plugin Options:  *None*
+OK to run? (yes/mod/no): yes
+Job queued. JobId=26

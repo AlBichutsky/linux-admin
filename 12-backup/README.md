@@ -1,67 +1,62 @@
-Убедиться что в конфигурационном файле нет ошибок
-sudo bacula-dir -tc /etc/bacula/bacula-dir.conf
+# 12. Backup
+## Задание
+Настраиваем бэкапы.
+Настроить стенд Vagrant с двумя виртуальными машинами server и client.
 
-У юзера bacula пароль в бд bacula в postgres : cat /var/spool/bacula/.pgpass
-NTUxZmM4NDg2MTNlYjdmZTU1Zjc2NzVjO
+Настроить политику бэкапа директории /etc с клиента:
+1) Полный бэкап - раз в день.
+2) Инкрементальный - каждые 10 минут.
+3) Дифференциальный - каждые 30 минут.
 
-Проверить подключениек бакула:
-psql -h 127.0.0.1 -U bacula
+Запустить систему на два часа. Для сдачи ДЗ приложить list jobs, list files jobid=<id>
+и сами конфиги bacula-*
 
+* Настроить доп. опции - сжатие, шифрование, дедупликация.
 
-Настройки postgres: /var/lib/pgsql/data/pg_hba.conf
+## Приложены файлы:
+- [Vagrantfile](Vagrantfile)
+- Конфиги bacula:
+  - [bacula-dir.conf](bacula-dir.conf)
+  - [bacula-sd.conf](bacula-sd.conf)
+  - [bacula-fd.conf](bacula-fd.conf)
+  - [bconsole.conf](bconsole.conf)
+- Лог bconsole с выводом команд:
+  - [bconsole.log](bconsole.log)
 
-Пароль консоли bconsole: 
-bconsole.conf NTQ5ZDNjNzU2MjAzYzZiMzlmNGQwODBkZ
+## Инструкция по запуску тестового стенда (задание без *)
 
-Перед настройкой bacula-director необходимо указать используемую БД:
-alternatives --config libbaccats.so
+1. С помощью [Vagrantfile](Vagrantfile) развернуть тестовые хосты:
+- bacula-server  (имя для ssh-подключения: server).  
+- bacula-client1 (имя для ssh-подключения: client1). Бэкапится каталог /etc.
+- bacula-client2 (имя для ssh-подключения: client2). Бэкапирование не настроено.
 
-Конфиг etc/bacula/bacula-dir.conf
+2. После разворачивания хостов необходимо авторизоваться на сервере bacula:
+```
+vagrant ssh
+```
+Cкопировать пароль пользователя bacula БД postgres из файла .pgpass:
 
-# указываем LabelFormat
-# File Pool definition
-Pool {
-  Name = File
-  Pool Type = Backup
-  Recycle = yes                       # Bacula can automatically recycle Volumes
-  AutoPrune = yes                     # Prune expired volumes
-  Volume Retention = 365 days         # one year
-  Maximum Volume Bytes = 50G          # Limit Volume size to something reasonable
-  Maximum Volumes = 100               # Limit number of Volumes in Pool
-  # Добавляем LabelFormat
-  LabelFormat = "BackupVol"
-}
-
-# Для успешного подключения к БД:
+```
+$ cat /var/spool/bacula/.pgpass 
+localhost:5432:bacula:bacula:YjJhMDk2ODI4ZjUwOTI0Y2NmMTE0N2ZiY
+```
+И заменить его в строчке `password = ` секции `Generic catalog service` файла bacula-dir.conf. Пример:
+```
+$ cat /etc/bacula/bacula-dir.conf
+...
 # Generic catalog service
 Catalog {
   Name = MyCatalog
-  dbname = "bacula"; DB Address = "127.0.0.1"; dbuser = "bacula"; password = "NTUxZmM4NDg2MTNlYjdmZTU1Zjc2NzVjO"
+  dbname = "bacula"; DB Address = "127.0.0.1"; dbuser = "bacula"; password = "YjJhMDk2ODI4ZjUwOTI0Y2NmMTE0N2ZiY"
 }
-
-Конфиг etc/bacula/bacula-sd.conf
-Storage {                             # definition of myself
-  Name = bacula-sd
-  SDPort = 9103                  # Director's port
-  WorkingDirectory = /var/spool/bacula
-  Pid Directory = /var/run
-  Maximum Concurrent Jobs = 20
-  # Настройка Storage Daemon
-  SDAddress = 192.168.111.10
-}
-
-
-Перезапуск служб:
-
-systemctl restart bacula-sd
-systemctl restart bacula-dir
-
-sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
-
-# Отключим временно файервол, после установки включим обратно:
-systemctl stop firewalld
-
-# Синхронизируем время и установим часовой пояс Москвы:
-# ntpdate 1.ru.pool.ntp.org
-mv /etc/localtime /etc/localtime.bak
-ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+...
+```
+После этого можно запустить консоль bacula:
+```
+$ bconsole
+```
+и попробовать подключиться к БД posgres от имени пользователя bacula (пароль из файла .pgpass):
+```
+$ psql -h 127.0.0.1 -U bacula
+```
+Selinux и firewalld отключен для тестирования.
