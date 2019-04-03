@@ -56,12 +56,5 @@ Storage {                             # definition of myself
 systemctl restart bacula-sd
 systemctl restart bacula-dir
 
-sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
 
-# Отключим временно файервол, после установки включим обратно:
-systemctl stop firewalld
 
-# Синхронизируем время и установим часовой пояс Москвы:
-# ntpdate 1.ru.pool.ntp.org
-mv /etc/localtime /etc/localtime.bak
-ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
