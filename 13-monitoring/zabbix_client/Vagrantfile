@@ -16,12 +16,21 @@ config.vbguest.auto_update = false
      
 mkdir -p ~root/.ssh
 cp ~vagrant/.ssh/auth* ~root/.ssh
+hostnamectl set-hostname host1
 sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
 mv /etc/localtime /etc/localtime.bak
 ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+#firewall-cmd --permanent --new-service=zabbix
+#firewall-cmd --permanent --service=zabbix --add-port=10050/tcp
+#firewall-cmd --permanent --service=zabbix --set-short="Zabbix Agent"
+#firewall-cmd --permanent --add-service=zabbix
+#firewall-cmd --reload
 rpm -i https://repo.zabbix.com/zabbix/4.2/rhel/7/x86_64/zabbix-release-4.2-1.el7.noarch.rpm
 yum makecache
 yum install -y zabbix-agent
-   SHELL
+systemctl enable zabbix-agent
+systemctl start zabbix-agent
+systemctl status zabbix-agent
+SHELL
 end
 
