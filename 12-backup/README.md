@@ -52,15 +52,11 @@ $ cat /etc/bacula/bacula-dir.conf
 # Generic catalog service
 Catalog {
   Name = MyCatalog
-  dbname = "bacula"; DB Address = "127.0.0.1"; dbuser = "bacula"; password = "YjJhMDk2ODI4ZjUwOTI0Y2NmMTE0N2ZiY"
+  dbname = "bacula"; DB Address = "127.0.0.1"; dbuser = "bacula"; password = "password"
 }
 ...
 ```
-<<<<<<< HEAD
 Запустить консоль bacula:
-=======
-3. Опционально, для проверки можно войти в консоль bacula:
->>>>>>> 51b362872a94694cd896537d6dd969df59842df8
 ```
 $ bconsole
 ```
