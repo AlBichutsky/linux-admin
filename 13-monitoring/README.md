@@ -22,6 +22,10 @@
 
 ## Приложены файлы:
 - [Vagrantfile для первичной настройки сервера Zabbix](Vagrantfile)
+<<<<<<< HEAD
 - [Vagrantfile для развертывания клиента Zabbix](zabbix_client/Vagrantfile)
+=======
+- [Vagrantfile для развертывания клиента Zabbix](/13-monitoring/zabbix_client/Vagrantfile)
+>>>>>>> 8d2f453fab79c5ad0c6e184c319e6ec919a3d66d
 - [Скриншот дашборда](zabbix_screenshot.png)
 - [Инструкция по настройке Zabbix](install_zabbix.md)
