@@ -20,7 +20,7 @@
   - [bacula-sd.conf](bacula-sd.conf)
   - [bacula-fd.conf](bacula-fd.conf)
   - [bconsole.conf](bconsole.conf)
-- Лог bconsole с выводом команд:
+- Лог bconsole с выводом команд list jobs и т.д.:
   - [bconsole.log](bconsole.log)
 
 ## Инструкция по запуску тестового стенда (задание без *)
@@ -56,7 +56,11 @@ Catalog {
 }
 ...
 ```
+<<<<<<< HEAD
 Запустить консоль bacula:
+=======
+3. Опционально, для проверки можно войти в консоль bacula:
+>>>>>>> 51b362872a94694cd896537d6dd969df59842df8
 ```
 $ bconsole
 ```
