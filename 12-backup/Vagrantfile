@@ -34,7 +34,8 @@ Vagrant.configure(2) do |config|
          postgresql-setup initdb
          sed -i "s/local   all             all                                     peer/local   all             all                                     peer\\nhost    bacula          bacula          127.0.0.1\\/32            md5\\nhost    bacula          bacula          ::1\\/128                 md5/" /var/lib/pgsql/data/pg_hba.conf
          systemctl restart postgresql
-         PG_BACULA_PASSWORD=`date +%s | sha256sum | base64 | head -c 33`
+         #PG_BACULA_PASSWORD=`date +%s | sha256sum | base64 | head -c 33`
+         PG_BACULA_PASSWORD="password"
          su - postgres <<EOF
 /usr/libexec/bacula/create_postgresql_database
 /usr/libexec/bacula/make_postgresql_tables
