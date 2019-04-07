@@ -28,9 +28,16 @@ ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 rpm -i https://repo.zabbix.com/zabbix/4.2/rhel/7/x86_64/zabbix-release-4.2-1.el7.noarch.rpm
 yum makecache
 yum install -y zabbix-agent
+# Закомментируем старые параметры:
+sed -i '98s/^/#/' /etc/zabbix/zabbix_agentd.conf
+sed -i '139s/^/#/' /etc/zabbix/zabbix_agentd.conf
+sed -i '150s/^/#/' /etc/zabbix/zabbix_agentd.conf
+# Добавим новые параметры:
+sed -i '99i Server=192.168.33.14' /etc/zabbix/zabbix_agentd.conf
+sed -i '140i ServerActive=192.168.33.14' /etc/zabbix/zabbix_agentd.conf
+sed -i '151i Hostname=host1' /etc/zabbix/zabbix_agentd.conf
+systemctl restart zabbix-agent
 systemctl enable zabbix-agent
-systemctl start zabbix-agent
-systemctl status zabbix-agent
 SHELL
 end
 
