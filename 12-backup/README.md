@@ -33,8 +33,12 @@
 2. После разворачивания хостов необходимо авторизоваться на сервере bacula:
 ```
 vagrant ssh
+sudo su
 ```
-
+Перейти в консоль bacula:
+```
+bconsole
+```
 ## Доп.информация
 
 Selinux и firewalld отключены для тестирования.
@@ -55,10 +59,6 @@ Catalog {
   dbname = "bacula"; DB Address = "127.0.0.1"; dbuser = "bacula"; password = "password"
 }
 ...
-```
-Запустить консоль bacula:
-```
-$ bconsole
 ```
 Для проверки подключения к БД posgres от имени пользователя bacula с паролем из файла .pgpass выполнить:
 ```
