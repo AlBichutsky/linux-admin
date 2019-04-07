@@ -34,13 +34,18 @@
 ```
 vagrant ssh
 ```
-Cкопировать пароль пользователя bacula БД postgres из файла .pgpass:
+
+## Доп.информация
+
+Selinux и firewalld отключены для тестирования.
+
+Пароль пользователя bacula БД postgres хранится в файле `.pgpass`:
 
 ```
 $ cat /var/spool/bacula/.pgpass 
-localhost:5432:bacula:bacula:YjJhMDk2ODI4ZjUwOTI0Y2NmMTE0N2ZiY
+localhost:5432:bacula:bacula:password
 ```
-И заменить его в строчке `password = ` секции `Generic catalog service` файла bacula-dir.conf. Пример:
+Настройки подключения к БД хранятся в секции `Generic catalog service` файла bacula-dir.conf:
 ```
 $ cat /etc/bacula/bacula-dir.conf
 ...
@@ -51,12 +56,11 @@ Catalog {
 }
 ...
 ```
-3. Для проверки войти в консоль bacula:
+Запустить консоль bacula:
 ```
 $ bconsole
 ```
-Для отладки можно попробовать подключиться к БД posgres от имени пользователя bacula (пароль из файла .pgpass):
+Для проверки подключения к БД posgres от имени пользователя bacula с паролем из файла .pgpass выполнить:
 ```
 $ psql -h 127.0.0.1 -U bacula
 ```
-Selinux и firewalld отключены для тестирования.
