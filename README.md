@@ -10,4 +10,6 @@
 * [9.ansible](09-ansible/)
 * [10.pam](10-pam/)
 * [11.ldap](11-ldap/)
+* [12.backup(bacula)](12-backup/)
+* [13.monitoring](13-monitoring/)
 
