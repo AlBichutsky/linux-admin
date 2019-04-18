@@ -45,9 +45,8 @@ Vagrant.configure(2) do |config|
         mv /etc/rsyslog.conf /etc/rsyslog.conf.bak
         cp /vagrant/rsyslog-server-config/rsyslog.conf /etc/
         
-        # Для наглядности удалим файлы в /var/log на rsyslog-сервере. 
+        # Для удобства удалим файлы в /var/log на rsyslog-сервере. 
         # Логи сервера и клиента будут собираться на сервере в папке /var/log/%hostname% 
-        # Соответственно, логи сервера будут храниться в папке log, клиента в папке web.
         rm -f /var/log/* 
 
         #######################################
@@ -94,8 +93,7 @@ Vagrant.configure(2) do |config|
       cp /vagrant/nginx-client-config/nginx.conf /etc/nginx/
       
       # Перезапускаем nginx
-      systemctl start nginx 
-      systemctl enable nginx
+      systemctl restart nginx 
      
       ########################################
       #         Настройка rsyslog-клиента    # 
