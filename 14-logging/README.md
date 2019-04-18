@@ -62,7 +62,7 @@ $ vagrant up
 $ vagrant ssh web
 $ sudo su
 ```
-2. Открыть на редактирование конфиг `/etc/rsyslog.conf`:
+2. Открыть для редактирования файл `/etc/rsyslog.conf`:
 ```
 vi /etc/rsyslog.conf
 ```
