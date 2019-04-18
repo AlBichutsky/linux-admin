@@ -1,0 +1,134 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+   config.vm.box = "centos/7"
+   config.vm.box_check_update = false
+   #config.vm.network "forwarded_port", guest: 80, host: 8080
+   #config.vm.synced_folder ".", "/vagrant"
+ 
+   config.vm.provision "shell", inline: <<-SHELL
+     # Общая настройка для всех поднимаемых хостов
+     set -x
+     # На всех поднятых виртуальных машинах установим московский часовой пояс и отключим SELINUX.
+     mv /etc/localtime /etc/localtime.bak
+     ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+     systemctl stop firewalld
+     systemctl disable firewalld
+     #yum update -y && yum upgrade -y
+   SHELL
+ 
+   config.vm.define "log", primary: true do |s|
+     s.vm.hostname = 'log'
+     s.vm.network "private_network", ip: "192.168.111.10"
+     s.vm.provision "shell", inline: <<-SHELL
+        
+        # Отключаем или настраиваем selinux
+        # semanage -a -t syslogd_port_t -p udp 514
+        sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+
+        # Открываем порты для rsyslog-сервера
+        # Set firewall-rules
+        # sudo firewall-cmd --permanent --add-port=514/udp
+        # sudo firewall-cmd --permanent --add-port=514/tcp
+        # sudo firewall-cmd --reload
+        
+        # Настриваем резволвинг ip-адресов в /etc/hosts 
+        echo -e "192.168.111.10 log" >> /etc/hosts
+        echo -e "192.168.111.12 web" >> /etc/hosts
+
+        ########################################
+        #        Настройка rsyslog-сервера     # 
+        ########################################
+
+        # Скопируем отредактированный конфиг syslog.conf для rsyslog-сервера
+        mv /etc/rsyslog.conf /etc/rsyslog.conf.bak
+        cp /vagrant/rsyslog-server-config/rsyslog.conf /etc/
+        
+        # Для наглядности удалим файлы в /var/log на rsyslog-сервере. 
+        # Логи сервера и клиента будут собираться на сервере в папке /var/log/%hostname% 
+        # Соответственно, логи сервера будут храниться в папке log, клиента в папке web.
+        rm -f /var/log/* 
+
+        #######################################
+        #       Настройка auditd-сервера      # 
+        #######################################
+
+        # Скопируем отредактированный конфиг auditd.conf для auditd-сервера
+        mv /etc/audit/auditd.conf /etc/audit/auditd.conf.bak
+        cp /vagrant/auditd-server-config/auditd.conf /etc/audit/
+
+        # Перезапускаем rsyslog-сервер и auditd
+        systemctl restart rsyslog
+        service auditd restart
+  
+     SHELL
+   end
+ 
+   config.vm.define "web" do |c|
+      c.vm.hostname = 'web'
+      c.vm.network "private_network", ip: "192.168.111.12"
+      c.vm.provision "shell", inline: <<-SHELL
+
+      # Отключаем или настраиваем selinux
+      sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+
+      # Настриваем резволвинг ip-адресов в /etc/hosts 
+      echo -e "192.168.111.10 log" >> /etc/hosts
+      echo -e "192.168.111.12 web" >> /etc/hosts
+
+      ########################################
+      #            Установка nginx           # 
+      ########################################
+
+      # Устанавливаем EPEL-repo
+      yum -y install epel-release
+
+      # Устанавливаем nginx и сохраняем его старый конфиг
+      yum install -y nginx
+      mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+      systemctl start nginx
+      systemctl enable nginx
+      
+      # Скопируем отредактированный конфиг для nginx
+      cp /vagrant/nginx-client-config/nginx.conf /etc/nginx/
+      
+      # Перезапускаем nginx
+      systemctl start nginx 
+      systemctl enable nginx
+     
+      ########################################
+      #         Настройка rsyslog-клиента    # 
+      ########################################
+
+      # Копируем отредактированный конфиг syslog.conf для rsyslog-клиента
+      mv /etc/rsyslog.conf /etc/rsyslog.conf.bak
+      cp /vagrant/rsyslog-client-config/rsyslog.conf /etc/
+  
+      ########################################
+      #         Настройка auditd-клиента     # 
+      ########################################
+
+      # Устанавливаем плагин для auditd для возможности отправки логов на удаленный сервер
+      yum -y install audispd-plugins
+
+      #Скопируем отредактированные конфиги для auditd-клиента (основной конфиг и правило мониторинга конфигурационного файла nginx.conf)
+      mv /etc/audit/auditd.conf /etc/audit/auditd.bak
+      cp /vagrant/auditd-client-config/auditd.conf /etc/audit/
+      cp /vagrant/auditd-client-config/nginx.rules /etc/audit/rules.d/
+
+      # Скопируем отредактированные конфиги для плагина audispd
+      mv /etc/audisp/plugins.d/au-remote.conf /etc/audisp/plugins.d/au-remote.conf.bak
+      mv /etc/audisp/audisp-remote.conf /etc/audisp/audisp-remote.conf.bak
+      cp /vagrant/auditd-client-config/au-remote.conf /etc/audisp/plugins.d/
+      cp /vagrant/auditd-client-config/audisp-remote.conf /etc/audisp/
+
+      # Перезапускаем rsyslog-клиент, nginx, auditd
+      systemctl restart rsyslog
+      systemctl restart nginx
+      service auditd restart
+
+     SHELL
+   end
+
+ end
