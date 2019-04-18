@@ -12,4 +12,5 @@
 * [11.ldap](11-ldap/)
 * [12.backup(bacula)](12-backup/)
 * [13.monitoring](13-monitoring/)
+* [14.logging](14-logging/)
 
