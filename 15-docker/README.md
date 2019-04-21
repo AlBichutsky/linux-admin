@@ -68,5 +68,5 @@ http://172.17.0.2/
 
 ## Дополнительно:
 - [Vagrantfile](Vagrantfile)
-- [Dockerfile](15-docker/alpine/nginx/Dockerfile) 
+- [Dockerfile](/15-docker/alpine/nginx/Dockerfile) 
 - [Cheatsheet по установке docker](Docker.md)
