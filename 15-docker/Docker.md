@@ -104,7 +104,3 @@ latest: digest: sha256:732a455febaa55227421080fdf4858170266b11e261c6eecf4962c893
 Скачать docker образ:
 ```
 docker pull abichutsky/alpine-nginx
-
-## Дополнительно:
-- (Vagrant)[Vagrant]
-- (cheatsheet по установке docker)[Docker.md]
