@@ -56,10 +56,14 @@
 
 https://cloud.docker.com/u/abichutsky/repository/docker/abichutsky/alpine-nginx
 
-Для загрузки образа и запуска контейнера выполнить:
+Для запуска контейнера выполнить:
 ```
 docker pull abichutsky/alpine-nginx
 docker run -it abichutsky/alpine-nginx
+```
+Открыть стартовую страницу nginx в бразуере:
+```
+http://172.17.0.2/
 ```
 
 ## Дополнительно:
