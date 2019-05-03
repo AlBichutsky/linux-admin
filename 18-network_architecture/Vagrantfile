@@ -103,7 +103,7 @@ Vagrant.configure("2") do |config|
 			sysctl -p
 			# Включить NAT (выход в интернет через интерфейс Vagrant - eth0)
 			iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
-			# Прописываем роутинг, чтобы пакеты, предназначенные внутренним ip-адресам (а не внешним ip) направлялись от inetRouter к centraRouter (через шлюз  192.168.255.2) 
+			# Прописываем роутинг, чтобы пакеты, предназначенные внутренним ip-адресам направлялись от inetRouter к centraRouter (через шлюз  192.168.255.2) 
 			# и далее уже разруливались с помощью таблицы маршрутизации CentralRouter
 			echo "192.168.0.0/16 via 192.168.255.2" >  /etc/sysconfig/network-scripts/route-eth1
 			# Перезапустить сеть
@@ -111,10 +111,9 @@ Vagrant.configure("2") do |config|
 			SHELL
 		when "centralRouter"
 			box.vm.provision "shell", inline: <<-SHELL
-			# Включить форвардинг пакетов (параметры в файле 99-override.conf перекрывают остальные)
-			# Либо указываем как на других хостах через файл /etc/sysctl.conf
-			echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.d/99-override.conf
-			sysctl --system
+			# Включить форвардинг пакетов
+			echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf
+			sysctl -p
 			# Отключаем default gateway для интерфейса eth0 (Vagrant), чтобы пакеты не ходили в интернет через nat Vagrant
 			echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
 			# Указываем шлюз по умолчанию для интерфейса eth1
@@ -184,7 +183,7 @@ Vagrant.configure("2") do |config|
 		end
 		 box.vm.provision "shell", inline: <<-SHELL
 		# после поднятия каждого хоста в конце выполнить контрольный перезапуск сети, чтобы пофиксить проблему,
-		# связанную с недоступностью серверов (приходилось перезапускать сеть вручную)
+		# связанную с недоступностью серверов (приходилось перезапускать сеть на отдельных хостах вручную)
 		/etc/init.d/network restart
         SHELL
 
