@@ -61,7 +61,7 @@ ns02            IN      A       192.168.50.11
 web1            IN      A       192.168.50.15
 web2            IN      A       192.168.50.16
 ```
-Проверка на основном DNS-сервере разрешения имен web1, web2
+Проверка на основном DNS-сервере резолвинга имен `web1`, `web2`
 ```
 [root@ns01 vagrant]# nslookup web1
 Server:         192.168.50.10
@@ -79,7 +79,7 @@ Address: 192.168.50.16
 ```
 
 ### Зона `newdns.lab`
-- запись www смотрит на client1 и client2 
+- запись `www` смотрит на client1 и client2 
 (реализована простая round robin DNS-балансировка):
 ```
 $TTL 3600
@@ -103,7 +103,7 @@ web           30s     IN      A       192.168.50.15
 web           30s     IN      A       192.168.50.16
 www                   IN      CNAME   web.newdns.lab.
 ```
-Проверка на вторичном DNS-сервере разрешения имени www
+Проверка на вторичном DNS-сервере резолвинга имени `www`
 ```
 [root@ns02 vagrant]# dig www.newdns.lab +short
 web.newdns.lab.
@@ -126,13 +126,13 @@ web.newdns.lab.
 - клиент1 - видит обе зоны (`dns.lab` и `newdns.lab`), но в зоне `dns.lab` только `web1`;
 - клиент2 - видит только `dns.lab`;
 
-split-dns реализован через представления (view), прописанные в `/etc/named.conf` на master и slave серверах (см. master-named.conf и slave-named.conf):
+split-dns реализован через представления (view) в `/etc/named.conf` на master- и slave-сервере (см. `master-named.conf` и `slave-named.conf`):
 - client1;
 - client2;
 - internal_subnet;
 
 ### Проверка split-dns
-- Проверка на клиенте1 разрешения имен web1, web2 (не должен разрешать), www
+Проверка на клиенте1 резолвинга имен `web1`, `web2` (не должен разрешать), `www`
 ```
 [root@client vagrant]# nslookup web1
 Server:         192.168.50.10
@@ -157,7 +157,7 @@ Address: 192.168.50.15
 Name:   web.newdns.lab
 Address: 192.168.50.16
 ```
-- Проверка на клиенте2 разрешения имен web1, web2, www (не должен разрешать)
+Проверка на клиенте2 резолвинга имен `web1`, `web2`, `www` (не должен разрешать)
 ```
 [root@client2 vagrant]# nslookup web1
 Server:         192.168.50.10
