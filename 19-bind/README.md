@@ -1,8 +1,6 @@
 # 19. BIND
 ## Задание
 
-### Настраиваем split-dns
-
 Взять стенд https://github.com/erlong15/vagrant-bind
 
 Добавить еще один сервер client2.
