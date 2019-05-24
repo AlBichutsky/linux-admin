@@ -1,0 +1,60 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Disable SELinux
+    shell: setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+  - name: Disable default route on eth0 (Vagrant interface)
+    shell: echo -e "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  - name: Disable rp_filter on all interfaces for ospf routing
+    shell: echo -e "net.ipv4.conf.all.rp_filter=0" >> /etc/sysctl.conf && sysctl -p
+  - name: Enable forwarding packets
+    shell: echo -e "net.ipv4.ip_forward=1\n#" >> /etc/sysctl.conf && sysctl -p
+  - name: Install packages
+    yum: name={{ item }} state=latest 
+    with_items:
+      - quagga
+      - net-tools
+      - traceroute
+
+- hosts: abr1
+  become: yes
+  tasks:
+   - name: Copy zebra.conf to abr1
+     copy: src=zebra1.conf dest=/etc/quagga/zebra.conf owner=quagga group=quagga mode=0644
+   - name: Copy ospdf.conf to abr1
+     copy: src=ospfd1.conf dest=/etc/quagga/ospfd.conf owner=quagga group=quagga mode=0644
+   - name: Ensure quagga is running and enabled
+     service: name=zebra.service state=restarted enabled=yes
+   - name: Ensure ospfd is running and enabled
+     service: name=ospfd state=restarted enabled=yes
+
+- hosts: abr2
+  become: yes
+  tasks:
+   - name: Copy zebra.conf to abr2
+     copy: src=zebra2.conf dest=/etc/quagga/zebra.conf owner=quagga group=quagga mode=0644
+   - name: Copy ospdf.conf to abr2
+     copy: src=ospfd2.conf dest=/etc/quagga/ospfd.conf owner=quagga group=quagga mode=0644
+   - name: Restart network
+     service: name=network state=restarted
+   - name: Ensure quagga is running and enabled
+     service: name=zebra.service state=restarted enabled=yes
+   - name: Ensure ospfd is running and enabled
+     service: name=ospfd state=restarted enabled=yes
+      
+- hosts: abr3
+  become: yes
+  tasks:
+   - name: Copy zebra.conf to abr3
+     copy: src=zebra3.conf dest=/etc/quagga/zebra.conf owner=quagga group=quagga mode=0644
+   - name: Copy ospdf.conf to abr3
+     copy: src=ospfd3.conf dest=/etc/quagga/ospfd.conf owner=quagga group=quagga mode=0644
+   - name: Restart network
+     service: name=network state=restarted
+   - name: Ensure quagga is running and enabled
+     service: name=zebra.service state=restarted enabled=yes
+   - name: Ensure ospfd is running and enabled
+     service: name=ospfd state=restarted enabled=yes
+
+
