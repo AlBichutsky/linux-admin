@@ -14,9 +14,9 @@ MACHINES = {
 :inetRouter2 => {
 	:box_name => "centos/6",
 	# добавляем public-интерфейс, чтобы хостовая машина видела inetRouter2
-	:public => {:ip => '192.168.50.10', :adapter => 3},
+	:public => {:ip => '192.168.50.3', :adapter => 3},
 	:net => [
-			   {ip: '192.168.252.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+			   {ip: '192.168.252.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net2"},
 			]
 },
 :centralRouter => {
@@ -28,7 +28,7 @@ MACHINES = {
                    {ip: '192.168.0.1', adapter: 5, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
                    {ip: '192.168.0.33', adapter: 6, netmask: "255.255.255.240", virtualbox__intnet: "hw-net"},
 				   {ip: '192.168.0.65', adapter: 7, netmask: "255.255.255.192", virtualbox__intnet: "wi-fi-net"},
-				   {ip: '192.168.252.2', adapter: 8, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+				   {ip: '192.168.252.2', adapter: 8, netmask: "255.255.255.252", virtualbox__intnet: "router-net2"},
                 ]
   },
   
@@ -73,12 +73,13 @@ Vagrant.configure("2") do |config|
 		case boxname.to_s
 		when "inetRouter"
 			box.vm.provision "shell", inline: <<-SHELL
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config 
 			# Включить форвардинг пакетов
 			echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf
 			sysctl -p
 			# Прописываем роутинг, чтобы пакеты, предназначенные внутренним ip-адресам направлялись от inetRouter к centraRouter (через шлюз  192.168.255.2) 
 			# и далее уже разруливались с помощью таблицы маршрутизации CentralRouter
-			echo "192.168.0.0/16 via 192.168.255.2" >  /etc/sysconfig/network-scripts/route-eth1
+			echo "192.168.0.0/16 via 192.168.255.2" > /etc/sysconfig/network-scripts/route-eth1
 			# Перезапустить сеть
 			service network restart
 			# Нам необходимо запретить доступ по ssh всем, кроме тех, кто знает «как правильно постучаться». 
@@ -93,19 +94,21 @@ Vagrant.configure("2") do |config|
 			SHELL
 		when "inetRouter2"
 			box.vm.provision "shell", inline: <<-SHELL
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
 			# Включить форвардинг пакетов
 			echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf
 			sysctl -p
-			# Прописываем роутинг, чтобы пакеты, предназначенные внутренним ip-адресам направлялись от inetRouter2 к centraRouter (через шлюз  192.168.255.2) 
+			# Прописываем роутинг, чтобы пакеты, предназначенные внутренним ip-адресам направлялись от inetRouter2 к centraRouter (через шлюз  192.168.252.2) 
 			# и далее уже разруливались с помощью таблицы маршрутизации CentralRouter
-			# echo "192.168.0.0/16 via 192.168.252.2" >  /etc/sysconfig/network-scripts/route-eth1
-			Перезапустить сеть
+			echo "192.168.0.0/24 via 192.168.252.2" >  /etc/sysconfig/network-scripts/route-eth1
+			# Перезапустить сеть
 			service network restart
 			#chmod +x /vagrant/iptables_rules_inetRouter2.sh
 			#bash /vagrant/iptables_rules_inetRouter2.sh
 			SHELL
 		when "centralRouter"
 			box.vm.provision "shell", inline: <<-SHELL
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
 			# Устанавливаем nmap для работы скрипта knock.sh
 			yum install -y nmap
 			# Включить форвардинг пакетов
@@ -127,6 +130,7 @@ Vagrant.configure("2") do |config|
 			SHELL
 		when "centralServer"
 			box.vm.provision "shell", inline: <<-SHELL
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
 			# Удаляем маршрут из таблицы маршрутизации для интерфейса eth0 (Vagrant), чтобы исключить отправку пакетов на него
 			# ip route del default via 10.0.2.2 dev eth0
 			# Устанавливаем nginx 

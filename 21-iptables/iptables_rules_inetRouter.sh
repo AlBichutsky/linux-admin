@@ -25,4 +25,5 @@ iptables -t filter -A SSH-INPUTTWO -m recent --name SSH2 --set -j DROP
 iptables -t filter -A TRAFFIC -j DROP
 # Сохраняем правила
 service iptables save
+
 # end

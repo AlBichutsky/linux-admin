@@ -20,7 +20,7 @@
 vagrant up
 ```
 #### Схема тестового стенда
-![alt text](network.png)
+![alt text](plan_network_iptables.png)
 
 ###  1.Реализовать knocking port: centralRouter может попасть на ssh inetRouter через knock скрипт
 
@@ -97,21 +97,21 @@ rtt min/avg/max/mdev = 0.138/0.181/0.205/0.032 ms
 
 Применены правила iptables на inetRouter2:
 ```bash
-# Проброс http c inet
+# Проброс http c интерфейса eth0 (inet)
 
-# все что приходит на адрес 10.0.2.15 (inet) по 80 порту будет пересылаться на адрес 192.168.0.2 через destination NAT
+# все что приходит на адрес 10.0.2.15 (inet) на порт 8080 будет пересылаться на адрес 192.168.0.2 через destination NAT
 iptables -t nat -A PREROUTING --dst 10.0.2.15 -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
 # Разрешаем проходящие соединения в цепочке FORWARD.
-# После прохождения цепочки PREROUTING пакет c интерфейса eth0 (inet) будет направлен на маршрутизацию через eth1 (192.168.254.1) до 192.168.0.2
+# После прохождения цепочки PREROUTING пакет c интерфейса eth0 (inet) будет отправлен через eth1 (192.168.254.1) до 192.168.0.2
 iptables -I FORWARD 1 -i eth0 -o eth1 -d 192.168.0.2 -p tcp -m tcp --dport 8080 -j ACCEPT
 
-# Проброс http c public для проверки
+# Проброс http c интерфейса eth4 (public) для проверки
 
-# все что приходит на public ip 192.168.50.10 по 80 порту будет пересылаться на адрес 192.168.0.2 через destination NAT
+# все что приходит на public ip 192.168.50.10 на порт 80 будет пересылаться на адрес 192.168.0.2 через destination NAT
 iptables -t nat -A PREROUTING --dst 192.168.50.10 -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
 # Разрешаем проходящие соединения в цепочке FORWARD.
-# После прохождения цепочки PREROUTING пакет c интерфейса eth4 (public) будет направлен на маршрутизацию через eth1 (192.168.254.1) до 192.168.0.2
-iptables -I FORWARD 1 -i eth4 -o eth1 -d 192.168.0.2 -p tcp -m tcp --dport 8080 -j ACCEPT
+# После прохождения цепочки PREROUTING пакет c интерфейса eth4 (public) будет отправлен через eth1 (192.168.254.1) до 192.168.0.2
+iptables -I FORWARD 1 -i eth2 -o eth1 -d 192.168.0.2 -p tcp -m tcp --dport 8080 -j ACCEPT
 ```
 
 ### 5. Дефолт в инет оставить через inetRouter
