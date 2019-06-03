@@ -30,7 +30,6 @@ vagrant up
 
 Применены правила iptables на inetRouter:
 ```bash
-#!/bin/bash
 # Добавляем правило для NAT, чтобы гостевые машины могли ходит в интернет через inetRouter
 iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
 # Правила для knocking port
@@ -66,26 +65,18 @@ service iptables save
 У нас есть 30 секунд для подключения после запуска скрипта. Если не успели за этот интервал, то придётся запускать скрипт заново.
 
 Выполняем команду для подключения к inetRouter:
-```bash
-bash /vagrant/knock.sh 192.168.255.1 8881 7777 9991 && ssh vagrant@192.168.255.1
+```
+[root@centralRouter vagrant]# bash /vagrant/knock.sh 192.168.255.1 8881 7777 9991 && ssh vagrant@192.168.255.1
 ```
 ### 2. Добавить inetRouter2, который виден(маршрутизируется) с хоста.
 
-- в Vagrantfile добавлен inetRouter2 с public-интерфейсом - 192.168.50.10, который виден с моей хостовой машины (хостовая машина и inetRouter2 в одной сети).
+в Vagrantfile настроен проброс порта 8080 inetRouter2 на 127.0.0.1 хостовой машины
 ```
-[Alexey@alexhome 21-iptables]$ ping 192.168.50.10 -c3
-PING 192.168.50.10 (192.168.50.10) 56(84) bytes of data.
-64 bytes from 192.168.50.10: icmp_seq=1 ttl=64 time=0.138 ms
-64 bytes from 192.168.50.10: icmp_seq=2 ttl=64 time=0.205 ms
-64 bytes from 192.168.50.10: icmp_seq=3 ttl=64 time=0.201 ms
-
---- 192.168.50.10 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 1999ms
-rtt min/avg/max/mdev = 0.138/0.181/0.205/0.032 ms
+box.vm.network 'forwarded_port', guest: 8080, host: 8080, host_ip: '127.0.0.1'
 ```
 
 ### 3. Запустить nginx на centralServer
-- для проверки в Vagrantfile также добавлен public-интерфейс - 192.168.50.12 для centralServer, который виден с моей хостовой машины (хостовая машина и centralServer в одной сети).
+Проверка: в Vagrantfile добавлен public-интерфейс - 192.168.50.12 на centralServer, который виден с моей хостовой машины (хостовая машина и centralServer в одной сети).
 
 Стартовая страница nginx на centralServer открывается:
 
@@ -93,26 +84,23 @@ rtt min/avg/max/mdev = 0.138/0.181/0.205/0.032 ms
 
 ### 4. Пробросить http c inetRouter2:8080 на centralServer:80.
 
-При обращении к inetRouter2:8080 должна открываться страница nginx на centralServer:80.
-
-Применены правила iptables на inetRouter2:
+Настроен firewalld:
 ```bash
-# Проброс http c интерфейса eth0 (inet)
-
-# все что приходит на адрес 10.0.2.15 (inet) на порт 8080 будет пересылаться на адрес 192.168.0.2 через destination NAT
-iptables -t nat -A PREROUTING --dst 10.0.2.15 -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
-# Разрешаем проходящие соединения в цепочке FORWARD.
-# После прохождения цепочки PREROUTING пакет c интерфейса eth0 (inet) будет отправлен через eth1 (192.168.254.1) до 192.168.0.2
-iptables -I FORWARD 1 -i eth0 -o eth1 -d 192.168.0.2 -p tcp -m tcp --dport 8080 -j ACCEPT
-
-# Проброс http c интерфейса eth4 (public) для проверки
-
-# все что приходит на public ip 192.168.50.10 на порт 80 будет пересылаться на адрес 192.168.0.2 через destination NAT
-iptables -t nat -A PREROUTING --dst 192.168.50.10 -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
-# Разрешаем проходящие соединения в цепочке FORWARD.
-# После прохождения цепочки PREROUTING пакет c интерфейса eth4 (public) будет отправлен через eth1 (192.168.254.1) до 192.168.0.2
-iptables -I FORWARD 1 -i eth2 -o eth1 -d 192.168.0.2 -p tcp -m tcp --dport 8080 -j ACCEPT
+systemctl start firewalld
+systemctl enable firewalld
+# Добавить внешний сетевой интерфейс eth0 (inet) в зону public
+firewall-cmd --zone=public --change-interface=eth0
+# Добавить внутренний сетевой интерфейс eth1 (192.168.252.1) в зону internal
+firewall-cmd --zone=internal --change-interface=eth1
+# Добавить маскарадинг для зоны internal
+firewall-cmd --zone=internal --add-masquerade --permanent
+# Входящие запросы по tcp 8080 для зоны public перенапрвлять на 192.168.0.2:80
+firewall-cmd --zone=public --add-forward-port=port=8080:proto=tcp:toport=80:toaddr=192.168.0.2 --permanent
+# Применить правила фаервола
+firewall-cmd --reload
 ```
+Проверка: при обращении к 127.0.0.1:8080 на хостовой машине должна открываться страница nginx на centralServer.
+![alt text](nginx_on_127.0.0.1.png)
 
 ### 5. Дефолт в инет оставить через inetRouter
 
