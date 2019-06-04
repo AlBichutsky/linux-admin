@@ -69,7 +69,7 @@ service iptables save
 ```
 ### 2. Добавить inetRouter2, который виден(маршрутизируется) с хоста.
 
-в Vagrantfile настроен проброс порта 8080 inetRouter2 на 127.0.0.1 хостовой машины
+в Vagrantfile настроен проброс порта 8080 с inetRouter2 на 127.0.0.1 хостовой машины
 ```
 box.vm.network 'forwarded_port', guest: 8080, host: 8080, host_ip: '127.0.0.1'
 ```
@@ -91,7 +91,7 @@ systemctl enable firewalld
 firewall-cmd --zone=public --change-interface=eth0
 # Добавить внутренний сетевой интерфейс eth1 (192.168.252.1) в зону internal
 firewall-cmd --zone=internal --change-interface=eth1
-# Добавить маскарадинг для зоны internal
+# 
 firewall-cmd --zone=internal --add-masquerade --permanent
 # Входящие запросы по tcp 8080 для зоны public перенапрвлять на 192.168.0.2:80
 firewall-cmd --zone=public --add-forward-port=port=8080:proto=tcp:toport=80:toaddr=192.168.0.2 --permanent
