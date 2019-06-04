@@ -26,7 +26,7 @@ vagrant up
 
 Нам необходимо запретить доступ по ssh к inetRouter всем, кроме тех, кто знает «как правильно постучаться». 
 
-Перед ssh-подключением потребуется последовательно постучаться на следующие порты inetRouter: 8881 7777 9991 и затем в течении 30 сек открыть ssh-сессию.
+Стучаться необходимо на следующие порты inetRouter: 8881 7777 9991 и затем в течении 30 сек открыть ssh-сессию.
 
 Применены правила iptables на inetRouter:
 ```bash
@@ -54,7 +54,6 @@ iptables -t filter -A SSH-INPUT -m recent --name SSH1 --set -j DROP
 iptables -t filter -A SSH-INPUTTWO -m recent --name SSH2 --set -j DROP
 # 
 iptables -t filter -A TRAFFIC -j DROP
-iptables
 # Сохраняем правила
 service iptables save
 ```
