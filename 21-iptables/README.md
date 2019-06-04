@@ -98,7 +98,7 @@ firewall-cmd --zone=public --add-forward-port=port=8080:proto=tcp:toport=80:toad
 # Применить правила фаервола
 firewall-cmd --reload
 ```
-Проверка: при обращении к 127.0.0.1:8080 на хостовой машине должна открываться страница nginx на centralServer.
+Проверка: при обращении к 127.0.0.1:8080 на хостовой машине должна открываться страница nginx - перенапрвление запроса на centralServer:80 выполняется.
 ![alt text](nginx_on_127.0.0.1.png)
 
 ### 5. Дефолт в инет оставить через inetRouter
