@@ -172,3 +172,45 @@ TCP window size: 0.12 MByte (default)
 [ ID] Interval       Transfer     Bandwidth
 [  3]  0.0-32.2 sec  1000 MBytes  31.1 MBytes/sec
 ```
+
+#### Проверка vpn-соединения в режиме tap
+
+Для работы в режиме tap в конфигурационных файлах server.conf и client01.conf был изменен параметр
+```
+dev tun
+```
+на
+```
+dev tap
+```
+Также был добавлен маршрут в сеть 192.168.101.0 в server.conf (оастальные маршруты и пушы закомментированы).
+```
+route 192.168.101.0 255.255.255.0 10.8.0.1
+```
+
+- Тестируем пропускную способность канала в режиме tap
+
+на vpnserver запускаем iperf в режиме сервера (отчет в Мбайтах)
+```bash
+root@vpnserver server]# iperf -s -f M
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 0.08 MByte (default)
+------------------------------------------------------------
+[  4] local 192.168.100.1 port 5001 connected with 10.8.0.2 port 58980
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-34.7 sec  1000 MBytes  28.8 MBytes/sec
+```
+c client01 передаем на vpnserver данные 1000 Мб (отчет в Мбайтах)
+```bash
+[root@client01 vagrant]# iperf -c 192.168.100.1 -n 1000M -f M
+------------------------------------------------------------
+Client connecting to 192.168.100.1, TCP port 5001
+TCP window size: 0.10 MByte (default)
+------------------------------------------------------------
+[  3] local 10.8.0.2 port 58980 connected with 192.168.100.1 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-34.6 sec  1000 MBytes  28.9 MBytes/sec
+```
+
+Таким образом, выяснено, что vpn-соединение в режиме tap медленнее, чем tun.

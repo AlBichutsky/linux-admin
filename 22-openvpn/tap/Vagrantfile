@@ -1,0 +1,125 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+:vpnserver => {
+		:box_name => "centos/7",
+        :net => [
+					# Внутренний интерфейс
+					{ip: '192.168.100.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "internal"},
+					# Внешний интерфейс
+					{ip: '192.168.252.1', adapter: 3, netmask: "255.255.255.240", virtualbox__intnet: "external"},
+                ]
+ },
+
+ :client01 => {
+		:box_name => "centos/7",
+        :net => [
+ 					# Внутренний интерфейс
+					{ip: '192.168.101.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "internal"},
+					# внешний интерфейс
+					{ip: '192.168.252.2', adapter: 3, netmask: "255.255.255.240", virtualbox__intnet: "external"},
+                ]
+ },
+		
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+		box.vm.host_name = boxname.to_s
+
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+
+		box.vm.provision "shell", inline: <<-SHELL
+		# Для всех хостов выполнить команды:
+          		mkdir -p ~root/.ssh
+				cp ~vagrant/.ssh/auth* ~root/.ssh
+				cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime # устаналиваем временную зону 
+				yum install epel-release -y # Устанавливаем репозиторий epel
+				yum install bridge-utils policycoreutils-python openvpn -y # устаналиваем OpenVPN, bridge-utils, policycoreutils-python
+				yum install sshpass -y # устанавливаем утилиту для передачи пароля по ssh в открытом виде, чтобы можно было копировать файлы между хостами без использования ключей
+				yum install iperf -y # устанавливаем iperf для мониторинга пропускной способности сети
+				echo -e 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf # включаем форвардинг пакетов
+				sysctl -p
+				sed -i '65s/^/#/' /etc/ssh/sshd_config # включаем парольную атентификацию на ssh-серверах
+				sed -i '66i PasswordAuthentication yes' /etc/ssh/sshd_config # включаем парольную атентификацию на ssh-сервере, чтобы можно было копировать файлы по ssh без ключей
+				systemctl reload sshd
+				systemctl stop firewalld		
+		SHELL
+		case boxname.to_s
+		when "vpnserver"
+			box.vm.provision "shell", inline: <<-SHELL
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config 
+			yum install easy-rsa -y # устаналиваем Easy RSA - он будет использоваться для создания пар SSL-ключей, которые обеспечат безопасность VPN-соединений
+			mkdir /var/log/openvpn # создаем каталог для логов openvpn
+			mkdir /etc/openvpn/ccd # создаем каталог для хранения кастомных настроек клиентов
+			mkdir /etc/openvpn/keys # создаем каталог, где будут находиться ключи шифрования
+			cp /vagrant/server.conf /etc/openvpn/server # копируем конфиг с настройками сервера 
+			# echo "iroute 192.168.101.0 255.255.255.0" > /etc/openvpn/ccd/client01 # указываем маршрут для клиента client01 - не требуется для tap
+			# переходим в каталог easy-rsa и генерируем ключи
+			cd /usr/share/easy-rsa/3.0.3/
+			./easyrsa init-pki  # инициализируем PKI (Public Key Infrastructure — Инфраструктура открытых ключей)
+			./easyrsa --batch build-ca nopass # cоздаем корневой сертификат без пароля (c паролем вводим команду ./easyrsa build-ca)
+			./easyrsa gen-dh # формируем ключ Диффи-Хеллмана
+			./easyrsa build-server-full server nopass # cоздаем сертификат для сервера без пароля, иначе при каждом старте OpenVPN будет запрашивать его
+			./easyrsa build-client-full client01 nopass # cоздаем сертификат для клиента без пароля
+			openvpn --genkey --secret ta.key # Создаем ключ HMAC
+			# должно быть 5 ключей для сервера, копируем их в /etc/openvpn/keys
+			cp pki/ca.crt /etc/openvpn/keys/
+			cp pki/dh.pem /etc/openvpn/keys/
+			cp pki/issued/server.crt /etc/openvpn/keys/
+			cp pki/private/server.key /etc/openvpn/keys/
+			cp ta.key /etc/openvpn/keys/
+			# Отключаем default gateway для интерфейса eth0 (Vagrant), чтобы пакеты не ходили в интернет через nat Vagrant
+			echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+			# Перезапускаем сеть после этого
+			systemctl restart network
+			systemctl restart network
+			# запускаем openvpn-сервер
+			systemctl start openvpn-server@server
+			systemctl enable openvpn-server@server 
+			SHELL
+		
+		when "client01"
+			box.vm.provision "shell", inline: <<-SHELL
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+			# создаем каталог, где будут находиться ключи шифрования
+			mkdir /etc/openvpn/keys
+			# копируем конфиг с настройками клиента 
+			cp /vagrant/client.conf /etc/openvpn/client
+			# копируем 4 сгенерированных клиентских ключа по ssh на client01 в /etc/openvpn/keys
+			sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.252.1:/usr/share/easy-rsa/3.0.3/pki/ca.crt /etc/openvpn/keys/
+			sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.252.1:/usr/share/easy-rsa/3.0.3/pki/issued/client01.crt /etc/openvpn/keys/
+			sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.252.1:/usr/share/easy-rsa/3.0.3/pki/private/client01.key /etc/openvpn/keys/
+			sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.252.1:/usr/share/easy-rsa/3.0.3/ta.key /etc/openvpn/keys/			
+			# Отключаем default gateway для интерфейса eth0 (Vagrant), чтобы пакеты не ходили в интернет через nat Vagrant
+			echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+			# Перезапускаем сеть после этого
+			systemctl restart network
+			systemctl restart network
+			# Запускаем openvpn-клиента
+			systemctl start openvpn-client@client
+			systemctl enable openvpn-client@client
+			SHELL
+	  
+		end
+
+      end
+
+  end
+  
+end
+
