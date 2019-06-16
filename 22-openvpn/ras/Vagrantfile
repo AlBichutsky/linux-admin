@@ -1,0 +1,108 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+:vpnras => {
+	:box_name => "centos/7",
+	# добавляем public-интерфейс
+	:public => {:ip => '192.168.50.200', :netmask => '255.255.255.0', :adapter => 2},
+	:net=> [
+			   {ip: '192.168.51.200', adapter: 3, netmask: "255.255.255.0", virtualbox__intnet: "secret_net" },
+			]
+ },
+
+ 
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+		box.vm.host_name = boxname.to_s
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+
+		case boxname.to_s
+		when "vpnras"
+			box.vm.provision "shell", inline: <<-SHELL
+			
+			mkdir -p ~root/.ssh
+			cp ~vagrant/.ssh/auth* ~root/.ssh
+			
+			# устаналиваем временную зону 
+			cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+			
+			# отключаем selinux
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config 
+
+			# устанавливаем пакеты
+			yum install epel-release -y # Устанавливаем репозиторий epel
+			yum install easy-rsa -y # устаналиваем Easy RSA - он будет использоваться для создания пар SSL-ключей, которые обеспечат безопасность VPN-соединений
+			yum install bridge-utils policycoreutils-python openvpn -y # устаналиваем OpenVPN, bridge-utils, policycoreutils-python
+			yum install sshpass -y # устанавливаем утилиту для передачи пароля по ssh в открытом виде, чтобы можно было копировать файлы между хостами без использования ключей
+			
+			# включаем форвардинг пакетов
+			echo -e 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+			sysctl -p
+			
+			# говорим серверу sshd принимать соединения только на 192.168.51.200
+			# sed -i '19i ListenAddress 192.168.51.200' /etc/ssh/sshd_config 
+			# включаем парольную атентификацию на ssh-сервере, чтобы можно было копировать файлы по ssh без ключей
+			sed -i '65s/^/#/' /etc/ssh/sshd_config
+			sed -i '66i PasswordAuthentication yes' /etc/ssh/sshd_config 
+			systemctl reload sshd	
+							
+			# создаем каталоги для openvpn
+			mkdir /var/log/openvpn # создаем каталог для логов openvpn
+			mkdir /etc/openvpn/ccd # создаем каталог для хранения кастомных настроек клиентов
+			mkdir /etc/openvpn/keys # создаем каталог, где будут находиться ключи шифрования
+			
+			# копируем конфиг с настройками сервера
+			cp /vagrant/server.conf /etc/openvpn/server 
+			
+			# переходим в каталог easy-rsa и генерируем ключи
+			cd /usr/share/easy-rsa/3.0.3/
+			./easyrsa init-pki  # инициализируем PKI (Public Key Infrastructure — Инфраструктура открытых ключей)
+			./easyrsa --batch build-ca nopass # cоздаем корневой сертификат без пароля (c паролем вводим команду ./easyrsa build-ca)
+			./easyrsa gen-dh # формируем ключ Диффи-Хеллмана
+			./easyrsa build-server-full server nopass # cоздаем сертификат для сервера без пароля, иначе при каждом старте OpenVPN будет запрашивать его
+			./easyrsa build-client-full client01 nopass # cоздаем сертификат для клиента без пароля
+			openvpn --genkey --secret ta.key # Создаем ключ HMAC
+			
+			# должно быть 5 ключей для сервера, копируем их в /etc/openvpn/keys
+			cp pki/ca.crt /etc/openvpn/keys/
+			cp pki/dh.pem /etc/openvpn/keys/
+			cp pki/issued/server.crt /etc/openvpn/keys/
+			cp pki/private/server.key /etc/openvpn/keys/
+			cp ta.key /etc/openvpn/keys/
+			
+			# для того, чтобы через наш туннель можно было бы ходить в интернет прописываем правила (может не заработать в vagrant)
+			# iptables -A INPUT -i lo -j ACCEPT
+			# iptables -A OUTPUT -o lo -j ACCEPT
+			# iptables -A FORWARD -s 10.8.0.0/24 -j ACCEPT
+			# iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+			# iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+
+			# запускаем openvpn-сервер
+			systemctl start openvpn-server@server
+			systemctl enable openvpn-server@server 
+			
+			SHELL
+		end
+		
+      end
+
+  end
+  
+end
+

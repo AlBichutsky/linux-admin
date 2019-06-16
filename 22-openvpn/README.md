@@ -9,7 +9,7 @@
 2. Поднять RAS на базе OpenVPN с клиентскими сертификатами, подключиться с локальной машины на виртуалку
 
 
-## Решение
+## Тестовые стенды 
 
 Подготовлено 3 тестовых стенда Vagrant:
 1. OpenVPN в режиме tun 
@@ -21,10 +21,19 @@
 ```bash
 vagrant up
 ```
+## 1. Между двумя виртуалками поднять vpn в режимах tun, tap. Прочуствовать разницу.
 
-#### Схема vpn-соединения (п1,2)
+
+#### Схема vpn-соединения
 ![alt text](1openvpn.png)
 
+
+#### Управление службами
+```
+systemctl {stop,start,restart} openvpn-server@server
+systemctl {stop,start,restart} openvpn-client@client
+```
+Если opvpn-сервер/клиент остановлен, то ping, соответственно идти не должен.
 
 #### Проверка vpn-соединения в режиме tun
 
@@ -50,7 +59,6 @@ vagrant up
     inet 10.8.0.1 peer 10.8.0.2/32 scope global tun0
        valid_lft forever preferred_lft forever
 ```
-
 Доступность внешнего интерфейса client01:
 ```bash
 [root@vpnserver vagrant]# ping 192.168.252.2 -c 3
@@ -75,7 +83,7 @@ PING 192.168.101.1 (192.168.101.1) 56(84) bytes of data.
 3 packets transmitted, 3 received, 0% packet loss, time 2005ms
 rtt min/avg/max/mdev = 0.476/0.516/0.539/0.038 ms
 ```
-Доступность tun-интерфейса client01 (создается при успешном vpn-соединении - ip выдается сервером)
+Доступность tun-интерфейса client01 (должен быть поднят для создания тунеля)
 ```bash
 [root@vpnserver vagrant]# ping 10.8.0.6 -c 3
 PING 10.8.0.6 (10.8.0.6) 56(84) bytes of data.
@@ -87,7 +95,6 @@ PING 10.8.0.6 (10.8.0.6) 56(84) bytes of data.
 3 packets transmitted, 3 received, 0% packet loss, time 2003ms
 rtt min/avg/max/mdev = 0.475/0.530/0.602/0.056 ms
 ```
-
 - client01
 
 Интерфейсы:
@@ -110,7 +117,6 @@ rtt min/avg/max/mdev = 0.475/0.530/0.602/0.056 ms
     inet 10.8.0.6 peer 10.8.0.5/32 scope global tun0
        valid_lft forever preferred_lft forever
 ```
-
 Доступность внешнего интерфейса vpnserver:
 ```bash
 [root@client01 vagrant]# ping 192.168.252.1 -c3
@@ -136,7 +142,7 @@ PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
 rtt min/avg/max/mdev = 0.468/0.504/0.558/0.038 ms
 [root@client01 vagrant]#
 ```
-Доступность tun-интерфейса vpnserver (всегда 10.8.0.1 - первый ip из выделяемого адресного пространства):
+Доступность tun-интерфейса vpnserver (на сервере всегда 10.8.0.1):
 ```bash
 [root@client01 vagrant]# ping 10.8.0.1 -c3
 PING 10.8.0.1 (10.8.0.1) 56(84) bytes of data.
@@ -175,7 +181,7 @@ TCP window size: 0.12 MByte (default)
 
 #### Проверка vpn-соединения в режиме tap
 
-Для работы в режиме tap в конфигурационных файлах server.conf и client01.conf был изменен параметр
+Для работы vpn в режиме tap в конфигурационных файлах server.conf и client01.conf изменен параметр:
 ```
 dev tun
 ```
@@ -183,10 +189,11 @@ dev tun
 ```
 dev tap
 ```
-Также был добавлен маршрут в сеть 192.168.101.0 в server.conf (оастальные маршруты и пушы закомментированы).
+Был добавлен маршрут в сеть 192.168.101.0 в /etc/openvpn/server.conf (иначе пинг с сервера на клиента не шел): 
 ```
 route 192.168.101.0 255.255.255.0 10.8.0.1
 ```
+Параметры push и client-config-dir /etc/openvpn/ccd закомментированы (были предупреждения в логах).
 
 - Тестируем пропускную способность канала в режиме tap
 
@@ -212,5 +219,58 @@ TCP window size: 0.10 MByte (default)
 [ ID] Interval       Transfer     Bandwidth
 [  3]  0.0-34.6 sec  1000 MBytes  28.9 MBytes/sec
 ```
+Результат проверки: пропусканая способность канала в режиме tun выше, чем tap.
 
-Таким образом, видно, что vpn-соединение в режиме tap менее экономичнее, чем tun.
+## 2. Поднять RAS на базе OpenVPN с клиентскими сертификатами, подключиться с локальной машины на виртуалку
+
+OpenVPN-сервер vpnras запускается в Vagrant.
+
+Интерфейсы:
+
+- eth0: интернет
+- eth1 (public): 192.168.50.200/24 - используется для vpn-соединения (ip из пула домашней сети)
+- eth2 (private): 192.168.51.200/24 - прослушивается ssh-сервером
+
+Затем развернул OpenVPN в режиме client на локальной машине и скопировал с сервера созданные сертификаты:
+```
+# устаналиваем пакеты
+yum install epel-release bridge-utils openvpn sshpass -y
+
+# создаем каталог для логов и ключей openvpn 
+mkdir /var/log/openvpn && mkdir /etc/openvpn/keys
+
+# копируем готовый клиентский конфиг и ключи с vpn-сервера на свой хост:
+
+# Если возникла ошибка WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! перегенируем ключи:
+# ssh-keygen -R 192.168.50.200
+
+sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.50.200:/vagrant/client.conf /etc/openvpn/client/ &&
+sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.50.200:/usr/share/easy-rsa/3.0.3/pki/ca.crt /etc/openvpn/keys/ &&
+sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.50.200:/usr/share/easy-rsa/3.0.3/pki/issued/client01.crt /etc/openvpn/keys/ &&
+sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.50.200:/usr/share/easy-rsa/3.0.3/pki/private/client01.key /etc/openvpn/keys/ &&
+sshpass -p "vagrant" scp -o "StrictHostKeyChecking=no" root@192.168.50.200:/usr/share/easy-rsa/3.0.3/ta.key /etc/openvpn/keys/
+
+# запускаем клиента
+systemctl restart openvpn-client@client
+```
+После настройки клиента, подключаемся к серверу через тунель и настриваем sshd:
+```
+# Может понадобиться вначале перегенировать ключи ssh на клиенте
+[Alexey@alexhome ras]$ ssh-keygen -R 192.168.51.200
+The authenticity of host '192.168.51.200 (192.168.51.200)' can't be established.ECDSA key fingerprint is SHA256:ZgfvOwjt/ST32pvqZJ6hNKcadwMjFMsO0+j5R5pjEkg.ECDSA key fingerprint is MD5:4a:9f:53:5e:6d:ff:b2:3e:b8:3a:c5:d3:2d:1e:9b:c1.Are you sure you want to continue connecting (yes/no)? yesWarning: Permanently added '192.168.51.200' (ECDSA) to the list of known hosts.
+
+# Подключаемся к vpnras через тунель:
+[Alexey@alexhome ras]$ ssh root@192.168.51.200
+
+# Говорим sshd-серверу принимать подключения только на интерфейсе 192.168.51.200
+# Интерфейс 192.168.50.200 слушаться не будет.
+[root@vpnras ~]# sed -i '19i ListenAddress 192.168.51.200' /etc/ssh/sshd_config
+[root@vpnras ~]# systemctl reload sshd
+```
+
+## Проверка ssh-подключения к vpnras
+
+После этого локальная машина должна подключаться по ssh к vpnras только через vpn-тунель.
+
+![alt text](test_ssh.png)
+
