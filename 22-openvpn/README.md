@@ -272,7 +272,7 @@ The authenticity of host '192.168.51.200 (192.168.51.200)' can't be established.
 [root@vpnras ~]# systemctl reload sshd
 ```
 
-## Проверка ssh-подключения к vpnras
+#### Проверка ssh-подключения к vpnras
 
 После этого локальная машина должна подключаться по ssh к vpnras только через vpn-тунель.
 
