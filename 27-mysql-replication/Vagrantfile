@@ -1,0 +1,255 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+:master => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.10.10', netmask: "255.255.255.0", virtualbox__intnet: "mysql-servers"},
+                ]
+  },
+:slave => {
+	      :box_name => "centos/7",
+        :net => [
+			            {ip: '192.168.10.11', netmask: "255.255.255.0", virtualbox__intnet: "mysql-servers"},
+			         ]
+},
+	
+}
+
+Vagrant.configure("2") do |config|
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+		box.vm.host_name = boxname.to_s
+
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+        # включаем двухсторонню синхронизацию файлов с хоста на гостевые машины и обратно (должен быть установлен плагин vagrant-vbguest)
+        # config.vm.synced_folder ".", "/vagrant", type:"virtualbox"
+        # включаем обычную одностороннюю синхронизацию c хоста на vm
+        config.vm.synced_folder ".", "/vagrant"
+
+		box.vm.provision "shell", inline: <<-SHELL
+          
+        # для всех хостов выполнить команды
+        
+        mkdir -p ~root/.ssh
+				cp ~vagrant/.ssh/auth* ~root/.ssh
+        
+        # устанавливаем percona yum-репозиторий
+        yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
+        
+        # проверяем
+        # yum list | grep percona
+        
+        # устаналиваем percona server 5.7
+        yum install Percona-Server-server-57 -y
+
+        SHELL
+        
+    case boxname.to_s
+      
+    when "master"
+
+      box.vm.provision "shell", inline: <<-SHELL
+
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config 
+
+      # копируем конфиги для master
+      cp /vagrant/conf/master/conf.d/* /etc/my.cnf.d/ 
+
+      # запускаем службу
+      systemctl start mysql
+
+      # При установке Percona автоматически генерирует пароль для пользователя root и кладет его в файл /var/log/mysqld.log.
+      # Посмотреть можно так:
+      
+      # cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'
+
+      # Подключаемся к mysql и меняем пароль для доступа к полному функционалу
+      
+      # mysql -uroot -p'пароль'
+      # mysql > ALTER USER USER() IDENTIFIED BY 'новыйпароль';
+      
+      def_pass_master=$(cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}')
+      pass_master="2019MyPassw0rd$%^"
+      mysql -e "SET PASSWORD = PASSWORD('2019MyPassw0rd$%^');" --connect-expired-password -uroot -p$def_pass_master
+
+      # Репликацию будем настраивать с использованием GTID
+
+      # атрибут server-id на мастер-сервере должен обязательно отличаться от server-id слейв-сервера. 
+      # Проверить какая переменная установлена в текущий момент можно следующим образом:
+      
+      # mysql> SELECT @@server_id;
+      
+      # +---------------------+
+      # | @@server_id |
+      # +---------------------+
+      # | 1 |
+      # +---------------------+
+
+      # Убеждаемся, что GTID включен:
+      
+      # mysql> SHOW VARIABLES LIKE 'gtid_mode';
+      
+      # +-----------------------+---------+
+      # | Variable_name | Value |
+      # +-----------------------+--------+
+      # | gtid_mode | ON |
+      # +-----------------------+--------+
+
+      # Создадим тестовую базу bet и загрузим в нее дамп
+      
+      # mysql> CREATE DATABASE bet;
+      # mysql -uroot -p -D bet < /vagrant/bet.dmp;
+      
+      mysql -uroot -p$pass_master -e "CREATE DATABASE bet;"
+      mysql -uroot -p$pass_master -D bet < /vagrant/bet.dmp;
+
+      # Проверим, что база создалась
+      
+      # mysql> USE bet;
+      # mysql> SHOW TABLES;
+      # +-----------------------------+
+      # | Tables_in_bet |
+      # +-----------------------------+
+      # | bookmaker |
+      # | competition |
+      # | events_on_demand |
+      # | market |
+      # | odds |
+      # | outcome |
+      # | v_same_event |
+      # +------------------------------+
+
+      # Создадим пользователя для репликации:
+      
+      # mysql> CREATE USER 'repl'@'%' IDENTIFIED BY '!Pass2019';
+      # mysql> SELECT user,host FROM mysql.user where user='repl';
+      # +------+-----------+
+      # | user | host |
+      # +------+-----------+
+      # | repl | % |
+      # +------+-----------+
+      
+      # и даем ему права на эту самую репликацию
+      
+      # mysql> GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%' IDENTIFIED BY '!Pass2019';
+
+mysql -uroot -p$pass_master << EOF
+CREATE USER 'repl'@'%' IDENTIFIED BY '!ReplPass2019';
+SELECT user,host FROM mysql.user where user='repl';
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%' IDENTIFIED BY '!ReplPass2019';
+EOF
+
+     # Дампим базу для последующего залива на слейв и игнорируем таблицу по заданию:
+     # mysqldump --all-databases --triggers --routines --master-data --ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -p$pass_master > /vagrant/master.sql
+     # бэкап уже положен в /vagrant
+     
+      # На этом настройка Master завершена. Файл дампа будет залит на слейв.
+
+      SHELL
+      
+		when "slave"
+      
+      box.vm.provision "shell", inline: <<-SHELL
+			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+      
+      # копируем конфиги
+      cp /vagrant/conf/slave/conf.d/* /etc/my.cnf.d/ 
+
+      # запускаем службу
+      systemctl start mysql
+
+      # При установке Percona автоматически генерирует пароль для пользователя root и кладет его в файл /var/log/mysqld.log.
+      # Посмотреть можно так:
+      # cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'
+
+      # Подключаемся к mysql и меняем пароль для доступа к полному функционалу
+      # mysql -uroot -p'пароль'
+      # mysql > ALTER USER USER() IDENTIFIED BY 'новыйпароль';
+      
+      def_pass_slave=$(cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}')
+      pass_slave="2019MyPassw0rd$%^"
+      mysql -e "SET PASSWORD = PASSWORD('2019MyPassw0rd$%^');" --connect-expired-password -uroot -p$def_pass_slave
+
+      # копируем конфиги для slave
+      # важно: в /etc/my.cnf.d/01-basics.cnf директива server-id = 2 
+
+      cp /vagrant/conf/master/conf.d/* /etc/my.cnf.d/ 
+
+      # Проверяем директиву:
+
+      # mysql> SELECT @@server_id;
+      # +---------------------+
+      # | @@server_id |
+      # +---------------------+
+      # | 2 |
+      # +---------------------+
+      
+      # В /etc/my.cnf.d/05-binlog.cnf расскоментированы строки:
+      # replicate-ignore-table=bet.events_on_demand
+      # replicate-ignore-table=bet.v_same_event
+      # Таким образом указываем таблицы которые будут игнорироваться при репликации
+
+      # Заливаем дамп мастера и убедимся, что база есть и она без лишних таблиц:
+      
+      # mysql> SOURCE /vagrant/master.sql
+      # mysql> SHOW DATABASES LIKE 'bet';
+      
+      # +-----------------------+
+      # | Database (bet) |
+      # +-----------------------+
+      # | bet |
+      # +-----------------------+
+      
+      # mysql> USE bet;
+      # mysql> SHOW TABLES;
+      
+      # +---------------------+
+      # | Tables_in_bet |
+      # +---------------------+
+      # | bookmaker |
+      # | competition |
+      # | market |
+      # | odds |
+      # | outcome |
+      # +---------------------+ 
+      # # видим что таблиц v_same_event и events_on_demand нет
+
+mysql -uroot -p$pass_slave << EOF
+SOURCE /vagrant/master.sql;
+SHOW DATABASES LIKE 'bet';
+USE bet;
+SHOW TABLES;
+EOF
+
+      # Подключаем и запускаем slave:
+
+mysql -uroot -p$pass_slave << EOF
+CHANGE MASTER TO MASTER_HOST = "192.168.10.10", MASTER_PORT = 3306, MASTER_USER = "repl", MASTER_PASSWORD = "!ReplPass2019", MASTER_AUTO_POSITION = 1;
+START SLAVE;
+SHOW SLAVE STATUS;
+EOF
+
+
+      SHELL
+      
+	
+    end
+    
+		
+      end
+
+  end
+  
+end
+
