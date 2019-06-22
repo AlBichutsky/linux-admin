@@ -44,14 +44,24 @@ Vagrant.configure("2") do |config|
         mkdir -p ~root/.ssh
 				cp ~vagrant/.ssh/auth* ~root/.ssh
         
-        # устанавливаем percona yum-репозиторий
+        ##################### Установка Percona ########################
+
+        # устанавливаем Percona yum-репозиторий
         yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
         
-        # проверяем
+        # проверяем список пакетов
         # yum list | grep percona
         
-        # устаналиваем percona server 5.7
+        # для Percona Server 5.7
         yum install Percona-Server-server-57 -y
+        
+        # для Percona Server 8.0:
+        # подключаем репозиторий
+        # percona-release setup ps80
+        # устанавливаем Percona Server 8.0
+        # yum install percona-server-server -y
+
+        #################################################################
 
         SHELL
         
@@ -61,7 +71,8 @@ Vagrant.configure("2") do |config|
 
       box.vm.provision "shell", inline: <<-SHELL
 
-			setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config 
+      # отключаем selinux
+      setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config 
 
       # копируем конфиги для master
       cp /vagrant/conf/master/conf.d/* /etc/my.cnf.d/ 
@@ -69,19 +80,30 @@ Vagrant.configure("2") do |config|
       # запускаем службу
       systemctl start mysql
 
-      # При установке Percona автоматически генерирует пароль для пользователя root и кладет его в файл /var/log/mysqld.log.
-      # Посмотреть можно так:
-      
-      # cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'
+      ####################### Смена дефолтного пароля ##########################
 
-      # Подключаемся к mysql и меняем пароль для доступа к полному функционалу
-      
+      # При установке Percona автоматически генерирует пароль для пользователя root и кладет его в файл /var/log/mysqld.log.
+
+      # Подключаемся к mysql с помощью команды
       # mysql -uroot -p'пароль'
-      # mysql > ALTER USER USER() IDENTIFIED BY 'новыйпароль';
       
+      # Для версии 8.0
+      # Считываем сгенерированный дефолтный пароль из лога
+      # def_pass_master=$(cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $13}')
+      # Назначаем свой пароль (будем использовать переменную далее для подстановки)
+      # pass_master="2019MyPassw0rd$%^"
+      # Меняем дефолтный пароль на свой
+      # mysql -e "SET PASSWORD = '2019MyPassw0rd$%^';" --connect-expired-password -uroot -p$def_pass_master
+      
+      # Для версии 5.7
+      # Считываем сгенерированный дефолтный пароль из лога
       def_pass_master=$(cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}')
+      # Назначаем свой пароль (будем использовать переменную далее для подстановки)
       pass_master="2019MyPassw0rd$%^"
+      # Меняем дефолтный пароль на свой в версии Percona 5.7
       mysql -e "SET PASSWORD = PASSWORD('2019MyPassw0rd$%^');" --connect-expired-password -uroot -p$def_pass_master
+
+      ############################################################################
 
       # Репликацию будем настраивать с использованием GTID
 
@@ -144,17 +166,25 @@ Vagrant.configure("2") do |config|
       
       # mysql> GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%' IDENTIFIED BY '!Pass2019';
 
+# для версии percona 8.0
+# mysql -uroot -p$pass_master << EOF
+# CREATE USER 'repl'@'%' IDENTIFIED BY '!ReplPass2019';
+# SELECT user,host FROM mysql.user where user='repl';
+# GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
+# EOF
+
+# для версии percona 5.7
 mysql -uroot -p$pass_master << EOF
 CREATE USER 'repl'@'%' IDENTIFIED BY '!ReplPass2019';
 SELECT user,host FROM mysql.user where user='repl';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%' IDENTIFIED BY '!ReplPass2019';
 EOF
 
+
      # Дампим базу для последующего залива на слейв и игнорируем таблицу по заданию:
      # mysqldump --all-databases --triggers --routines --master-data --ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -p$pass_master > /vagrant/master.sql
-     # бэкап уже положен в /vagrant
-     
-      # На этом настройка Master завершена. Файл дампа будет залит на слейв.
+     # дамп master.sql уже положен в /vagrant
+     # На этом настройка Master завершена. Файл дампа будет залит на слейв.
 
       SHELL
       
@@ -169,17 +199,31 @@ EOF
       # запускаем службу
       systemctl start mysql
 
-      # При установке Percona автоматически генерирует пароль для пользователя root и кладет его в файл /var/log/mysqld.log.
-      # Посмотреть можно так:
-      # cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'
+      ####################### Смена дефолтного пароля ##########################
 
-      # Подключаемся к mysql и меняем пароль для доступа к полному функционалу
+      # При установке Percona автоматически генерирует пароль для пользователя root и кладет его в файл /var/log/mysqld.log.
+
+      # Подключаемся к mysql с помощью команды
       # mysql -uroot -p'пароль'
-      # mysql > ALTER USER USER() IDENTIFIED BY 'новыйпароль';
       
+      # Для версии 8.0
+      # Считываем сгенерированный дефолтный пароль из лога
+      # def_pass_slave=$(cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $13}')
+      # Назначаем свой пароль (будем использовать переменную далее для подстановки)
+      # pass_slave="2019MyPassw0rd$%^"
+      # Меняем дефолтный пароль на свой
+      # mysql -e "SET PASSWORD = '2019MyPassw0rd$%^';" --connect-expired-password -uroot -p$def_pass_slave
+      
+      # Для версии 5.7
+      # Считываем сгенерированный дефолтный пароль из лога
       def_pass_slave=$(cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}')
+      # Назначаем свой пароль (будем использовать переменную далее для подстановки)
       pass_slave="2019MyPassw0rd$%^"
+      # Меняем дефолтный пароль на свой в версии Percona 5.7
       mysql -e "SET PASSWORD = PASSWORD('2019MyPassw0rd$%^');" --connect-expired-password -uroot -p$def_pass_slave
+
+      #############################################################################
+
 
       # копируем конфиги для slave
       # важно: в /etc/my.cnf.d/01-basics.cnf директива server-id = 2 
@@ -237,9 +281,10 @@ EOF
 mysql -uroot -p$pass_slave << EOF
 CHANGE MASTER TO MASTER_HOST = "192.168.10.10", MASTER_PORT = 3306, MASTER_USER = "repl", MASTER_PASSWORD = "!ReplPass2019", MASTER_AUTO_POSITION = 1;
 START SLAVE;
-SHOW SLAVE STATUS;
 EOF
 
+    # после запуска проверяем статус slave командой: 
+    # SHOW SLAVE STATUS\G;
 
       SHELL
       
