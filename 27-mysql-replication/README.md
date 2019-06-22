@@ -33,9 +33,9 @@ vagrant up
 
 Логин: ```root```, пароль: ```2019MyPassw0rd$%^```
 
-- bet.dmp - дамп базы;
-- master.sql - бэкап для заливки c master на slave; 
-- конфиги mysql приложены;
+- bet.dmp - дамп базы
+- master.sql - бэкап для заливки c master на slave
+- конфиги mysql приложены
 
 ## Проверка репликации на slave
 
