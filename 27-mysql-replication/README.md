@@ -201,12 +201,12 @@ mysql> select * from bookmaker;
 +----+----------------+
 4 rows in set (0.00 sec)
 ```
-Как видно из вывода, репликация на slave таблиц ```events_on_demand```, ```v_same_event``` не выполняется, т.к. в настройках они проигнорированы.
+Таким образом, репликация на slave таблиц ```events_on_demand```, ```v_same_event``` не выполняется, т.к. они добавлены в исключение.
 
-- Проверяем репликацию на slave после добавления новой записи "marafon" в таблицу "bookmaker_name"
+- Проверяем репликацию на slave после добавления на master новой записи "marafon" в таблицу "bookmaker_name": 
 
 ![alt text](show_replication.png)
 
-- Проверяем, что добавление записи "marafon" отобразилось в журнале транзакций binlog на master и slave:
+- Проверяем, что транзакция записалась в журнал транзакций binlog на master и slave:
 
  ![alt text](show_binlog.png)
