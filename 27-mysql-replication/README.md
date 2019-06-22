@@ -208,10 +208,10 @@ mysql> select * from bookmaker;
 ```
 Таким образом, репликация на slave таблиц ```events_on_demand```, ```v_same_event``` не выполняется, т.к. они добавлены в исключение.
 
-- Проверяем репликацию на slave после добавления на master новой записи "marafon" в таблицу "bookmaker_name": 
+- Проверяем репликацию на slave после добавления на master новой записи ```marafon``` в таблицу ```bookmaker_name```: 
 
 ![alt text](show_replication.png)
 
-- Проверяем, что транзакция записалась в журнал транзакций binlog на master и slave:
+- Проверяем, что запись добаилась в журнал транзакций binlog на master и slave:
 
  ![alt text](show_binlog.png)
