@@ -212,6 +212,6 @@ mysql> select * from bookmaker;
 
 ![alt text](show_replication.png)
 
-- Проверяем, что запись была добавлена в журнал транзакций binlog на master и slave:
+- Проверяем, что запись была добавлена в binlog на master и slave:
 
  ![alt text](show_binlog.png)
