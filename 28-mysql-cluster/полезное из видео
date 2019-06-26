@@ -1,0 +1,12 @@
+1 38 07
+
+1 35 23
+
+1 12
+
+pfrf
+
+docker exec -ti innodb-cluster_mysql-router_1 bash
+
+172.19.0.6
+ 
