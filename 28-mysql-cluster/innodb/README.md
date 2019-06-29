@@ -44,7 +44,7 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 - `mysql-router`: tcp 6446
 - `mysql-shell`, `node`,`node2`,`node3`: tcp 3306. Между собой общаются по порту tcp 33060.
 
-## Запуск докера
+## Запуск docker-compose
 
 Запускаем контейнеры в docker-compose:
 ```bash
