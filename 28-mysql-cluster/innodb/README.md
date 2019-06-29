@@ -63,7 +63,7 @@ innodb_node1_1          /entrypoint.sh mysqld --se ...   Up (healthy)   0.0.0.0:
 innodb_node2_1          /entrypoint.sh mysqld --se ...   Up (healthy)   0.0.0.0:3302->3306/tcp, 33060/tcp
 innodb_node3_1          /entrypoint.sh mysqld --se ...   Up (healthy)   0.0.0.0:3303->3306/tcp, 33060/tcp
 ```
-В случае ошибок пересоздаем контейнеры с очисткой данных томов от mysql:
+В случае ошибок пересоздаем контейнеры с очисткой данных томов mysql:
 ```bash
 sudo su
 docker-compose down && sudo rm -rf data/mysql-shell/* && rm -rf data/node1/* && rm -rf data/node2/* && rm -rf data/node3/* && docker-compose up -d
