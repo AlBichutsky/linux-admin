@@ -43,8 +43,8 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 ...
 ```
 Порты для соединений: 
-- `mysql-router`: tcp 6446
-- `mysql-shell`, `node`,`node2`,`node3`: tcp 3306. Между собой общаются по порту tcp 33060.
+- `mysql-router`: 6446
+- `mysql-shell`, `node1`,`node2`,`node3`: 3306. Между собой общаются по порту 33060.
 
 ### Запуск docker-compose
 
