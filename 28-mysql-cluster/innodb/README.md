@@ -37,8 +37,10 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 Маппинг папок с хоста в контейнеры описан в docker-compose.yml:
 ```
+...
  volumes:
       - ./data/node1:/var/lib/mysql
+...
 ```
 Порты для соединений: 
 - `mysql-router`: tcp 6446
