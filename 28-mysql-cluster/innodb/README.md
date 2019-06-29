@@ -7,7 +7,7 @@
 
 В качестве ДЗ принимает репозиторий с docker-compose, который по кнопке разворачивает кластер и выдает порт наружу.
 
-## Установка Docker Compose
+### Установка Docker Compose
 
 После установки Docker выполняется установка Docker Compose по инструкции 
 ```https://docs.docker.com/compose/install/``` 
@@ -17,13 +17,13 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 ```
-## Описание тестового стенда
+### Описание стенда
 
-Для запуска контейнеров используются официальные образы mysql:
+Для создания innodb-кластера используются официальные докер-образы mysql:
 - ```mysql/mysql-server:8.0.12```
 - ```mysql/mysql-router:8.0```
 
-Кластер InnoDB состоит из контейнеров:
+Кластер mysql состоит из контейнеров:
 - ```mysql-shell``` - консоль mysqlsh для управления кластером
 - ```mysql-router``` - обеспечивает маршрутизацию соединений к серверам MySQL в кластере для повышения производительности и надежности,
 при настройке роутера указывается главная нода (Primary instance), чтобы он увидел все существующие ноды в кластере
@@ -44,7 +44,7 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 - `mysql-router`: tcp 6446
 - `mysql-shell`, `node`,`node2`,`node3`: tcp 3306. Между собой общаются по порту tcp 33060.
 
-## Запуск docker-compose
+### Запуск docker-compose
 
 Запускаем контейнеры в docker-compose:
 ```bash
@@ -66,7 +66,7 @@ innodb_node3_1          /entrypoint.sh mysqld --se ...   Up (healthy)   0.0.0.0:
 sudo su
 docker-compose down && sudo rm -rf data/mysql-shell/* && rm -rf data/node1/* && rm -rf data/node2/* && rm -rf data/node3/* && docker-compose up -d
 ```
-## Проверка работы кластера
+### Проверка работы кластера
 
 Соединения в кластере будет принимать `mysql-router` на порту 6446. Роутер будет перенаправлять все запросы на главную ноду, остальные ноды - это реплика.
 Если главная нода стала недоступной, то в процессе перевыборов назначается новая главная нода.
