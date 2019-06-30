@@ -10,7 +10,7 @@
 ### Установка Docker Compose
 
 После установки Docker выполняется установка Docker Compose по инструкции 
-```https://docs.docker.com/compose/install/``` 
+https://docs.docker.com/compose/install/ 
 
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -33,7 +33,7 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 На всех серверах: логин: ```root```, пароль: ```mysql```
 
-В каталогах `/data/...` хранятся тома mysql, развернутого в контейнерах (содержатся БД, логи и т.д.).
+В каталогах `/data/...` хранятся тома с данными mysql каждой ноды (содержатся БД, логи и т.д.).
 
 Маппинг папок с хоста в контейнеры описан в docker-compose.yml:
 ```
@@ -63,10 +63,12 @@ innodb_node1_1          /entrypoint.sh mysqld --se ...   Up (healthy)   0.0.0.0:
 innodb_node2_1          /entrypoint.sh mysqld --se ...   Up (healthy)   0.0.0.0:3302->3306/tcp, 33060/tcp
 innodb_node3_1          /entrypoint.sh mysqld --se ...   Up (healthy)   0.0.0.0:3303->3306/tcp, 33060/tcp
 ```
-В случае ошибок пересоздаем контейнеры с очисткой данных томов mysql:
+В случае ошибок пересоздаем контейнеры с очисткой томов mysql:
 ```bash
 sudo su
-docker-compose down && sudo rm -rf data/mysql-shell/* && rm -rf data/node1/* && rm -rf data/node2/* && rm -rf data/node3/* && docker-compose up -d
+systemctl restart docker
+docker-compose down && sudo rm -rf data/mysql-shell/* && rm -rf data/node1/* && rm -rf data/node2/* && rm -rf data/node3/* 
+docker-compose up -d
 ```
 ### Проверка работы кластера
 
@@ -225,4 +227,9 @@ mysql -u root -pmysql
 docker commit -m "innodb_mysql-shell v.1" -a "Alexey B." 3a1cc1d7e359 abichutsky/mysql-shell:v1
 docker images
 docker push abichutsky/mysql-shell
+```
+
+Создать файлы README.md в подкаталогах /data/.. для возможности коммита
+```
+echo "mysql data" > ./data/node1/README.md && echo "mysql data" > ./data/node2/README.md && echo "mysql data" > ./data/node3/README.md
 ```
