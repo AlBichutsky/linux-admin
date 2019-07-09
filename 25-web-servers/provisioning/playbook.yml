@@ -1,0 +1,31 @@
+---
+- hosts: webserver
+  become: yes
+  
+  tasks:
+
+  - name: install epel-release
+    yum:
+      name: epel-release
+      state: latest
+
+  - name: Install a list of packages before nginx
+    yum: name={{ item }} state=latest
+    with_items:
+      - vim
+
+  - name: install the latest version of nginx
+    yum:
+      name: nginx
+      state: present
+
+  - name: Copy configs to nginx
+    copy: src={{ item.src }} dest={{ item.dest }}
+    with_items:
+              - { src: 'templates/nginx.conf', dest: '/etc/nginx/nginx.conf' }
+              - { src: 'templates/index.html', dest: '/usr/share/nginx/html/index.html' }
+  
+  - name: Make sure a nginx is running
+    systemd:
+      state: started
+      name: nginx
