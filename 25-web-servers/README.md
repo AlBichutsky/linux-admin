@@ -16,7 +16,7 @@ https://nginx.org/ru/docs/http/ngx_http_headers_module.html
 
 ## Запуск тестового стенда
 
-Тестовый стенд: `Vagrant` + `Ansible`.
+Тестовый стенд: `Vagrant` + `Ansible`
 
 Запустить стенд: 
 ```bash
@@ -25,8 +25,7 @@ vagrant ssh webserver
 ```
 NGINX отдает web-страницу по адресу `192.168.50.100` на порту `80`.
 
-В `Vagrantfile` указал тип сетевого соединения "public network", выделил NGINX ip-адрес из хостовой подсети
-(можно указать свой).
+В `Vagrantfile` указал для сервера тип сетевого соединения `public network` (выделил NGINX ip-адрес из хостовой подсети):
 ```bash
 webserver.vm.network "public_network", ip: "192.168.50.100"
 ```
