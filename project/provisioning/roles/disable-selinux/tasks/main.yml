@@ -1,0 +1,7 @@
+---
+- name: Disable SELinux
+  shell: setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+#- name: Disable SELinux
+#  selinux:
+#    state: disabled
+    

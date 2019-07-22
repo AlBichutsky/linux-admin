@@ -1,0 +1,14 @@
+---
+# tasks file for configure-innodb-shell
+
+- name: Create script prepareCluster.js
+  copy:
+      src: "prepareCluster.js"
+      dest: "/tmp/prepareCluster.js"
+      owner: root
+      group: root
+      mode: 0666
+
+#- name: Run script prepareCluster.js for prepare cluster
+#  command: mysqlsh --user=admin --password='adminPa$$w0rd$2019' --host=srv-mysql-01 --port=3306 --interactive --file=/tmp/prepareCluster.js
+#  ignore_errors: yes

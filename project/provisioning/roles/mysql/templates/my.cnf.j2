@@ -1,0 +1,43 @@
+[mysqld]
+
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+
+# symbolic-links=0
+
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+# bind-address=0.0.0.0
+port=3306
+# Replication part
+server_id={{ ansible_eth1.ipv4.address | replace("192.168.100.","") }}
+gtid_mode=ON
+enforce_gtid_consistency=ON
+master_info_repository=TABLE
+relay-log={{ ansible_hostname }}-relay-bin
+relay_log_info_repository=TABLE
+binlog_checksum=NONE
+log_slave_updates=ON
+log_bin=binlog
+binlog_format=ROW
+# plugin-load = group_replication.so
+default_authentication_plugin=mysql_native_password
+
+# Group replication part
+transaction_write_set_extraction=XXHASH64
+#loose-group_replication_start_on_boot=OFF
+#loose-group_replication_local_address={{ ansible_eth1.ipv4.address }}:33060
+#loose-group_replication_bootstrap_group=OFF
+#report_port=3306
+#report_host={{ ansible_eth1.ipv4.address }}
+
+[mysql]
+# prompt="{{ ansible_hostname }} mysql> "
+default-character-set=utf8
+
+[client]
+user=admin
+
+# end
+

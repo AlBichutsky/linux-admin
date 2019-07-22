@@ -1,0 +1,32 @@
+---
+# tasks file for bind-master
+
+- name: install bind
+  yum: name={{ item }} state=latest
+  with_items:
+    - bind
+    - bind-utils
+    - ntp
+
+- name: Create transferkey
+  copy: src=zonetransfer.key dest=/etc/named.zonetransfer.key owner=root group=named mode=0644
+
+- name: Create rndc.key
+  copy: src=rndc.key dest=/etc/rndc.key owner=root group=named mode=0640    
+    
+- name: Create named.conf
+  copy: src=master-named.conf dest=/etc/named.conf owner=root group=named mode=0640
+
+- name: Create zones
+  copy: src={{ item }} dest=/etc/named/ owner=root group=named mode=0660
+  with_fileglob:
+    - named.project*
+
+- name: Create file resolv.conf
+  copy: src=servers-resolv.conf dest=/etc/resolv.conf owner=root group=root mode=0644
+  
+- name: set /etc/named permissions
+  file: path=/etc/named owner=root group=named mode=0670
+
+- name: ensure named is running and enabled
+  service: name=named state=restarted enabled=yes

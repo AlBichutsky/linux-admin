@@ -1,0 +1,24 @@
+$TTL 3600
+$ORIGIN project.lab.
+@               IN      SOA     srv-ns-01.project.lab. root.project.lab. (
+                            2711201407 ; serial
+                            3600       ; refresh (1 hour)
+                            600        ; retry (10 minutes)
+                            86400      ; expire (1 day)
+                            600        ; minimum (10 minutes)
+                        )
+
+                     IN      NS      srv-ns-01.project.lab.
+                     IN      NS      srv-ns-02.project.lab.
+
+; DNS Servers
+srv-ns-01            IN      A       192.168.100.10
+srv-ns-02            IN      A       192.168.100.11
+
+; Clients
+srv-mysqlrouter      IN      A       192.168.100.200
+srv-mysql-01         IN      A       192.168.100.201
+srv-mysql-02         IN      A       192.168.100.202
+srv-mysql-03         IN      A       192.168.100.203
+srv-mysqlshell       IN      A       192.168.100.204
+

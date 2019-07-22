@@ -1,0 +1,7 @@
+---
+# defaults file for mysql
+mysql_root_password: Pa$$w0rd$2019
+mysql_admin_username: admin
+mysql_admin_password: adminPa$$w0rd$2019
+replication_user: repl
+replication_user_password: replPa$$w0rd$2019

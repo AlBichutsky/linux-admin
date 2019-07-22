@@ -1,0 +1,93 @@
+
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+
+:"srv-ns-01" => {
+            :box_name => "centos/7",
+            :memory => "512",
+            :net => [
+            {ip: '192.168.100.10', adapter: 2, netmask: "255.255.255.0"},
+           ]                     
+},
+
+:"srv-mysql-01" => {
+            :box_name => "centos/7",
+            :memory => "512",
+#           :public => {:ip => '192.168.50.201', :adapter => 3 },
+            :net => [
+            {ip: '192.168.100.201', adapter: 2, netmask: "255.255.255.0"},
+          ]                     
+},
+
+:"srv-mysql-02" => {
+            :box_name => "centos/7",
+            :memory => "512",
+#           :public => {:ip => '192.168.50.202', :adapter => 3 },
+            :net => [
+            {ip: '192.168.100.202', adapter: 2, netmask: "255.255.255.0"},
+          ]                     
+},
+
+:"srv-mysql-03" => {
+            :box_name => "centos/7",
+            :memory => "512",
+#           :public => {:ip => '192.168.50.203', :adapter => 3 },
+            :net => [
+            {ip: '192.168.100.203', adapter: 2, netmask: "255.255.255.0"},
+          ]                     
+},
+
+:"srv-mysqlshell" => {
+            :box_name => "centos/7",
+            :memory => "256",
+#           :public => {:ip => '192.168.50.204', :adapter => 3 },
+            :net => [
+            {ip: '192.168.100.204', adapter: 2, netmask: "255.255.255.0"},
+          ]                     
+},
+
+:"srv-mysqlrouter" => {
+            :box_name => "centos/7",
+            :memory => "256",
+#           :public => {:ip => '192.168.50.200', :adapter => 3 },
+            :net => [
+            {ip: '192.168.100.200', adapter: 2, netmask: "255.255.255.0"},
+          ]                     
+},
+
+
+}
+
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+		box.vm.host_name = boxname.to_s
+
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+
+		config.vm.provision "ansible" do |ansible|
+			ansible.verbose = "vvv"
+			ansible.playbook = "provisioning/playbook.yml"
+			ansible.become = "true"
+
+		end
+
+	end
+
+  end
+end

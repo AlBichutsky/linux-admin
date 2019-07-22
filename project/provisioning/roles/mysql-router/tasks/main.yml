@@ -1,0 +1,18 @@
+---
+# tasks file for mysql-router
+
+- name: add repository MySQL
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-2.noarch.rpm
+    state: present
+
+- name: disable repository MySQL 5.7 and enable 8.0
+  shell: yum-config-manager {{ item }}
+  with_items:
+    - "--disable mysql57-community"
+    - "--enable mysql80-community"
+
+- name: install MySQL Router
+  yum:
+    name: ['mysql-router']
+    state: present

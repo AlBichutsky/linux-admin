@@ -1,0 +1,5 @@
+---
+# tasks file for configure-dns-on-client
+
+- name: Copy resolv.conf to the client
+  copy: src=client-resolv.conf dest=/etc/resolv.conf owner=root group=root mode=0644

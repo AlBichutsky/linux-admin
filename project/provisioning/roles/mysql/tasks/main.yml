@@ -1,0 +1,59 @@
+---
+# tasks file for mysql
+
+- name: Add repository MySQL
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-2.noarch.rpm
+    state: present
+
+- name: Disable repository MySQL 5.7 and enable 8.0
+  shell: yum-config-manager {{ item }}
+  with_items:
+    - "--disable mysql57-community"
+    - "--enable mysql80-community"
+
+- name: Install MySQL 8.0
+  yum:
+    name: ['mysql-community-server']
+    state: present
+  
+- name: Start the MySQL service
+  service: name=mysqld state=restarted enabled=yes
+
+- name: Get temporary MySQL root password
+  shell: grep 'A temporary password is generated for root@localhost' /var/log/mysqld.log | awk -F ' ' '{print $(NF)}'
+  register: mysql_temp_password
+
+- name: Out temporary MySQL root password to console for debug
+  debug: msg="{{ mysql_temp_password.stdout }}"
+
+- name: Create .my.cnf file for connecting to MySQL without credentionals
+  template:
+      src: ".my.cnf.j2"
+      dest: "/root/.my.cnf"
+      owner: root
+      group: root
+      mode: 0600
+
+- name: Create my.cnf file with configurtion
+  template:
+      src: "my.cnf.j2"
+      dest: "/etc/my.cnf"
+      owner: root
+      group: root
+      mode: 0444
+
+- name: Update temporary MySQL root password
+  command: mysql --user root --password={{ mysql_temp_password.stdout }} --connect-expired-password --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';"
+  ignore_errors: yes
+
+- name: Create users and grant privileges
+  command: mysql -NBe "{{ item }}"
+  with_items:
+     - "CREATE USER {{ mysql_admin_username }} IDENTIFIED WITH mysql_native_password BY '{{ mysql_admin_password }}';"
+     - "GRANT ALL PRIVILEGES ON *.* TO '{{ mysql_admin_username }}' WITH GRANT OPTION;"
+  ignore_errors: yes
+
+- name: Start the MySQL service
+  service: name=mysqld state=restarted enabled=yes
+

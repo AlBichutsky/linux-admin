@@ -1,0 +1,36 @@
+---
+# playbook.yml file.
+
+- hosts: all
+  become: yes
+  roles:
+   - disable-selinux
+
+- hosts: srv-ns-01
+  become: yes
+  roles:
+   - bind-master
+
+- hosts: ['srv-mysql-01', 'srv-mysql-02', 'srv-mysqlshell', 'srv-mysqlrouter']
+  become: yes
+  roles:
+   - packages
+   - configure-dns-on-client
+
+- hosts: ['srv-mysql-01', 'srv-mysql-02']
+  become: yes
+  roles:
+   - mysql
+   - mysql-shell
+
+- hosts: ['srv-mysqlshell']
+  become: yes
+  roles:
+   - mysql-shell
+   - configure-innodb-shell
+
+- hosts: ['srv-mysqlrouter']
+  become: yes
+  roles:
+   - mysql-router
+  
