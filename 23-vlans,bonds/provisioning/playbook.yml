@@ -1,0 +1,208 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+
+  - name: Создать ключи для root такие же как у vagrant
+    shell: mkdir -p ~root/.ssh && cp ~vagrant/.ssh/auth* ~root/.ssh
+  
+  - name: Отключить SELinux
+    shell: setenforce 0
+  
+  - name: Устаналиваем дополнительные пакеты
+    yum: 
+      name: traceroute
+      state: latest
+
+
+# inetRouter
+
+- hosts: inetRouter
+  become: yes
+  tasks:
+ 
+  - name: Включить форвардинг пакетов
+    shell: echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf && sysctl -p    
+ 
+  - name: Включить NAT (выход в интернет через интерфейс Vagrant - eth0)
+    shell: iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+ 
+  - name: Указываем роутинг, чтобы пакеты, предназначенные внутренним ip-адресам направлялись от inetRouter к centraRouter
+    shell: echo '192.168.0.0/16 via 192.168.255.2' > /etc/sysconfig/network-scripts/route-eth1
+ 
+  - name: Перезапустить сеть
+    service:
+      name: network
+      state: restarted
+
+# centralRouter
+
+- hosts: centralRouter
+  become: yes
+  tasks:
+  - name: Включить форвардинг пакетов
+    shell: echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf && sysctl -p    
+  
+  - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
+    shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+  
+  - name: Указываем шлюз по умолчанию для интерфейса eth1
+    shell: echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+  
+  - name: Прописываем роутинг, чтобы пакеты ходили от centralOffice в office1
+    shell: echo "192.168.2.0/24 via 192.168.254.2" > /etc/sysconfig/network-scripts/route-eth1
+  
+  - name: Прописываем роутинг, чтобы пакеты ходили от centralOffice в office2
+    shell: echo "192.168.1.0/24 via 192.168.253.2" >> /etc/sysconfig/network-scripts/route-eth1
+  
+  - name: restart network
+    service:
+      name: network
+      state: restarted
+
+# office1Router
+
+- hosts: office1Router
+  become: yes
+  tasks:
+  
+  - name: Включить форвардинг пакетов
+    shell: echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf && sysctl -p    
+
+  - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
+    shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+  - name: Указываем шлюз по умолчанию для интерфейса eth1
+    shell: echo "GATEWAY=192.168.254.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+
+  - name: Перезапустить сеть
+    service:
+      name: network
+      state: restarted
+
+# office1Server 
+
+- hosts: office1Server
+  become: yes
+  tasks:
+
+  - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
+    shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+  - name: Указываем шлюз по умолчанию для интерфейса eth1
+    shell: echo "GATEWAY=192.168.2.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+
+  #- name: Удаляем маршрут из таблицы маршрутизации для интерфейса eth0 (Vagrant), чтобы исключить отправку пакетов на него
+  #  shell: ip route del default via 10.0.2.2 dev eth0
+
+  #- name: Прописываем новый маршрут для eth1 - пакеты, предназначенные для любых подсетей должны уходить на шлюз 192.168.2.1
+  #  shell: echo "0.0.0.0 0.0.0.0 via 192.168.2.1" >> /etc/sysconfig/network-scripts/route-eth1
+
+  - name: Перезапустить сеть
+    service:
+      name: network
+      state: restarted
+
+# testClient1 
+
+- hosts: testClient1
+  become: yes
+  tasks:
+  
+  - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
+    shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+  - name: Указываем шлюз по умолчанию для интерфейса eth1
+    shell: echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+
+  - name: Cоздаем новый интерфейс eth2.1 с VLAN 1
+    copy: src=vlans/ifcfg-eth2.1.testClient1 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
+  
+  - name: Перезапустить сеть
+    service:
+      name: network
+      state: restarted
+
+# testServer1
+
+- hosts: testServer1
+  become: yes
+  tasks:
+  
+  - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
+    shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+  - name: Указываем шлюз по умолчанию для интерфейса eth1
+    shell: echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+
+  - name: Включаем парольную аутентификацию на ssh-сервере 
+    shell: sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config 
+
+  - name: Перезапустить sshd
+    service:
+      name: sshd
+      state: restarted
+
+  - name: Cоздаем новый интерфейс eth2.1 с VLAN 1
+    copy: src=vlan/ifcfg-eth2.1.testServer1 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
+
+  - name: Перезапустить сеть
+    service:
+      name: network
+      state: restarted
+
+# testClient2
+
+- hosts: testClient2
+  become: yes
+  tasks:
+  
+  - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
+    shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+  - name: Указываем шлюз по умолчанию для интерфейса eth1
+    shell: echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+
+  - name: Cоздаем новый интерфейс eth2.2 с VLAN 2
+    copy: src=vlans/ifcfg-eth2.2.testClient2 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
+  
+  - name: Перезапустить сеть
+    service:
+      name: network
+      state: restarted
+
+# testServer2
+
+- hosts: testServer2
+  become: yes
+  tasks:
+  
+  - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
+    shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+  - name: Указываем шлюз по умолчанию для интерфейса eth1
+    shell: echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+
+  - name: Cоздаем новый интерфейс eth2.2 с VLAN 2
+    copy: src=vlans/ifcfg-eth2.2.testServer2 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.2 owner=root group=root 
+  
+  - name: Включаем парольную аутентификацию на ssh-сервере 
+    shell: sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config 
+
+  - name: Перезапустить sshd
+    service:
+      name: sshd
+      state: restarted
+
+  - name: Перезапустить сеть
+    service:
+      name: network
+      state: restarted
+
+# на всех хостах
+
+- hosts: all
+  become: yes
+  tasks:
+  - name: Выполнить контрольный перезапуск сети для исключения багов
+    shell: /etc/init.d/network restart
