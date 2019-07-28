@@ -34,11 +34,11 @@ Cхема сети:
 
 ### Настройка вланов в Linux
 
-В тестовой подсети testLAN имеются вланы:
-- VLAN 1: `testClient1` (eth2), `testServer1` (eth2)
-- VLAN 2: `testClient2` (eth2), `testServer2` (eth2)  
+Вланы тестовой подсети:
+- VLAN 1: `testClient1` (eth2.1), `testServer1` (eth2.1)
+- VLAN 2: `testClient2` (eth2.2), `testServer2` (eth2.2)  
 
-Проверяем, что хосты из одного влана видят друг друга:
+Проверяем, что хосты одного влана видят друг друга:
 
 ![alt text](pics/vlan-access.png)
 
@@ -60,6 +60,6 @@ Cхема сети:
 
 ![alt text](pics/show-fault-tolerance.png)
 
-Проверяем, что после перехода на бэкапные линки другие хосты могут отправлять пакеты `inetRouter`
+Проверяем, что после перехода на бэкапные линки другие хосты могут отправлять пакеты на `inetRouter`
 
 ![alt text](pics/show-packet-tracing.png)
