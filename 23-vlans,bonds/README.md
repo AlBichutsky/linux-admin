@@ -38,7 +38,7 @@ Cхема сети:
 - VLAN 1: `testClient1` (eth2.1), `testServer1` (eth2.1)
 - VLAN 2: `testClient2` (eth2.2), `testServer2` (eth2.2)  
 
-Проверяем, что хосты одного влана видят друг друга:
+Проверяем, что хосты одного влана видят друг друга, подключившись по ssh:
 
 ![alt text](pics/vlan-access.png)
 
