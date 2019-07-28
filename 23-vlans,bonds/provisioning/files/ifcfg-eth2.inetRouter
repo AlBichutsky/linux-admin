@@ -1,0 +1,8 @@
+NM_CONTROLLED=no
+TYPE=Ethernet
+BOOTPROTO=static
+ONBOOT=yes
+DEVICE=eth2
+MASTER=bond0
+SLAVE=yes
+

@@ -17,7 +17,7 @@ MACHINES = {
 :centralRouter => {
         :box_name => "centos/7",
         :net => [
-				   # интерфейс eth1 будет использован под bond0 slave1
+				   # интерфейс eth1 будет задействован под bond0 slave 1 и будет изменен через ансибл
 				   ####################################################################
 				   {ip: '192.168.255.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
 				   ####################################################################  
@@ -26,7 +26,7 @@ MACHINES = {
                    {ip: '192.168.0.1', adapter: 5, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
                    {ip: '192.168.0.33', adapter: 6, netmask: "255.255.255.240", virtualbox__intnet: "hw-net"},
 				   {ip: '192.168.0.65', adapter: 7, netmask: "255.255.255.192", virtualbox__intnet: "wi-fi-net"},
-				   # новый интерфейс eth7 будет использован под bond0 slave2
+				   # интерфейс eth7 будет задействован под bond0 slave 2 и будет изменен через ансибл
 				   #####################################################################  
 				   {adapter: 8, auto_config: false, virtualbox__intnet: "router-net"},
 				   #####################################################################
@@ -57,8 +57,8 @@ MACHINES = {
   		:box_name => "centos/7",
   		:net => [
           	  {ip: '192.168.2.68', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "testserv-net"},
-			  # интерфейс для VLAN 1
-			  {adapter: 3, auto_config: false, virtualbox__intnet: "test-internal"},
+			  # интерфейс во VLAN 1
+			  {adapter: 3, auto_config: false, virtualbox__intnet: "testlan"},
  			    ]
 },
 
@@ -66,8 +66,8 @@ MACHINES = {
   		:box_name => "centos/7",
   		:net => [
          	   {ip: '192.168.2.71', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "testserv-net"},
-			   # интерфейс для VLAN 1
-			   {adapter: 3, auto_config: false, virtualbox__intnet: "test-internal"},
+			   # интерфейс во VLAN 1
+			   {adapter: 3, auto_config: false, virtualbox__intnet: "testlan"},
   				]
 },
 
@@ -76,8 +76,8 @@ MACHINES = {
   		:box_name => "centos/7",
  		:net => [
          	{ip: '192.168.2.69', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "testserv-net"},
-			# интерфейс для VLAN 2
-			{adapter: 3, auto_config: false, virtualbox__intnet: "test-internal"},
+			# интерфейс во VLAN 2
+			{adapter: 3, auto_config: false, virtualbox__intnet: "testlan"},
   		  		]
 },
 
@@ -86,8 +86,8 @@ MACHINES = {
   		:box_name => "centos/7",
   		:net => [
          	 {ip: '192.168.2.72', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "testserv-net"},
-			 # интерфейс для VLAN 2
-			 {adapter: 3, auto_config: false, virtualbox__intnet: "test-internal"},
+			 # интерфейс во VLAN 2
+			 {adapter: 3, auto_config: false, virtualbox__intnet: "testlan"},
 		 	    ]
 },
 

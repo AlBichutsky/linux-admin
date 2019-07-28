@@ -1,35 +1,43 @@
 ---
 - hosts: all
   become: yes
+  gather_facts: no
   tasks:
 
   - name: Создать ключи для root такие же как у vagrant
     shell: mkdir -p ~root/.ssh && cp ~vagrant/.ssh/auth* ~root/.ssh
   
   - name: Отключить SELinux
-    shell: setenforce 0
+    shell: setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
   
   - name: Устаналиваем дополнительные пакеты
     yum: 
-      name: traceroute
+      name: ['traceroute', 'libselinux-python']
       state: latest
-
 
 # inetRouter
 
 - hosts: inetRouter
   become: yes
+  gather_facts: no
   tasks:
- 
+
   - name: Включить форвардинг пакетов
     shell: echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf && sysctl -p    
  
   - name: Включить NAT (выход в интернет через интерфейс Vagrant - eth0)
     shell: iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
  
+  - name: Настройка интерфейсов для бондинга
+    copy: src={{ item.src }} dest={{ item.dest }}
+    with_items:
+      - { src: 'ifcfg-bond0.inetRouter', dest: '/etc/sysconfig/network-scripts/ifcfg-bond0' }
+      - { src: 'ifcfg-eth1.inetRouter', dest: '/etc/sysconfig/network-scripts/ifcfg-eth1' }
+      - { src: 'ifcfg-eth2.inetRouter', dest: '/etc/sysconfig/network-scripts/ifcfg-eth2' }
+
   - name: Указываем роутинг, чтобы пакеты, предназначенные внутренним ip-адресам направлялись от inetRouter к centraRouter
-    shell: echo '192.168.0.0/16 via 192.168.255.2' > /etc/sysconfig/network-scripts/route-eth1
- 
+    shell: echo '192.168.0.0/16 via 192.168.255.2' > /etc/sysconfig/network-scripts/route-bond0
+  
   - name: Перезапустить сеть
     service:
       name: network
@@ -39,21 +47,29 @@
 
 - hosts: centralRouter
   become: yes
+  gather_facts: no
   tasks:
   - name: Включить форвардинг пакетов
     shell: echo -e 'net.ipv4.conf.all.forwarding=1\nnet.ipv4.ip_forward=1' >> /etc/sysctl.conf && sysctl -p    
   
   - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
     shell: echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+  - name: Настройка интерфейсов для бондинга
+    copy: src={{ item.src }} dest={{ item.dest }}
+    with_items:
+      - { src: 'ifcfg-bond0.centralRouter', dest: '/etc/sysconfig/network-scripts/ifcfg-bond0' }
+      - { src: 'ifcfg-eth1.centralRouter', dest: '/etc/sysconfig/network-scripts/ifcfg-eth1' }
+      - { src: 'ifcfg-eth7.centralRouter', dest: '/etc/sysconfig/network-scripts/ifcfg-eth7' }
   
-  - name: Указываем шлюз по умолчанию для интерфейса eth1
-    shell: echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+#  - name: Указываем шлюз по умолчанию для интерфейса bond0
+#    shell: echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-bond0
   
   - name: Прописываем роутинг, чтобы пакеты ходили от centralOffice в office1
-    shell: echo "192.168.2.0/24 via 192.168.254.2" > /etc/sysconfig/network-scripts/route-eth1
+    shell: echo "192.168.2.0/24 via 192.168.254.2" > /etc/sysconfig/network-scripts/route-eth2
   
   - name: Прописываем роутинг, чтобы пакеты ходили от centralOffice в office2
-    shell: echo "192.168.1.0/24 via 192.168.253.2" >> /etc/sysconfig/network-scripts/route-eth1
+    shell: echo "192.168.1.0/24 via 192.168.253.2" >> /etc/sysconfig/network-scripts/route-eth3
   
   - name: restart network
     service:
@@ -64,6 +80,7 @@
 
 - hosts: office1Router
   become: yes
+  gather_facts: no
   tasks:
   
   - name: Включить форвардинг пакетов
@@ -84,6 +101,7 @@
 
 - hosts: office1Server
   become: yes
+  gather_facts: no
   tasks:
 
   - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
@@ -107,6 +125,7 @@
 
 - hosts: testClient1
   become: yes
+  gather_facts: no
   tasks:
   
   - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
@@ -114,9 +133,17 @@
 
   - name: Указываем шлюз по умолчанию для интерфейса eth1
     shell: echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+  
+  - name: Включаем парольную аутентификацию на ssh-сервере 
+    shell: sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config 
 
-  - name: Cоздаем новый интерфейс eth2.1 с VLAN 1
-    copy: src=vlans/ifcfg-eth2.1.testClient1 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
+  - name: Перезапустить sshd
+    service:
+      name: sshd
+      state: restarted
+
+  - name: Настройка интерфейса eth2.1 с VLAN 1
+    copy: src=ifcfg-eth2.1.testClient1 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
   
   - name: Перезапустить сеть
     service:
@@ -127,6 +154,7 @@
 
 - hosts: testServer1
   become: yes
+  gather_facts: no
   tasks:
   
   - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
@@ -143,8 +171,8 @@
       name: sshd
       state: restarted
 
-  - name: Cоздаем новый интерфейс eth2.1 с VLAN 1
-    copy: src=vlan/ifcfg-eth2.1.testServer1 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
+  - name: Настройка интерфейса eth2.1 с VLAN 1
+    copy: src=ifcfg-eth2.1.testServer1 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
 
   - name: Перезапустить сеть
     service:
@@ -155,6 +183,7 @@
 
 - hosts: testClient2
   become: yes
+  gather_facts: no
   tasks:
   
   - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
@@ -162,9 +191,17 @@
 
   - name: Указываем шлюз по умолчанию для интерфейса eth1
     shell: echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+  
+  - name: Включаем парольную аутентификацию на ssh-сервере 
+    shell: sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config 
 
-  - name: Cоздаем новый интерфейс eth2.2 с VLAN 2
-    copy: src=vlans/ifcfg-eth2.2.testClient2 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
+  - name: Перезапустить sshd
+    service:
+      name: sshd
+      state: restarted
+
+  - name: Настройка интерфейса eth2.2 с VLAN 2
+    copy: src=ifcfg-eth2.2.testClient2 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.1 owner=root group=root 
   
   - name: Перезапустить сеть
     service:
@@ -175,6 +212,7 @@
 
 - hosts: testServer2
   become: yes
+  gather_facts: no
   tasks:
   
   - name: Отключаем default gateway для интерфейса eth0 (Vagrant)
@@ -183,8 +221,8 @@
   - name: Указываем шлюз по умолчанию для интерфейса eth1
     shell: echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
 
-  - name: Cоздаем новый интерфейс eth2.2 с VLAN 2
-    copy: src=vlans/ifcfg-eth2.2.testServer2 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.2 owner=root group=root 
+  - name: Настройка интерфейса eth2.2 с VLAN 2
+    copy: src=ifcfg-eth2.2.testServer2 dest=/etc/sysconfig/network-scripts/ifcfg-eth2.2 owner=root group=root 
   
   - name: Включаем парольную аутентификацию на ssh-сервере 
     shell: sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config 
@@ -204,5 +242,5 @@
 - hosts: all
   become: yes
   tasks:
-  - name: Выполнить контрольный перезапуск сети для исключения багов
+  - name: Выполнить через init.d контрольный перезапуск сети для исправления бага с сетью
     shell: /etc/init.d/network restart
