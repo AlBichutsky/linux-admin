@@ -1,0 +1,90 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+:master => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.10.10', netmask: "255.255.255.0", virtualbox__intnet: "postgres-net"},
+                ]
+  },
+:slave => {
+	      :box_name => "centos/7",
+        :net => [
+			             {ip: '192.168.10.11', netmask: "255.255.255.0", virtualbox__intnet: "postgres-net"},
+			          ]
+},
+	
+}
+
+Vagrant.configure("2") do |config|
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+		box.vm.host_name = boxname.to_s
+
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+
+        config.vm.synced_folder ".", "/vagrant"
+
+		box.vm.provision "shell", inline: <<-SHELL
+          
+        # for all hosts
+        
+        mkdir -p ~root/.ssh
+				cp ~vagrant/.ssh/auth* ~root/.ssh
+       
+         # disable selinux
+         setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config 
+         
+         ###################### Installing Postgres #####################
+         
+         # installing repo
+         yum install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-ppc64le/pgdg-redhat-repo-latest.noarch.rpm -y
+         # installing postgres 11.0 
+         yum install postgresql-server -y
+         systemctl enable postgresql
+         
+         ################################################################
+         
+createuser --replication -P repluser << EOF
+replpass
+replpass
+EOF
+    
+         SHELL
+        
+    case boxname.to_s
+      
+    when "master"
+
+      box.vm.provision "shell", inline: <<-SHELL 
+
+   
+      SHELL
+      
+		when "slave"
+      
+      box.vm.provision "shell", inline: <<-SHELL
+    
+     
+      SHELL
+      
+	
+    end
+    
+		
+      end
+
+  end
+  
+end
+

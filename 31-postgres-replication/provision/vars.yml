@@ -1,0 +1,10 @@
+master_host: 192.168.100.10
+standby_host: 192.168.100.11
+barman_host: 192.168.100.12
+
+pgsqlrep_user: repluser
+pgsqlrep_password: ReplPass
+
+pgsql_data_dir: /var/lib/pgsql/11/data
+pqsql_WALarchive_dir: /var/lib/pgsql/11/data/archive
+

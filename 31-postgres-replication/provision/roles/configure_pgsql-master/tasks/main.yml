@@ -1,0 +1,34 @@
+---
+# tasks file for postgresql-master
+
+- name: Edit pg_hba.conf  | Specify allow hosts and user for access to master 
+  lineinfile:
+    dest: /var/lib/pgsql/11/data/pg_hba.conf 
+    create: yes
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - host    all             all                     {{ barman_host/32 }}   trust
+    - host    replication     {{ pgsqlrep_user }}     127.0.0.1/32  md5
+    - host    replication     {{ pgsqlrep_user }}     {{ master_host }}/32   md5
+    - host    replication     {{ pgsqlrep_user }}     {{ standby_host }}/32  md5
+
+- name: Create replication user account
+  become_user: postgres
+  command: psql postgres -c "CREATE USER {{ pgsqlrep_user }} REPLICATION LOGIN CONNECTION LIMIT 2 ENCRYPTED PASSWORD '{{ pgsqlrep_password }}';"
+
+- name: Backup old postgresql.conf
+  copy: remote_src=True src={{ pgsql_data_dir }}/postgresql.conf dest={{ pgsql_data_dir }}/postgresql.conf.back owner=postgres group=postgres mode=0640
+
+- name: Copy configured postgresql.conf
+  copy: src=postgresql.conf dest={{ pgsql_data_dir }}/postgresql.conf owner=postgres group=postgres mode=0640
+
+- name: Create folder where will keep WAL archives
+  file:
+    path: "{{ pqsql_WALarchive_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: 0700
+  notify: restart postgresql
+  
