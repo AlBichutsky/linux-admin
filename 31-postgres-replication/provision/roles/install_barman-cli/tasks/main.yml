@@ -1,0 +1,9 @@
+---
+# tasks file for barman-cli
+
+- name: Install required packages
+  yum: 
+    name:
+    - epel-release
+    - barman-cli
+    state: present
