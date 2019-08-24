@@ -5,6 +5,11 @@ barman_host: 192.168.100.12
 pgsqlrep_user: repluser
 pgsqlrep_password: ReplPass
 
+pgsql_barman_user: barman
+pgsql_barman_password: BarmanPass
+pgsql_barman_streaming_user: streaming_barman
+pgsql_barman_streaming_password: StrBarmanPass
+
 pgsql_data_dir: /var/lib/pgsql/11/data
 pqsql_WALarchive_dir: /var/lib/pgsql/11/data/archive
 

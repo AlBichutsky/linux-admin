@@ -1,2 +1,62 @@
 ---
 # tasks file for postgresql-barman
+
+- name: Add password to .pgpass for connection to master
+  become_user: barman
+  lineinfile:
+    line: "{{ item }}"
+    dest: /var/lib/barman/.pgpass
+    create: yes
+    mode: 0600
+  with_items:
+    - "{{ master_host }}:5432:*:{{ pgsql_barman_user }}:{{ pgsql_barman_password }}"
+    - "{{ master_host }}:5432:*:{{ pgsql_barman_streaming_user }}:{{ pgsql_barman_streaming_password }}"
+
+- name: Check account "{{ pgsql_barman_user }}" for connection to  {{ master_host }}
+  command: su - barman -c "psql -c 'SELECT version()' -U {{ pgsql_barman_user }} -h {{ master_host }} postgres"
+  register: check1
+  
+- name: Debug out
+  debug: msg="{{ check1.stdout }}"
+  
+- name: Check account "{{ pgsql_barman_streaming_user }}" for connection to {{ master_host }}
+  command: su - barman -c "psql -U {{ pgsql_barman_streaming_user }} -h {{ master_host }} \-c "IDENTIFY_SYSTEM" \replication=1"
+  register: check2
+
+- name: Debug out
+  debug: msg="{{ check2.stdout }}"
+
+- name: Backup old barman.conf
+  copy: 
+    remote_src: True 
+    src: /etc/barman.conf 
+    dest: /etc/barman.conf.back 
+    owner: barman 
+    group: barman 
+    mode: 0644
+
+- name: Create configured barman.conf
+  copy:
+    src: barman.conf
+    dest: /etc/barman.conf
+    owner: barman 
+    group: barman 
+    mode: 0644
+
+- name: Create backup configuration for master
+  template:
+    src: templates/main.conf
+    dest: /etc/barman.d/main.conf
+    owner: barman 
+    group: barman 
+    mode: 0644
+
+- name: Create replication slot  
+  command: barman receive-wal --create-slot {{ master_host }}
+
+- name: Verification of WAL archiving configuration
+  command: barman switch-wal --force --archive {{ master_host }}
+  ignore_errors: true
+
+
+

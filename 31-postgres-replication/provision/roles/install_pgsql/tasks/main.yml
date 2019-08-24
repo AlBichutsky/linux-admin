@@ -1,13 +1,13 @@
 ---
 # tasks file for install_pgsql
 
-- name: Install postgresql repo
+- name: Install postgres repo
   yum:
     name:
     - https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-centos11-11-2.noarch.rpm
     state: present
   
-- name: Install packages
+- name: Install postgres packages
   yum: 
     name:
     - postgresql11-server
@@ -26,4 +26,3 @@
     name: postgresql-11.service
     state: started
     enabled: yes
-    

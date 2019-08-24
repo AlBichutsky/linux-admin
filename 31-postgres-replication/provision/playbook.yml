@@ -1,44 +1,27 @@
 ---
-- hosts: all
-  become: true
-  tasks:
-
-  - name: Install postgresql repo
-    yum:
-      name:
-        - https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-centos11-11-2.noarch.rpm
-      state: present
-  
-  - name: Install packages
-    yum: 
-      name:
-        - epel-release
-        - libselinux-python
-        - postgresql11-server
-        - postgresql11
-      state: present
-
-  - name: Disable SELinux
-    selinux:
-      state: disabled
-
-  - name: Init database
-    command: /usr/pgsql-11/bin/postgresql-11-setup initdb
-
-  - name: Start postgres
-    systemd:
-      name: postgresql-11.service
-      state: started
-      enabled: yes
 
 - hosts: master
   become: true
   vars_files: vars.yml
   roles:
-    - master-pgsql
+    - install_packages
+    - install_pgsql
+    - install_barman-cli
+    - configure_master
 
 - hosts: slave
   become: true
   vars_files: vars.yml
   roles:
-    - slave-pgsql
+    - install_packages
+    - install_pgsql
+    - configure_standby
+
+- hosts: backup
+  become: true
+  vars_files: vars.yml
+  roles:
+    - install_packages
+    - install_pgsql
+    - install_barman
+    - configure_barman

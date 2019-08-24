@@ -1,2 +1,9 @@
 ---
 # tasks file for install_packages
+
+- name: Install required packages
+  yum: 
+    name:
+    - epel-release
+    - libselinux-python
+    state: present

@@ -1,2 +1,10 @@
 ---
 # tasks file for install_barman
+
+- name: Install postgres packages
+  yum: 
+    name:
+    - barman
+    state: present
+
+
