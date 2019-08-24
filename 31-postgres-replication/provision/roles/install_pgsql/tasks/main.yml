@@ -14,12 +14,12 @@
     - postgresql11
     state: present
 
+- name: Init database
+  command: /usr/pgsql-11/bin/postgresql-11-setup initdb
+
 - name: Disable SELinux
   selinux:
     state: disabled
-
-- name: Init database
-  command: /usr/pgsql-11/bin/postgresql-11-setup initdb
 
 - name: Start postgres
   systemd:

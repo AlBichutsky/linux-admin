@@ -54,9 +54,6 @@
 - name: Create replication slot  
   command: barman receive-wal --create-slot {{ master_host }}
 
-- name: Verification of WAL archiving configuration
-  command: barman switch-wal --force --archive {{ master_host }}
-  ignore_errors: true
 
 
 

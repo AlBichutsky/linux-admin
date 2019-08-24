@@ -1,7 +1,7 @@
 ---
 # tasks file for postgresql-master
 
-- name: Configure authentificaton on master | set allowed users, hosts in pg_hba.conf
+- name: Allow access to databases and replication from various sources
   lineinfile:
     dest: /var/lib/pgsql/11/data/pg_hba.conf 
     create: yes
@@ -11,7 +11,7 @@
     - host    replication     {{ pgsqlrep_user }}     127.0.0.1/32  md5
     - host    replication     {{ pgsqlrep_user }}     {{ master_host }}/32   md5
     - host    replication     {{ pgsqlrep_user }}     {{ standby_host }}/32  md5
-    - host    all             all      {{ barman_host }}/32  trust
+    - host    all             {{ pgsql_barman_user }} {{ barman_host }}/32   md5
     - host    replication     {{ pgsql_barman_streaming_user }} {{ barman_host }}/32 md5
 
 - name: Create account for slave replication
@@ -27,11 +27,7 @@
   command: psql postgres -c "CREATE USER {{ pgsql_barman_streaming_user }} WITH REPLICATION PASSWORD '{{ pgsql_barman_streaming_password }}';"
 
 - name: Backup postgresql.conf
-  copy: remote_src=True src={{ pgsql_data_dir }}/postgresql.conf dest={{ pgsql_data_dir }}/postgresql.conf.back owner=postgres group=postgres mode=0640
-
-#- name: Copy configured postgresql.conf
-#  copy: src=postgresql.conf dest={{ pgsql_data_dir }}/postgresql.conf owner=postgres group=postgres mode=0640
-#  notify: restart postgresql
+  copy: remote_src=True src={{ pgsql_data_dir }}/postgresql.conf dest={{ pgsql_data_dir }}/postgresql.conf.back owner=postgres group=postgres mode=0640    
 
 - name: Copy configured postgresql.conf
   template:
@@ -41,6 +37,9 @@
     owner: postgres
     group: postgres
 
+- name: Create physical replication slot
+  become_user: postgres
+  command: psql postgres -c "SELECT pg_create_physical_replication_slot('standby_slot');"
 
 - name: Create folder for WAL archives
   file:
