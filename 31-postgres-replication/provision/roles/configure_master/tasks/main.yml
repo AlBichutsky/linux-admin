@@ -32,7 +32,7 @@
     owner: postgres
     group: postgres
 
-- name: Create physical replication slot
+- name: Create standby slot
   become_user: postgres
   command: psql postgres -c "SELECT pg_create_physical_replication_slot('standby_slot');"
 

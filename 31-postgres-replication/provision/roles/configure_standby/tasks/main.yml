@@ -20,14 +20,6 @@
     - absent
     - directory
 
-#- name: Add password to .pgpass for user "root"
-#  lineinfile:
-#      line: "*:*:*:{{ pgsqlrep_user }}:{{ pgsqlrep_password }}"
-#      regexp: "{{ pgsqlrep_user }}"
-#      dest: ~/.pgpass
-#      create: yes
-#      mode: 0600
-
 - name: Add password to .pgpass
   become_user: postgres
   lineinfile:
@@ -43,12 +35,12 @@
 
 - name: Add required options in recovery.conf 
   lineinfile:
-     dest: /var/lib/pgsql/11/data/recovery.conf 
-     create: yes
-     line: "{{ item }}"
-     state: present
+      dest: /var/lib/pgsql/11/data/recovery.conf 
+      create: yes
+      line: "{{ item }}"
+      state: present
   with_items:
-     - primary_slot_name = 'standby_slot'
+      - primary_slot_name = 'standby_slot'
   
 - name: Copy configured postgresql.conf
   copy: src=postgresql.conf dest={{ pgsql_data_dir }}/postgresql.conf owner=postgres group=postgres mode=0640

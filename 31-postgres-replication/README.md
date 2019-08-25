@@ -48,9 +48,8 @@ host    replication     streaming_barman  192.168.100.12/32                  md5
 ```
 listen_addresses = '*'
 
-max_connections = 50
-shared_buffers = 128MB
-work_mem = 32MB
+max_connections = 80
+shared_buffers = 256MB
 dynamic_shared_memory_type = posix
 
 fsync = on
@@ -61,7 +60,7 @@ wal_level = replica
 wal_log_hints = on
 max_replication_slots = 4
 max_wal_senders = 6
-wal_keep_segments = 64
+wal_keep_segments = 32
 min_wal_size = 100MB
 max_wal_size = 1GB
 archive_mode = on
@@ -70,7 +69,7 @@ archive_command = 'cp -i %p /var/lib/pgsql/11/data/archive/%f'
 
 # Настройка архивации WAL на сервер barman в папку "incoming"
 # Рекомендуемый способ, но требуется настройка ssh-ключей для авторизации
-# archive_command = 'barman-wal-archive 192.168.100.12 192.168.100.10 %p'
+# archive_command = 'barman-wal-archive {{ barman_host }} {{ master_host }} %p'
 ```
 
 ### standby-сервер

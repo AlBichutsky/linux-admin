@@ -53,6 +53,4 @@
 
 - name: Create replication slot  
   command: barman receive-wal --create-slot {{ master_host }}
-
-
-
+  ignore_errors: true
