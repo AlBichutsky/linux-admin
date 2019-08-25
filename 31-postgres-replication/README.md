@@ -113,31 +113,15 @@ path_prefix = /usr/pgsql-11/bin
 
 ### Проверка репликации
 
-Создаем на master-сервере БД и в ней таблицу:
+Создаем на master-сервере БД и в ней таблицу с данными:
 
 ```sql
 vagrant ssh master
 sudo -u postgres psql
 =# CREATE DATABASE test_db ENCODING='UTF8';
-=# \l
-                                  List of databases
-   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
------------+----------+----------+-------------+-------------+-----------------------
- postgres  | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
- template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
-           |          |          |             |             | postgres=CTc/postgres
- template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
-           |          |          |             |             | postgres=CTc/postgres
- test_db   | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
-(4 rows)
 =# \c test_db
-test_db=# CREATE TABLE names (John varchar(80));
-test_db=#\dt
-         List of relations
- Schema | Name  | Type  |  Owner
---------+-------+-------+----------
- public | names | table | postgres
-(1 row)
+test_db=# CREATE TABLE names (family varchar(80));
+test_db=# INSERT INTO names VALUES ('Smith');
 ```
 Проверяем реплицированную БД на standby-сервере:
 
@@ -156,13 +140,10 @@ sudo -u postgres psql
  test_db   | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
 (4 rows)
 postgres=# \c test_db
-You are now connected to database "test_db" as user "postgres".
-test_db=# \dt
-         List of relations
- Schema | Name  | Type  |  Owner
---------+-------+-------+----------
- public | names | table | postgres
-(1 row)
+test_db=# SELECT * FROM names ;
+ Smith
+------
+(0 rows)
 ```
 ### Проверка резервного копирования
 
