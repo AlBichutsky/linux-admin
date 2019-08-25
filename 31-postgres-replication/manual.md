@@ -32,21 +32,20 @@ systemctl enable postgresql
 /usr/pgsql-11/bin/postgresql-11-setup initdb
 ```
 4.
-Настриваем аутентификацию:  
-- разрешаем slave коннектиться к master под пользователем `repluser`.
-- разрешаем barman коннектиться к master под любым пользователем (у нас будет пользователь barman для управления).
-- разрешаем барману коннектиться к мастеру под пользователем `barman_streaming` для выполнения стимингового бэкапа. 
-
-Добавляем в `/var/lib/pgsql/11/data/pg_hba.conf`
+Настриваем клиентскую аутентификацию в `/var/lib/pgsql/11/data/pg_hba.conf`
 
 ```
-host    replication     repluser           127.0.0.1/32       md5
-host    replication     repluser           192.168.100.10/32  md5
-host    replication     repuser            192.168.100.11/32  md5
-host    all             barman             192.168.100.12/32   md5
-# либо можем просто разрешить любые подключения с хоста 192.168.100.12
-# host    all             all              192.168.100.12/32  trust
-host    replication     barman_streaming   192.168.100.12/32  md5
+# PostgreSQL Client Authentication Configuration File
+# ===================================================
+# TYPE  DATABASE        USER              ADDRESS                            METHOD
+local   all             all                                                  peer
+# Разрешаем доступ ко всем БД любому пользователю из своей подсети (проверяется логин-пароль) 
+host    all             all               192.168.100.0/24                   md5
+# Разрешаем доступ указанным пользователям к репликации с указанных адресов (проверяется логин-пароль)
+host    replication     repluser          127.0.0.1/32                       md5
+host    replication     repluser          192.168.100.10/32                  md5
+host    replication     repluser          192.168.100.11/32                  md5
+host    replication     streaming_barman  192.168.100.12/32                  md5
 ```
 5. 
 Создаем  пользователя `repluser` для репликации на slave (пример создания через консоль)
@@ -94,11 +93,11 @@ wal_keep_segments = 64
 min_wal_size = 100MB
 max_wal_size = 1GB
 archive_mode = on
-# Передаем архивы WAL в локальную папку "archive"
+# Настройка архивации WAL в локальную папку "archive" (при бэкапе забирает barman)
 archive_command = 'cp -i %p /var/lib/pgsql/11/data/archive/%f'
 
-# Передаем архивы WAL на сервер barman в папку /var/lib/barman/192.168.100.12/incoming
-# Это рекомендуемый способ, но требуется настройка ssh-ключей для авторизации
+# Настройка архивации WAL на сервер barman в папку "incoming"
+# Рекомендуемый способ, но требуется настройка ssh-ключей для авторизации
 # archive_command = 'barman-wal-archive 192.168.100.12 192.168.100.10 %p'
 ```
 7.
@@ -215,8 +214,7 @@ psql
 ```sql
 sudo -u postgres psql
 =# CREATE DATABASE test_db ENCODING='UTF8';
-=# \l;
-test_db=# \l
+=# \l
                                   List of databases
    Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
 -----------+----------+----------+-------------+-------------+-----------------------
@@ -229,7 +227,7 @@ test_db=# \l
 (4 rows)
 =# \c test_db
 test_db=# CREATE TABLE names (John varchar(80));
-test_db=#\dt;
+test_db=#\dt
          List of relations
  Schema | Name  | Type  |  Owner
 --------+-------+-------+----------
@@ -237,7 +235,7 @@ test_db=#\dt;
 (1 row)
 ```
 После этого проверяем на slave нашу реплицированную БД:
-```bash
+```sql
 sudo -u postgres psql
 =# \l
                                  List of databases

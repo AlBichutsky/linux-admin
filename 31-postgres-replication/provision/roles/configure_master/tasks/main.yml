@@ -1,28 +1,23 @@
 ---
 # tasks file for postgresql-master
 
-- name: Allow access to databases and replication from various sources
-  lineinfile:
-    dest: /var/lib/pgsql/11/data/pg_hba.conf 
-    create: yes
-    line: "{{ item }}"
-    state: present
-  with_items:
-    - host    replication     {{ pgsqlrep_user }}     127.0.0.1/32  md5
-    - host    replication     {{ pgsqlrep_user }}     {{ master_host }}/32   md5
-    - host    replication     {{ pgsqlrep_user }}     {{ standby_host }}/32  md5
-    - host    all             {{ pgsql_barman_user }} {{ barman_host }}/32   md5
-    - host    replication     {{ pgsql_barman_streaming_user }} {{ barman_host }}/32 md5
+- name: Copy configured postgresql.conf
+  template:
+    src: templates/pg_hba.conf
+    dest: "{{ pgsql_data_dir }}"
+    mode: 0600
+    owner: postgres
+    group: postgres
 
-- name: Create account for slave replication
+- name: Create user for replication
   become_user: postgres
   command: psql postgres -c "CREATE USER {{ pgsqlrep_user }} WITH REPLICATION LOGIN CONNECTION LIMIT 2 ENCRYPTED PASSWORD '{{ pgsqlrep_password }}';"
 
-- name: Create barman managment account
+- name: Create barman user for managment purposes
   become_user: postgres
   command: psql postgres -c "CREATE USER {{ pgsql_barman_user }} WITH SUPERUSER PASSWORD '{{ pgsql_barman_password }}';"
 
-- name: Create barman streaming backup account
+- name: Create barman user for streaming backup
   become_user: postgres
   command: psql postgres -c "CREATE USER {{ pgsql_barman_streaming_user }} WITH REPLICATION PASSWORD '{{ pgsql_barman_streaming_password }}';"
 
