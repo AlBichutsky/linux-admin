@@ -25,7 +25,9 @@ vagrant up
 | standby-сервер | slave           | 192.168.100.11/24 |
 | barman-сервер  | backup          | 192.168.100.12/24 |
 
-### Конфигурационные файлы master-сервера
+## Конфигурационные файлы 
+
+### master-сервер
 
 /var/lib/pgsql/11/data/pg_hba.conf
 ```
@@ -71,7 +73,7 @@ archive_command = 'cp -i %p /var/lib/pgsql/11/data/archive/%f'
 # archive_command = 'barman-wal-archive 192.168.100.12 192.168.100.10 %p'
 ```
 
-### Конфигурационные файлы standby-сервера 
+### standby-сервер
 
 /var/lib/pgsql/11/data/postgresql.conf
 ```
@@ -85,7 +87,7 @@ primary_conninfo = 'user=repluser passfile=''/var/lib/pgsql/.pgpass'' host=192.1
 primary_slot_name = 'standby_slot'
 ```
 
-### Конфигурационные файлы barman-сервера
+### barman-сервер
 
 /etc/barman.conf
 ```
