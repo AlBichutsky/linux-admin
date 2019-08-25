@@ -130,7 +130,7 @@ sudo -u postgres psql
 (4 rows)
 =# \c test_db
 test_db=# CREATE TABLE names (John varchar(80));
-test_db=#\dt;
+test_db=#\dt
          List of relations
  Schema | Name  | Type  |  Owner
 --------+-------+-------+----------
