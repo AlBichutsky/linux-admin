@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: True
+  tasks:
+  - name: Add settings to /etc/hosts
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      line: '{{ item.ip }} {{ item.name }}'
+    with_items:
+      - { ip: 192.168.101.1, name: server.test.local }
+
+- hosts: server
+  become: True
+  roles:
+    - role: postfix-server
+      allowed_networks: "192.168.101.0/24"
+      listen_ip: "192.168.101.1, 10.0.2.15"
+    - role: dovecot
+      user: vagrant
+      password: password
+
+

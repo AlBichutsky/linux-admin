@@ -1,0 +1,9 @@
+---
+# handlers file for postfix-server
+
+- name: restart postfix
+  systemd:
+    name: postfix
+    state: restarted
+    enabled: yes
+...
