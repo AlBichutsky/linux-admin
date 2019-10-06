@@ -22,11 +22,11 @@ vagrant up
 - **nfsserver**  
 расшарен каталог: `/var/nfs_share`
 - **client**  
-монтируется по требованию через `autofs` в: `/mnt/nfsserver/public`
+`autofs` монтирует по требованию в: `/mnt/nfsserver/public`
 
 ## Проверка 
 
-Монтирование:
+Проверка автомонтирования:
 
 ```bash
 [Alexey@alexhome 33-nfs]$ vagrant ssh client
