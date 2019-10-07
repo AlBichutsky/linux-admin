@@ -41,6 +41,15 @@ total 4
 drwxrwxr-x. 2 vagrant vagrant 22 Oct  6 19:39 .
 drwxrwxrwx. 3 root    root    24 Oct  6 19:38 ..
 -rw-rw-r--. 1 vagrant vagrant  5 Oct  6 19:39 testfile
+[vagrant@client upload]$ df -hT
+Filesystem               Type      Size  Used Avail Use% Mounted on
+/dev/sda1                xfs        40G  2.9G   38G   8% /
+devtmpfs                 devtmpfs  236M     0  236M   0% /dev
+tmpfs                    tmpfs     244M     0  244M   0% /dev/shm
+tmpfs                    tmpfs     244M  4.5M  240M   2% /run
+tmpfs                    tmpfs     244M     0  244M   0% /sys/fs/cgroup
+tmpfs                    tmpfs      49M     0   49M   0% /run/user/1000
+nfsserver:/var/nfs_share nfs        40G  2.8G   38G   7% /mnt/nfsserver/public
 ```
 Проверка политики `root_squash`:
 ```bash

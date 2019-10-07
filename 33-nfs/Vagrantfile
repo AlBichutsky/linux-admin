@@ -90,7 +90,7 @@ Vagrant.configure(2) do |config|
       systemctl enable autofs
 
       # Add entry in master file
-      echo -e "/mnt/nfsserver /etc/auto.master.d/auto.nfs --timeout=600" >> /etc/auto.master
+      echo -e "/mnt/nfsserver /etc/auto.master.d/auto.nfs --timeout=30" >> /etc/auto.master
 
       # Add entry in corresponding map file
       echo -e "public  -fstype=nfs,rw,nosuid,noexec,soft,intr,proto=udp,vers=3  nfsserver:/var/nfs_share" > /etc/auto.master.d/auto.nfs
