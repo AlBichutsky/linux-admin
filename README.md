@@ -20,7 +20,7 @@
 * [21.iptables](21-iptables/)
 * [22.openvpn](22-openvpn/)
 * [23.vlans,bonds](23-vlans,bonds/)
-* [25.web-servers](25-web-servers/)
+* [25.web-servers (in progress)](25-web-servers/)
 * [26.dynamic-web](26-dynamic-web/)
 * [27.mysql-replication](27-mysql-replication/)
 * [28.mysql-cluster](28-mysql-cluster/)
