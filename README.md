@@ -26,4 +26,4 @@
 * [28.mysql-cluster](28-mysql-cluster/)
 * [29.postfix](29-postfix/)
 * [31.postgres-replication](31-postgres-replication/)
-* [33.nfs](29-nfs/)
+* [33.nfs](33-nfs/)
