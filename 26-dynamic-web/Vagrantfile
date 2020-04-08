@@ -1,0 +1,114 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+   config.vm.box = "centos/7"
+   config.vm.box_check_update = false
+   #config.vm.network "forwarded_port", guest: 80, host: 8080
+   #config.vm.synced_folder ".", "/vagrant"
+ 
+   config.vm.provision "shell", inline: <<-SHELL
+     
+     #############################
+     # Provisioning all machines #
+     #############################
+
+     # Disable selinux
+     sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+
+     # Setup /etc/hosts 
+     echo -e "192.168.10.10 nfsserver" >> /etc/hosts
+     echo -e "192.168.10.11 client" >> /etc/hosts
+     
+     # Setup Moscow time
+     mv /etc/localtime /etc/localtime.bak
+     ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+     
+     # Enable firewalld
+     #systemctl start firewalld
+     #systemctl enable firewalld
+
+   SHELL
+ 
+   config.vm.define "nginx", primary: true do |s|
+     s.vm.hostname = 'nginx'
+     s.vm.network "private_network", ip: "192.168.10.10"
+     s.vm.provision "shell", inline: <<-SHELL
+
+     SHELL
+   
+  end
+ 
+    config.vm.define "wordpress" do |c|
+      c.vm.hostname = 'wordpress'
+      c.vm.network "private_network", ip: "192.168.10.11"
+      c.vm.provision "shell", inline: <<-SHELL
+  
+  
+     SHELL
+  
+  end
+ 
+ 
+    config.vm.define "django" do |c|
+      c.vm.hostname = 'django'
+      c.vm.network "private_network", ip: "192.168.10.12"
+      #config.vm.network "forwarded_port", guest: 8000, host: 8001
+      c.vm.provision "shell", inline: <<-SHELL
+      
+      # Install python 3.6
+      sudo yum install tree centos-release-scl -y
+      sudo yum install rh-python36 -y
+      
+      # Creating new catalog for Django project
+      mkdir -p /var/www/
+      cd /var/www/
+      
+      # To access Python 3.6 we need to launch a new shell instance using the scl tool:
+      scl enable rh-python36 bash 
+      
+      # Run the following command to create a new virtual environment
+      /opt/rh/rh-python36/root/usr/bin/python3 -m venv venv
+
+      # To start using this virtual environment, we need to activate it by running the activate script:
+      source venv/bin/activate
+      
+      # Installing Django ver 2.1 (Django 2.2 is required newer version sqllite)
+      pip install Django==2.1
+      
+      # To verify the installation use the following command which will print the Django version:
+      python -m django --version
+
+      # To create a new Django project named mydjangoapp use the django-admin command-line utility:
+      django-admin startproject mydjangoapp
+      tree  mydjangoapp/
+
+      # Let’s migrate the database and create an administrative user
+      cd mydjangoapp
+      python manage.py migrate
+
+      # Once the database is migrated, create an administrative user so that you can use the Django admin interface:
+      # python manage.py createsuperuser
+
+      # Set allow hosts
+      sed -i "s/ALLOWED_HOSTS = \\[]/ALLOWED_HOSTS = ['192.168.10.12']/" /var/www/mydjangoapp/mydjangoapp/settings.py
+      
+      # Start the development web server using the manage.py script followed by the runserver option:
+      python manage.py runserver 0.0.0.0:8000
+
+     SHELL
+
+  end
+
+     config.vm.define "react" do |c|
+      c.vm.hostname = 'react'
+      c.vm.network "private_network", ip: "192.168.10.13"
+      c.vm.provision "shell", inline: <<-SHELL
+
+
+     SHELL
+
+  end
+
+
+ end
